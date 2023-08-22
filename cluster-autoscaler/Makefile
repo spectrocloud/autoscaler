@@ -68,11 +68,11 @@ ifdef BASEIMAGE
 #	--build-arg ldflags="$(LDFLAGS)" \
 #	-t $(IMAGE)-$(ARCH):$(TAG) \
 #	-f Dockerfile.amd64 .
-	docker build --pull CRYPTO_LIB=${FIPS_ENABLE} --build-arg BASEIMAGE=${BASEIMAGE} \
+	docker build --pull --build-arg CRYPTO_LIB=${FIPS_ENABLE} --build-arg BASEIMAGE=${BASEIMAGE} \
 		-t ${IMAGE}-$(ARCH):${TAG} \
 		-f Dockerfile.amd64 .
  else
-	docker build --pull CRYPTO_LIB=${FIPS_ENABLE}\
+	docker build --pull --build-arg CRYPTO_LIB=${FIPS_ENABLE}\
 		-t ${IMAGE}-$(ARCH):${TAG} \
 		-f Dockerfile.amd64 .
 endif
