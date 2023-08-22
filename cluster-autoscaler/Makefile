@@ -81,7 +81,7 @@ endif
 push-image: push-image-arch-$(GOARCH)
 
 push-image-arch-%:
-	./push_image.sh ${IMAGE}-$*:${TAG}
+	./push_image.sh ${IMAGE}-$(ARCH):${TAG}
 
 push-manifest:
 	docker manifest create ${IMAGE}:${TAG} \
