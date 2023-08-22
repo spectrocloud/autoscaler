@@ -69,11 +69,11 @@ ifdef BASEIMAGE
 #	-t $(IMAGE)-$(ARCH):$(TAG) \
 #	-f Dockerfile.amd64 .
 	docker build --pull CRYPTO_LIB=${FIPS_ENABLE} --build-arg BASEIMAGE=${BASEIMAGE} \
-		-t ${IMAGE}-$*:${TAG} \
+		-t ${IMAGE}-$(ARCH):${TAG} \
 		-f Dockerfile.$* .
  else
 	docker build --pull CRYPTO_LIB=${FIPS_ENABLE}\
-		-t ${IMAGE}-$*:${TAG} \
+		-t ${IMAGE}-$(ARCH):${TAG} \
 		-f Dockerfile.$* .
 endif
 	@echo "Image ${TAG}${FOR_PROVIDER}-$* completed"
