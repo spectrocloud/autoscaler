@@ -32,6 +32,21 @@ IMAGE=$(REGISTRY)/cluster-autoscaler$(PROVIDER)
 
 export DOCKER_CLI_EXPERIMENTAL := enabled
 
+GOOS ?= $(shell go env GOOS)
+GOARCH ?= $(shell go env GOARCH)
+GOPATH ?= $(shell go env GOPATH)
+TARGETARCH ?= linux/amd64
+
+FIPS_ENABLE ?= ""
+
+IMG_PATH ?= "gcr.io/spectro-dev-public/jayesh"
+IMG_TAG ?= "latest"
+IMG_SERVICE_URL ?= ${IMG_PATH}/
+CAS_IMG ?= ${IMG_SERVICE_URL}cluster-autoscaler:${IMG_TAG}
+
+docker:
+	docker buildx build --platform ${TARGETARCH} --push . -t ${CAS_IMG} --build-arg CRYPTO_LIB=${FIPS_ENABLE} -f Dockerfile.amd64
+
 build: build-arch-$(GOARCH)
 
 build-arch-%: clean-arch-%
@@ -104,4 +119,4 @@ container-arch-%: build-in-docker-arch-% make-image-arch-%
 test-in-docker: clean docker-builder
 	docker run ${RM_FLAG} -v `pwd`:/cluster-autoscaler/:Z autoscaling-builder:latest bash -c 'cd /cluster-autoscaler && go test -race ./... ${TAGS_FLAG}'
 
-.PHONY: all build test-unit clean format execute-release dev-release docker-builder build-in-docker release generate push-image push-manifest
+.PHONY: all docker build test-unit clean format execute-release dev-release docker-builder build-in-docker release generate push-image push-manifest
