@@ -1,13 +1,10 @@
-ALL_ARCH = amd64 arm64
+ALL_ARCH = amd64
 all: $(addprefix build-arch-,$(ALL_ARCH))
 
-TAG?=dev
+#TAG?=20230822.1103
 FLAGS=
-LDFLAGS?=-s
+LDFLAGS ?=
 ENVVAR=CGO_ENABLED=0
-GOOS?=linux
-GOARCH?=$(shell go env GOARCH)
-REGISTRY?=staging-k8s.gcr.io
 DOCKER_NETWORK?=default
 ifdef BUILD_TAGS
   TAGS_FLAG=--tags ${BUILD_TAGS}
@@ -28,14 +25,30 @@ ifdef DOCKER_RM
 else
   RM_FLAG=
 endif
-IMAGE=$(REGISTRY)/cluster-autoscaler$(PROVIDER)
+
+# Fips Flags
+FIPS_ENABLE ?= ""
+
+RELEASE_LOC := release
+ifeq ($(FIPS_ENABLE),yes)
+  RELEASE_LOC := release-fips
+endif
+
+SPECTRO_VERSION ?= 4.0.0-dev-20230822
+TAG ?= v1.3.2-spectro-${SPECTRO_VERSION}
+ARCH ?= amd64
+# ALL_ARCH = amd64 arm arm64 ppc64le s390x
+ALL_ARCH = amd64
+
+REGISTRY ?= gcr.io/spectro-dev-public/jayesh/${RELEASE_LOC}
+IMAGE=$(REGISTRY)/cluster-autoscaler
 
 export DOCKER_CLI_EXPERIMENTAL := enabled
 
 build: build-arch-$(GOARCH)
 
 build-arch-%: clean-arch-%
-	$(ENVVAR) GOOS=$(GOOS) GOARCH=$* go build -o cluster-autoscaler-$* ${LDFLAGS_FLAG} ${TAGS_FLAG}
+	$(ENVVAR) GOOS=$(GOOS) GOARCH=$* go build -mod=readonly -o cluster-autoscaler-$* ${LDFLAGS_FLAG} ${TAGS_FLAG}
 
 test-unit: clean build
 	go test --test.short -race ./... ${TAGS_FLAG}
@@ -48,16 +61,23 @@ dev-release-arch-%: build-arch-% make-image-arch-% push-image-arch-%
 make-image: make-image-arch-$(GOARCH)
 
 make-image-arch-%:
-ifdef BASEIMAGE
-	docker build --pull --build-arg BASEIMAGE=${BASEIMAGE} \
-		-t ${IMAGE}-$*:${TAG} \
-		-f Dockerfile.$* .
-else
-	docker build --pull \
-		-t ${IMAGE}-$*:${TAG} \
-		-f Dockerfile.$* .
-endif
-	@echo "Image ${TAG}${FOR_PROVIDER}-$* completed"
+#ifdef BASEIMAGE
+	docker build \
+	--build-arg CRYPTO_LIB=${FIPS_ENABLE} \
+	--build-arg ARCH=$(ARCH) \
+	--build-arg ldflags="$(LDFLAGS)" \
+	-t $(IMAGE)-$(ARCH):$(TAG) \
+	-f Dockerfile.amd64 .
+#	docker build --pull CRYPTO_LIB=${FIPS_ENABLE} --build-arg BASEIMAGE=${BASEIMAGE} \
+#		-t ${IMAGE}-$*:${TAG} \
+#		--build-arg LDFLAGS="$(LDFLAGS)"
+#		-f Dockerfile.$* .
+# else
+#	docker build --pull \
+#		-t ${IMAGE}-$*:${TAG} \
+#		-f Dockerfile.$* .
+#endif
+#	@echo "Image ${TAG}${FOR_PROVIDER}-$* completed"
 
 push-image: push-image-arch-$(GOARCH)
 

@@ -15,6 +15,18 @@ ARG BASEIMAGE=gcr.io/distroless/static:nonroot-amd64
 FROM $BASEIMAGE
 LABEL maintainer="Marcin Wielgus <mwielgus@google.com>"
 
+ARG CRYPTO_LIB
+ENV GOEXPERIMENT=${CRYPTO_LIB:+boringcrypto}
+ARG ldflags
+ARG ARCH
+
+RUN if [ ${CRYPTO_LIB} ]; \
+    then \
+      CGO_ENABLED=1 GOOS=linux GOARCH=${ARCH} GO111MODULE=on go build -ldflags "-linkmode=external -extldflags=-static" -a -o manager main.go ;\
+    else \
+      CGO_ENABLED=1 GOOS=linux GOARCH=${ARCH} GO111MODULE=on go build -a -o manager main.go ;\
+    fi
+
 COPY cluster-autoscaler-amd64 /cluster-autoscaler
 WORKDIR /
 CMD ["/cluster-autoscaler"]
