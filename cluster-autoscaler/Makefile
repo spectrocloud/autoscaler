@@ -1,10 +1,13 @@
-ALL_ARCH = amd64
+ALL_ARCH = amd64 arm64
 all: $(addprefix build-arch-,$(ALL_ARCH))
 
-#TAG?=20230822.1103
+TAG?=dev
 FLAGS=
-LDFLAGS ?=
+LDFLAGS?=-s
 ENVVAR=CGO_ENABLED=0
+GOOS?=linux
+GOARCH?=$(shell go env GOARCH)
+REGISTRY?=staging-k8s.gcr.io
 DOCKER_NETWORK?=default
 ifdef BUILD_TAGS
   TAGS_FLAG=--tags ${BUILD_TAGS}
@@ -25,31 +28,29 @@ ifdef DOCKER_RM
 else
   RM_FLAG=
 endif
-
-# Fips Flags
-FIPS_ENABLE ?= ""
-
-RELEASE_LOC := release
-ifeq ($(FIPS_ENABLE),yes)
-  RELEASE_LOC := release-fips
-endif
-
-SPECTRO_VERSION ?= 4.0.0-dev-20230822
-TAG ?= v1.3.2-spectro-${SPECTRO_VERSION}
-ARCH ?= amd64
-# ALL_ARCH = amd64 arm arm64 ppc64le s390x
-ALL_ARCH = amd64
-
-REGISTRY ?= gcr.io/spectro-dev-public/jayesh/${RELEASE_LOC}
-IMAGE=$(REGISTRY)/cluster-autoscaler
+IMAGE=$(REGISTRY)/cluster-autoscaler$(PROVIDER)
 
 export DOCKER_CLI_EXPERIMENTAL := enabled
+
+GOOS ?= $(shell go env GOOS)
+GOARCH ?= $(shell go env GOARCH)
+GOPATH ?= $(shell go env GOPATH)
+TARGETARCH ?= linux/amd64
+
+FIPS_ENABLE ?= ""
+
+IMG_PATH ?= "gcr.io/spectro-dev-public/jayesh"
+IMG_TAG ?= "latest"
+IMG_SERVICE_URL ?= ${IMG_PATH}/
+CAS_IMG ?= ${IMG_SERVICE_URL}cluster-autoscaler:${IMG_TAG}
+
+docker:
+	docker buildx build --platform ${TARGETARCH} --push . -t ${CAS_IMG} --build-arg CRYPTO_LIB=${FIPS_ENABLE} -f Dockerfile.amd64
 
 build: build-arch-$(GOARCH)
 
 build-arch-%: clean-arch-%
-	#$(ENVVAR) GOOS=$(GOOS) GOARCH=$* go build -mod=readonly -o cluster-autoscaler-$* ${LDFLAGS_FLAG} ${TAGS_FLAG}
-	$(ENVVAR) GOEXPEIMENT=boringcrypto CGO_ENABLED=1 GOOS=$(GOOS) GOARCH=$* go build -mod=readonly -o cluster-autoscaler-$* ${LDFLAGS_FLAG} ${TAGS_FLAG}
+	$(ENVVAR) GOOS=$(GOOS) GOARCH=$* go build -o cluster-autoscaler-$* ${LDFLAGS_FLAG} ${TAGS_FLAG}
 
 test-unit: clean build
 	go test --test.short -race ./... ${TAGS_FLAG}
@@ -63,26 +64,20 @@ make-image: make-image-arch-$(GOARCH)
 
 make-image-arch-%:
 ifdef BASEIMAGE
-#	docker build \
-#	--build-arg CRYPTO_LIB=${FIPS_ENABLE} \
-#	--build-arg ARCH=$(ARCH) \
-#	--build-arg ldflags="$(LDFLAGS)" \
-#	-t $(IMAGE)-$(ARCH):$(TAG) \
-#	-f Dockerfile.amd64 .
-	docker build --pull --build-arg CRYPTO_LIB=${FIPS_ENABLE} --build-arg BASEIMAGE=${BASEIMAGE} \
-		-t ${IMAGE}-$(ARCH):${TAG} \
-		-f Dockerfile.amd64 .
- else
-	docker build --pull --build-arg CRYPTO_LIB=${FIPS_ENABLE}\
-		-t ${IMAGE}-$(ARCH):${TAG} \
-		-f Dockerfile.amd64 .
+	docker build --pull --build-arg BASEIMAGE=${BASEIMAGE} \
+		-t ${IMAGE}-$*:${TAG} \
+		-f Dockerfile.$* .
+else
+	docker build --pull \
+		-t ${IMAGE}-$*:${TAG} \
+		-f Dockerfile.$* .
 endif
 	@echo "Image ${TAG}${FOR_PROVIDER}-$* completed"
 
 push-image: push-image-arch-$(GOARCH)
 
 push-image-arch-%:
-	./push_image.sh ${IMAGE}-$(ARCH):${TAG}
+	./push_image.sh ${IMAGE}-$*:${TAG}
 
 push-manifest:
 	docker manifest create ${IMAGE}:${TAG} \
@@ -124,4 +119,4 @@ container-arch-%: build-in-docker-arch-% make-image-arch-%
 test-in-docker: clean docker-builder
 	docker run ${RM_FLAG} -v `pwd`:/cluster-autoscaler/:Z autoscaling-builder:latest bash -c 'cd /cluster-autoscaler && go test -race ./... ${TAGS_FLAG}'
 
-.PHONY: all build test-unit clean format execute-release dev-release docker-builder build-in-docker release generate push-image push-manifest
+.PHONY: all docker build test-unit clean format execute-release dev-release docker-builder build-in-docker release generate push-image push-manifest
