@@ -61,23 +61,22 @@ dev-release-arch-%: build-arch-% make-image-arch-% push-image-arch-%
 make-image: make-image-arch-$(GOARCH)
 
 make-image-arch-%:
-#ifdef BASEIMAGE
-	docker build \
-	--build-arg CRYPTO_LIB=${FIPS_ENABLE} \
-	--build-arg ARCH=$(ARCH) \
-	--build-arg ldflags="$(LDFLAGS)" \
-	-t $(IMAGE)-$(ARCH):$(TAG) \
-	-f Dockerfile.amd64 .
-#	docker build --pull CRYPTO_LIB=${FIPS_ENABLE} --build-arg BASEIMAGE=${BASEIMAGE} \
-#		-t ${IMAGE}-$*:${TAG} \
-#		--build-arg LDFLAGS="$(LDFLAGS)"
-#		-f Dockerfile.$* .
-# else
-#	docker build --pull \
-#		-t ${IMAGE}-$*:${TAG} \
-#		-f Dockerfile.$* .
-#endif
-#	@echo "Image ${TAG}${FOR_PROVIDER}-$* completed"
+ifdef BASEIMAGE
+#	docker build \
+#	--build-arg CRYPTO_LIB=${FIPS_ENABLE} \
+#	--build-arg ARCH=$(ARCH) \
+#	--build-arg ldflags="$(LDFLAGS)" \
+#	-t $(IMAGE)-$(ARCH):$(TAG) \
+#	-f Dockerfile.amd64 .
+	docker build --pull CRYPTO_LIB=${FIPS_ENABLE} --build-arg BASEIMAGE=${BASEIMAGE} \
+		-t ${IMAGE}-$*:${TAG} \
+		-f Dockerfile.$* .
+ else
+	docker build --pull CRYPTO_LIB=${FIPS_ENABLE}\
+		-t ${IMAGE}-$*:${TAG} \
+		-f Dockerfile.$* .
+endif
+	@echo "Image ${TAG}${FOR_PROVIDER}-$* completed"
 
 push-image: push-image-arch-$(GOARCH)
 
