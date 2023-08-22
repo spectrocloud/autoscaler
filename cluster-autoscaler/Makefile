@@ -48,7 +48,8 @@ export DOCKER_CLI_EXPERIMENTAL := enabled
 build: build-arch-$(GOARCH)
 
 build-arch-%: clean-arch-%
-	$(ENVVAR) GOOS=$(GOOS) GOARCH=$* go build -mod=readonly -o cluster-autoscaler-$* ${LDFLAGS_FLAG} ${TAGS_FLAG}
+	#$(ENVVAR) GOOS=$(GOOS) GOARCH=$* go build -mod=readonly -o cluster-autoscaler-$* ${LDFLAGS_FLAG} ${TAGS_FLAG}
+	$(ENVVAR) GOEXPEIMENT=boringcrypto CGO_ENABLED=1 GOOS=$(GOOS) GOARCH=$* go build -mod=readonly -o cluster-autoscaler-$* ${LDFLAGS_FLAG} ${TAGS_FLAG}
 
 test-unit: clean build
 	go test --test.short -race ./... ${TAGS_FLAG}
