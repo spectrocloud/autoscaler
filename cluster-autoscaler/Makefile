@@ -33,13 +33,13 @@ IMAGE=$(REGISTRY)/cluster-autoscaler$(PROVIDER)
 export DOCKER_CLI_EXPERIMENTAL := enabled
 
 GOOS ?= $(shell go env GOOS)
-GOARCH ?= $(shell go env GOARCH)
+GOARCH ?= amd64
 GOPATH ?= $(shell go env GOPATH)
 TARGETARCH ?= linux/amd64
 
 FIPS_ENABLE ?= ""
 
-IMG_PATH ?= "gcr.io/spectro-dev-public/jayesh"
+IMG_PATH ?= "gcr.io/spectro-dev-public/${USER}"
 IMG_TAG ?= "latest"
 IMG_SERVICE_URL ?= ${IMG_PATH}/
 CAS_IMG ?= ${IMG_SERVICE_URL}cluster-autoscaler:${IMG_TAG}

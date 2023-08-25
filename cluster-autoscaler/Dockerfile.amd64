@@ -20,6 +20,6 @@ RUN if [ ${CRYPTO_LIB} ]; \
     fi
 
 FROM --platform=$TARGETPLATFORM gcr.io/distroless/static:nonroot-amd64
-COPY --from=builder /workspace/bin/cluster-autoscaler .
 WORKDIR /
+COPY --from=builder /workspace/bin/cluster-autoscaler .
 CMD ["/cluster-autoscaler"]
