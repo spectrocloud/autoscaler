@@ -1,4 +1,4 @@
-FROM --platform=$TARGETPLATFORM gcr.io/spectro-images-public/golang:1.19-alpine as builder
+FROM --platform=$TARGETPLATFORM gcr.io/spectro-images-public/golang:1.21-alpine as builder
 ARG TARGETOS
 ARG TARGETARCH
 ARG CRYPTO_LIB
@@ -14,10 +14,13 @@ RUN mkdir -p bin
 
 RUN if [ ${CRYPTO_LIB} ]; \
     then \
-      CGO_ENABLED=1 GOOS=${TARGETOS} GOARCH=${TARGETARCH} GO111MODULE=on go build -mod=readonly -ldflags "-linkmode=external -extldflags=-static" -a -o bin/cluster-autoscaler ;\
+      GOARCH=${ARCH} go-build-fips.sh -a -o bin/cluster-autoscaler main.go ;\
     else \
-      CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} GO111MODULE=on go build -mod=readonly -a -o bin/cluster-autoscaler ;\
+      GOARCH=${ARCH} go-build-static.sh -a -o bin/cluster-autoscaler main.go ;\
     fi
+RUN if [ "${CRYPTO_LIB}" ]; then assert-static.sh bin/cluster-autoscaler; fi
+RUN if [ "${CRYPTO_LIB}" ]; then assert-fips.sh bin/cluster-autoscaler; fi
+RUN scan-govulncheck.sh bin/cluster-autoscaler
 
 FROM --platform=$TARGETPLATFORM gcr.io/distroless/static:nonroot-amd64
 COPY --from=builder /workspace/bin/cluster-autoscaler .
