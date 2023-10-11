@@ -43,6 +43,7 @@ jobs:
         env:
           REGISTRY: gcr.io/spectro-images-public/release/autoscaler/cluster-autoscaler
         run: |
+          cd cluster-autoscaler
           make docker-build-all
           make docker-push-all
       -
@@ -51,6 +52,7 @@ jobs:
           FIPS_ENABLE: yes
           REGISTRY: gcr.io/spectro-images-public/release-fips/autoscaler/cluster-autoscaler
         run: |
+          cd cluster-autoscaler
           make docker-build-all
           make docker-push-all
       -
