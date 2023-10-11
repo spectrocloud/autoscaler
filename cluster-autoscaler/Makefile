@@ -1,7 +1,8 @@
 ALL_ARCH = amd64 arm64
 all: $(addprefix build-arch-,$(ALL_ARCH))
 
-TAG?=dev
+SPECTRO_VERSION ?= 4.1.0-dev
+TAG ?= v0.4.0-spectro-${SPECTRO_VERSION}
 FLAGS=
 LDFLAGS?=-s
 ENVVAR=CGO_ENABLED=0
