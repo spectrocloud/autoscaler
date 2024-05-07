@@ -1,4 +1,4 @@
-FROM --platform=$TARGETPLATFORM gcr.io/spectro-images-public/golang:1.21-alpine as builder
+FROM --platform=$TARGETPLATFORM gcr.io/spectro-images-public/golang:1.22-alpine as builder
 ARG TARGETOS
 ARG TARGETARCH
 ARG CRYPTO_LIB
