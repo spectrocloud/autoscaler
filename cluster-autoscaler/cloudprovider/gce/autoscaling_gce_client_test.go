@@ -17,9 +17,11 @@ limitations under the License.
 package gce
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"regexp"
 	"testing"
 	"time"
 
@@ -34,7 +36,12 @@ import (
 )
 
 func newTestAutoscalingGceClient(t *testing.T, projectId, url, userAgent string) *autoscalingGceClientV1 {
+	return newTestAutoscalingGceClientWithTimeout(t, projectId, url, userAgent, time.Duration(0))
+}
+
+func newTestAutoscalingGceClientWithTimeout(t *testing.T, projectId, url, userAgent string, timeout time.Duration) *autoscalingGceClientV1 {
 	client := &http.Client{}
+	client.Timeout = timeout
 	gceClient, err := NewAutoscalingGceClientV1(client, projectId, userAgent)
 	if !assert.NoError(t, err) {
 		t.Fatalf("fatal error: %v", err)
@@ -92,15 +99,13 @@ func TestWaitForOp(t *testing.T) {
 	defer server.Close()
 	g := newTestAutoscalingGceClient(t, "project1", server.URL, "")
 
+	// default polling interval is too big for testing purposes
 	g.operationPollInterval = 1 * time.Millisecond
-	g.operationWaitTimeout = 500 * time.Millisecond
 
-	server.On("handle", "/projects/project1/zones/us-central1-b/operations/operation-1505728466148-d16f5197").Return(operationRunningResponse).Times(3)
-	server.On("handle", "/projects/project1/zones/us-central1-b/operations/operation-1505728466148-d16f5197").Return(operationDoneResponse).Once()
+	server.On("handle", "/projects/project1/zones/us-central1-b/operations/operation-1505728466148-d16f5197/wait").Return(operationRunningResponse).Times(3)
+	server.On("handle", "/projects/project1/zones/us-central1-b/operations/operation-1505728466148-d16f5197/wait").Return(operationDoneResponse).Once()
 
-	operation := &gce_api.Operation{Name: "operation-1505728466148-d16f5197"}
-
-	err := g.waitForOp(operation, projectId, zoneB, false)
+	err := g.WaitForOperation("operation-1505728466148-d16f5197", "TestWaitForOp", projectId, zoneB)
 	assert.NoError(t, err)
 	mock.AssertExpectationsForObjects(t, server)
 }
@@ -110,12 +115,11 @@ func TestWaitForOpError(t *testing.T) {
 	defer server.Close()
 	g := newTestAutoscalingGceClient(t, "project1", server.URL, "")
 
-	server.On("handle", "/projects/project1/zones/us-central1-b/operations/operation-1505728466148-d16f5197").Return(operationDoneResponseError).Once()
+	server.On("handle", "/projects/project1/zones/us-central1-b/operations/operation-1505728466148-d16f5197/wait").Return(operationDoneResponseError).Once()
 
-	operation := &gce_api.Operation{Name: "operation-1505728466148-d16f5197"}
-
-	err := g.waitForOp(operation, projectId, zoneB, false)
+	err := g.WaitForOperation("operation-1505728466148-d16f5197", "TestWaitForOpError", projectId, zoneB)
 	assert.Error(t, err)
+	mock.AssertExpectationsForObjects(t, server)
 }
 
 func TestWaitForOpTimeout(t *testing.T) {
@@ -123,19 +127,29 @@ func TestWaitForOpTimeout(t *testing.T) {
 	defer server.Close()
 	g := newTestAutoscalingGceClient(t, "project1", server.URL, "")
 
-	// The values here are higher than in other tests since we're aiming for timeout.
-	// Lower values make this fragile and flakey.
-	g.operationPollInterval = 10 * time.Millisecond
-	g.operationWaitTimeout = 49 * time.Millisecond
+	// default polling interval and wait time are too big for the test
+	g.operationWaitTimeout = 10 * time.Millisecond
+	g.operationPollInterval = 20 * time.Millisecond
 
-	// Sometimes, only 3 calls are made, but it doesn't really matter,
-	// so let's not assert expectations for this mock, just check for timeout error.
-	server.On("handle", "/projects/project1/zones/us-central1-b/operations/operation-1505728466148-d16f5197").Return(operationRunningResponse).Times(5)
+	server.On("handle", "/projects/project1/zones/us-central1-b/operations/operation-1505728466148-d16f5197/wait").Return(operationRunningResponse).Once()
 
-	operation := &gce_api.Operation{Name: "operation-1505728466148-d16f5197"}
-
-	err := g.waitForOp(operation, projectId, zoneB, false)
+	err := g.WaitForOperation("operation-1505728466148-d16f5197", "TestWaitForOpTimeout", projectId, zoneB)
 	assert.Error(t, err)
+	mock.AssertExpectationsForObjects(t, server)
+}
+
+func TestWaitForOpContextTimeout(t *testing.T) {
+	server := test_util.NewHttpServerMock()
+	defer server.Close()
+	g := newTestAutoscalingGceClient(t, "project1", server.URL, "")
+
+	g.operationWaitTimeout = 10 * time.Millisecond
+
+	server.On("handle", "/projects/project1/zones/us-central1-b/operations/operation-1505728466148-d16f5197/wait").After(time.Minute).Return(operationDoneResponse).Once()
+
+	err := g.WaitForOperation("operation-1505728466148-d16f5197", "TestWaitForOpContextTimeout", projectId, zoneB)
+	assert.ErrorIs(t, err, context.DeadlineExceeded)
+	mock.AssertExpectationsForObjects(t, server)
 }
 
 func TestErrors(t *testing.T) {
@@ -174,6 +188,18 @@ func TestErrors(t *testing.T) {
 			errorCodes:         []string{"CONDITION_NOT_MET"},
 			errorMessage:       "Instance 'myinst' creation failed: Constraint constraints/compute.vmExternalIpAccess violated for project 1234567890.",
 			expectedErrorCode:  "VM_EXTERNAL_IP_ACCESS_POLICY_CONSTRAINT",
+			expectedErrorClass: cloudprovider.OtherErrorClass,
+		},
+		{
+			errorCodes:         []string{"CONDITION_NOT_MET"},
+			errorMessage:       "Instance 'myinst' creation failed: The reservation must exist in the same project as the instance.",
+			expectedErrorCode:  "INVALID_RESERVATION",
+			expectedErrorClass: cloudprovider.OtherErrorClass,
+		},
+		{
+			errorCodes:         []string{"CONDITION_NOT_MET"},
+			errorMessage:       "Cannot insert instance to a reservation with status: CREATING, as it requires reservation to be in READY state.",
+			expectedErrorCode:  "RESERVATION_NOT_READY",
 			expectedErrorClass: cloudprovider.OtherErrorClass,
 		},
 		{
@@ -216,21 +242,23 @@ func TestErrors(t *testing.T) {
 
 func TestFetchMigInstancesInstanceUrlHandling(t *testing.T) {
 	const goodInstanceUrlTempl = "https://content.googleapis.com/compute/v1/projects/myprojid/zones/myzone/instances/myinst_%d"
-	const badInstanceUrl = "https://badurl.com/compute/v1/projects/myprojid/zones/myzone/instances/myinst"
+	const badInstanceUrl = "https://badurl.com/compute/v1/projects3/myprojid/zones/myzone/instances/myinst"
 	server := test_util.NewHttpServerMock()
 	defer server.Close()
 	g := newTestAutoscalingGceClient(t, "project1", server.URL, "")
 
 	testCases := []struct {
-		name          string
-		lmiResponse   gce_api.InstanceGroupManagersListManagedInstancesResponse
-		wantInstances []cloudprovider.Instance
+		name             string
+		lmiResponse      gce_api.InstanceGroupManagersListManagedInstancesResponse
+		lmiPageResponses map[string]gce_api.InstanceGroupManagersListManagedInstancesResponse
+		wantInstances    []GceInstance
 	}{
 		{
 			name: "all instances good",
 			lmiResponse: gce_api.InstanceGroupManagersListManagedInstancesResponse{
 				ManagedInstances: []*gce_api.ManagedInstance{
 					{
+						Id:            2,
 						Instance:      fmt.Sprintf(goodInstanceUrlTempl, 2),
 						CurrentAction: "CREATING",
 						LastAttempt: &gce_api.ManagedInstanceLastAttempt{
@@ -238,6 +266,7 @@ func TestFetchMigInstancesInstanceUrlHandling(t *testing.T) {
 						},
 					},
 					{
+						Id:            42,
 						Instance:      fmt.Sprintf(goodInstanceUrlTempl, 42),
 						CurrentAction: "CREATING",
 						LastAttempt: &gce_api.ManagedInstanceLastAttempt{
@@ -246,14 +275,207 @@ func TestFetchMigInstancesInstanceUrlHandling(t *testing.T) {
 					},
 				},
 			},
-			wantInstances: []cloudprovider.Instance{
+			wantInstances: []GceInstance{
 				{
-					Id:     "gce://myprojid/myzone/myinst_2",
-					Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					Instance: cloudprovider.Instance{
+						Id:     "gce://myprojid/myzone/myinst_2",
+						Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					},
+					NumericId: 2,
 				},
 				{
-					Id:     "gce://myprojid/myzone/myinst_42",
-					Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					Instance: cloudprovider.Instance{
+						Id:     "gce://myprojid/myzone/myinst_42",
+						Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					},
+					NumericId: 42,
+				},
+			},
+		},
+		{
+			name: "paginated response",
+			lmiResponse: gce_api.InstanceGroupManagersListManagedInstancesResponse{
+				ManagedInstances: []*gce_api.ManagedInstance{
+					{
+						Id:            2,
+						Instance:      fmt.Sprintf(goodInstanceUrlTempl, 2),
+						CurrentAction: "CREATING",
+						LastAttempt: &gce_api.ManagedInstanceLastAttempt{
+							Errors: &gce_api.ManagedInstanceLastAttemptErrors{},
+						},
+					},
+					{
+						Id:            42,
+						Instance:      fmt.Sprintf(goodInstanceUrlTempl, 42),
+						CurrentAction: "CREATING",
+						LastAttempt: &gce_api.ManagedInstanceLastAttempt{
+							Errors: &gce_api.ManagedInstanceLastAttemptErrors{},
+						},
+					},
+				},
+				NextPageToken: "foo",
+			},
+			lmiPageResponses: map[string]gce_api.InstanceGroupManagersListManagedInstancesResponse{
+				"foo": {
+					ManagedInstances: []*gce_api.ManagedInstance{
+						{
+							Id:            123,
+							Instance:      fmt.Sprintf(goodInstanceUrlTempl, 123),
+							CurrentAction: "CREATING",
+							LastAttempt: &gce_api.ManagedInstanceLastAttempt{
+								Errors: &gce_api.ManagedInstanceLastAttemptErrors{},
+							},
+						},
+						{
+							Id:            456,
+							Instance:      fmt.Sprintf(goodInstanceUrlTempl, 456),
+							CurrentAction: "CREATING",
+							LastAttempt: &gce_api.ManagedInstanceLastAttempt{
+								Errors: &gce_api.ManagedInstanceLastAttemptErrors{},
+							},
+						},
+					},
+				},
+			},
+			wantInstances: []GceInstance{
+				{
+					Instance: cloudprovider.Instance{
+						Id:     "gce://myprojid/myzone/myinst_2",
+						Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					},
+					NumericId: 2,
+				},
+				{
+					Instance: cloudprovider.Instance{
+						Id:     "gce://myprojid/myzone/myinst_42",
+						Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					},
+					NumericId: 42,
+				},
+				{
+					Instance: cloudprovider.Instance{
+						Id:     "gce://myprojid/myzone/myinst_123",
+						Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					},
+					NumericId: 123,
+				},
+				{
+					Instance: cloudprovider.Instance{
+						Id:     "gce://myprojid/myzone/myinst_456",
+						Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					},
+					NumericId: 456,
+				},
+			},
+		},
+		{
+			name: "paginated response, more pages",
+			lmiResponse: gce_api.InstanceGroupManagersListManagedInstancesResponse{
+				ManagedInstances: []*gce_api.ManagedInstance{
+					{
+						Id:            2,
+						Instance:      fmt.Sprintf(goodInstanceUrlTempl, 2),
+						CurrentAction: "CREATING",
+						LastAttempt: &gce_api.ManagedInstanceLastAttempt{
+							Errors: &gce_api.ManagedInstanceLastAttemptErrors{},
+						},
+					},
+					{
+						Id:            42,
+						Instance:      fmt.Sprintf(goodInstanceUrlTempl, 42),
+						CurrentAction: "CREATING",
+						LastAttempt: &gce_api.ManagedInstanceLastAttempt{
+							Errors: &gce_api.ManagedInstanceLastAttemptErrors{},
+						},
+					},
+				},
+				NextPageToken: "foo",
+			},
+			lmiPageResponses: map[string]gce_api.InstanceGroupManagersListManagedInstancesResponse{
+				"foo": {
+					ManagedInstances: []*gce_api.ManagedInstance{
+						{
+							Id:            123,
+							Instance:      fmt.Sprintf(goodInstanceUrlTempl, 123),
+							CurrentAction: "CREATING",
+							LastAttempt: &gce_api.ManagedInstanceLastAttempt{
+								Errors: &gce_api.ManagedInstanceLastAttemptErrors{},
+							},
+						},
+						{
+							Id:            456,
+							Instance:      fmt.Sprintf(goodInstanceUrlTempl, 456),
+							CurrentAction: "CREATING",
+							LastAttempt: &gce_api.ManagedInstanceLastAttempt{
+								Errors: &gce_api.ManagedInstanceLastAttemptErrors{},
+							},
+						},
+					},
+					NextPageToken: "bar",
+				},
+				"bar": {
+					ManagedInstances: []*gce_api.ManagedInstance{
+						{
+							Id:            789,
+							Instance:      fmt.Sprintf(goodInstanceUrlTempl, 789),
+							CurrentAction: "CREATING",
+							LastAttempt: &gce_api.ManagedInstanceLastAttempt{
+								Errors: &gce_api.ManagedInstanceLastAttemptErrors{},
+							},
+						},
+						{
+							Id:            666,
+							Instance:      fmt.Sprintf(goodInstanceUrlTempl, 666),
+							CurrentAction: "CREATING",
+							LastAttempt: &gce_api.ManagedInstanceLastAttempt{
+								Errors: &gce_api.ManagedInstanceLastAttemptErrors{},
+							},
+						},
+					},
+				},
+			},
+			wantInstances: []GceInstance{
+				{
+					Instance: cloudprovider.Instance{
+						Id:     "gce://myprojid/myzone/myinst_2",
+						Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					},
+					NumericId: 2,
+				},
+				{
+					Instance: cloudprovider.Instance{
+						Id:     "gce://myprojid/myzone/myinst_42",
+						Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					},
+					NumericId: 42,
+				},
+				{
+					Instance: cloudprovider.Instance{
+						Id:     "gce://myprojid/myzone/myinst_123",
+						Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					},
+					NumericId: 123,
+				},
+				{
+					Instance: cloudprovider.Instance{
+						Id:     "gce://myprojid/myzone/myinst_456",
+						Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					},
+					NumericId: 456,
+				},
+				{
+					Instance: cloudprovider.Instance{
+						Id:     "gce://myprojid/myzone/myinst_789",
+						Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					},
+					NumericId: 789,
+				},
+				{
+					Instance: cloudprovider.Instance{
+						Id:     "gce://myprojid/myzone/myinst_666",
+						Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					},
+					NumericId: 666,
 				},
 			},
 		},
@@ -262,6 +484,7 @@ func TestFetchMigInstancesInstanceUrlHandling(t *testing.T) {
 			lmiResponse: gce_api.InstanceGroupManagersListManagedInstancesResponse{
 				ManagedInstances: []*gce_api.ManagedInstance{
 					{
+						Id:            99999,
 						Instance:      badInstanceUrl,
 						CurrentAction: "CREATING",
 						LastAttempt: &gce_api.ManagedInstanceLastAttempt{
@@ -269,6 +492,7 @@ func TestFetchMigInstancesInstanceUrlHandling(t *testing.T) {
 						},
 					},
 					{
+						Id:            42,
 						Instance:      fmt.Sprintf(goodInstanceUrlTempl, 42),
 						CurrentAction: "CREATING",
 						LastAttempt: &gce_api.ManagedInstanceLastAttempt{
@@ -277,10 +501,13 @@ func TestFetchMigInstancesInstanceUrlHandling(t *testing.T) {
 					},
 				},
 			},
-			wantInstances: []cloudprovider.Instance{
+			wantInstances: []GceInstance{
 				{
-					Id:     "gce://myprojid/myzone/myinst_42",
-					Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					Instance: cloudprovider.Instance{
+						Id:     "gce://myprojid/myzone/myinst_42",
+						Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					},
+					NumericId: 42,
 				},
 			},
 		},
@@ -296,6 +523,7 @@ func TestFetchMigInstancesInstanceUrlHandling(t *testing.T) {
 						},
 					},
 					{
+						Id:            42,
 						Instance:      fmt.Sprintf(goodInstanceUrlTempl, 42),
 						CurrentAction: "CREATING",
 						LastAttempt: &gce_api.ManagedInstanceLastAttempt{
@@ -304,10 +532,13 @@ func TestFetchMigInstancesInstanceUrlHandling(t *testing.T) {
 					},
 				},
 			},
-			wantInstances: []cloudprovider.Instance{
+			wantInstances: []GceInstance{
 				{
-					Id:     "gce://myprojid/myzone/myinst_42",
-					Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					Instance: cloudprovider.Instance{
+						Id:     "gce://myprojid/myzone/myinst_42",
+						Status: &cloudprovider.InstanceStatus{State: cloudprovider.InstanceCreating},
+					},
+					NumericId: 42,
 				},
 			},
 		},
@@ -317,6 +548,11 @@ func TestFetchMigInstancesInstanceUrlHandling(t *testing.T) {
 			b, err := json.Marshal(tc.lmiResponse)
 			assert.NoError(t, err)
 			server.On("handle", "/projects/zones/instanceGroupManagers/listManagedInstances").Return(string(b)).Times(1)
+			for token, response := range tc.lmiPageResponses {
+				b, err := json.Marshal(response)
+				assert.NoError(t, err)
+				server.On("handle", "/projects/zones/instanceGroupManagers/listManagedInstances", token).Return(string(b)).Times(1)
+			}
 			gotInstances, err := g.FetchMigInstances(GceRef{})
 			assert.NoError(t, err)
 			if diff := cmp.Diff(tc.wantInstances, gotInstances, cmpopts.EquateErrors()); diff != "" {
@@ -331,12 +567,214 @@ func TestUserAgent(t *testing.T) {
 	defer server.Close()
 	g := newTestAutoscalingGceClient(t, "project1", server.URL, "testuseragent")
 
-	g.operationPollInterval = 10 * time.Millisecond
-	g.operationWaitTimeout = 49 * time.Millisecond
+	server.On("handle", "/projects/project1/zones/us-central1-b/operations/operation-1505728466148-d16f5197/wait").Return("testuseragent", operationDoneResponse).Maybe()
 
-	server.On("handle", "/projects/project1/zones/us-central1-b/operations/operation-1505728466148-d16f5197").Return("testuseragent", operationRunningResponse).Maybe()
+	err := g.WaitForOperation("operation-1505728466148-d16f5197", "TestUserAgent", projectId, zoneB)
 
-	operation := &gce_api.Operation{Name: "operation-1505728466148-d16f5197"}
+	assert.NoError(t, err)
+	mock.AssertExpectationsForObjects(t, server)
+}
 
-	g.waitForOp(operation, projectId, zoneB, false)
+// NOTE: pagination operations can't be tested with context timeouts as it's not possible
+// to control per call timeouts as context is global per operation
+func TestAutoscalingClientTimeouts(t *testing.T) {
+	// non zero timeout to indicate that timeout should be respected for http client
+	instantTimeout := 1 * time.Nanosecond
+	tests := map[string]struct {
+		clientFunc              func(*autoscalingGceClientV1) error
+		httpTimeout             time.Duration
+		operationPerCallTimeout *time.Duration
+	}{
+		"CreateInstances_ContextTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				return client.CreateInstances(GceRef{}, "", 0, nil)
+			},
+			operationPerCallTimeout: &instantTimeout,
+		},
+		"DeleteInstances_ContextTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				return client.DeleteInstances(GceRef{}, nil)
+			},
+			operationPerCallTimeout: &instantTimeout,
+		},
+		"ResizeMig_ContextTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				return client.ResizeMig(GceRef{}, 0)
+			},
+			operationPerCallTimeout: &instantTimeout,
+		},
+		"FetchMachineType_ContextTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchMachineType("", "")
+				return err
+			},
+			operationPerCallTimeout: &instantTimeout,
+		},
+		"FetchMigBasename_ContextTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchMigBasename(GceRef{})
+				return err
+			},
+			operationPerCallTimeout: &instantTimeout,
+		},
+		"FetchMigTargetSize_ContextTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchMigTargetSize(GceRef{})
+				return err
+			},
+			operationPerCallTimeout: &instantTimeout,
+		},
+		"FetchMigTemplate_ContextTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchMigTemplate(GceRef{}, "", false)
+				return err
+			},
+			operationPerCallTimeout: &instantTimeout,
+		},
+		"FetchMigTemplateName_ContextTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchMigTemplateName(GceRef{})
+				return err
+			},
+			operationPerCallTimeout: &instantTimeout,
+		},
+		"FetchListManagedInstancesResults_ContextTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchListManagedInstancesResults(GceRef{})
+				return err
+			},
+			operationPerCallTimeout: &instantTimeout,
+		},
+		"FetchZones_ContextTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchZones("")
+				return err
+			},
+			operationPerCallTimeout: &instantTimeout,
+		},
+		"CreateInstances_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				return client.CreateInstances(GceRef{}, "", 0, nil)
+			},
+			httpTimeout: instantTimeout,
+		},
+		"DeleteInstances_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				return client.DeleteInstances(GceRef{}, nil)
+			},
+			httpTimeout: instantTimeout,
+		},
+		"ResizeMig_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				return client.ResizeMig(GceRef{}, 0)
+			},
+			httpTimeout: instantTimeout,
+		},
+		"FetchMachineType_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchMachineType("", "")
+				return err
+			},
+			httpTimeout: instantTimeout,
+		},
+		"FetchMigBasename_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchMigBasename(GceRef{})
+				return err
+			},
+			httpTimeout: instantTimeout,
+		},
+		"FetchMigTargetSize_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchMigTargetSize(GceRef{})
+				return err
+			},
+			httpTimeout: instantTimeout,
+		},
+		"FetchMigTemplate_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchMigTemplate(GceRef{}, "", false)
+				return err
+			},
+			httpTimeout: instantTimeout,
+		},
+		"FetchMigTemplateName_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchMigTemplateName(GceRef{})
+				return err
+			},
+			httpTimeout: instantTimeout,
+		},
+		"FetchListManagedInstancesResults_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchListManagedInstancesResults(GceRef{})
+				return err
+			},
+			httpTimeout: instantTimeout,
+		},
+		"FetchZones_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchZones("")
+				return err
+			},
+			httpTimeout: instantTimeout,
+		},
+		"FetchMachineTypes_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchMachineTypes("")
+				return err
+			},
+			httpTimeout: instantTimeout,
+		},
+		"FetchAllMigs_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchAllMigs("")
+				return err
+			},
+			httpTimeout: instantTimeout,
+		},
+		"FetchMigInstances_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchMigInstances(GceRef{})
+				return err
+			},
+			httpTimeout: instantTimeout,
+		},
+		"FetchAvailableCpuPlatforms_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchAvailableCpuPlatforms()
+				return err
+			},
+			httpTimeout: instantTimeout,
+		},
+		"FetchMigsWithName_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchMigsWithName("", &regexp.Regexp{})
+				return err
+			},
+			httpTimeout: instantTimeout,
+		},
+		"FetchReservationsInProject_HttpClientTimeout": {
+			clientFunc: func(client *autoscalingGceClientV1) error {
+				_, err := client.FetchReservationsInProject("")
+				return err
+			},
+			httpTimeout: instantTimeout,
+		},
+	}
+
+	server := test_util.NewHttpServerMock()
+	defer server.Close()
+	server.On("handle", mock.Anything).Return(`{"status": "unreachable"}`).After(50 * time.Millisecond)
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			client := newTestAutoscalingGceClientWithTimeout(t, "project", server.URL, "", test.httpTimeout)
+			if test.operationPerCallTimeout != nil {
+				client.operationPerCallTimeout = *test.operationPerCallTimeout
+			}
+			err := test.clientFunc(client)
+			// NOTE: unable to test with ErrorIs as http errors are not wrapping an err, but overwriting it
+			assert.ErrorContains(t, err, context.DeadlineExceeded.Error())
+		})
+	}
 }

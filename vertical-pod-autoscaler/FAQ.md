@@ -3,6 +3,7 @@
 ## Contents
 
 - [VPA restarts my pods but does not modify CPU or memory settings. Why?](#vpa-restarts-my-pods-but-does-not-modify-CPU-or-memory-settings)
+- [How can I apply VPA to my Custom Resource?](#how-can-i-apply-vpa-to-my-custom-resource)
 - [How can I use Prometheus as a history provider for the VPA recommender?](#how-can-i-use-prometheus-as-a-history-provider-for-the-vpa-recommender)
 - [I get recommendations for my single pod replicaSet, but they are not applied. Why?](#i-get-recommendations-for-my-single-pod-replicaset-but-they-are-not-applied)
 - [What are the parameters to VPA recommender?](#what-are-the-parameters-to-vpa-recommender)
@@ -107,6 +108,18 @@ is serving.
 
 Note: the commands will differ if you deploy VPA in a different namespace.
 
+### How can I apply VPA to my Custom Resource?
+
+The VPA can scale not only the built-in resources like Deployment or StatefulSet, but also Custom Resources which manage
+Pods. Just like the Horizontal Pod Autoscaler, the VPA requires that the Custom Resource implements the
+[`/scale` subresource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#scale-subresource)
+with the optional field `labelSelector`,
+which corresponds to `.scale.status.selector`. VPA doesn't use the `/scale` subresource for the actual scaling, but uses
+this label selector to identify the Pods managed by a Custom Resource. As VPA relies on Pod eviction to apply new
+resource recommendations, this ensures that all Pods with a matching VPA object are managed by a controller that will
+recreate them after eviction. Furthermore, it avoids misconfigurations that happened in the past when label selectors
+were specified manually.
+
 ### How can I use Prometheus as a history provider for the VPA recommender
 
 Configure your Prometheus to get metrics from cadvisor. Make sure that the metrics from the cadvisor have the label `job=kubernetes-cadvisor`
@@ -156,6 +169,12 @@ Name | Type | Description | Default
 `recommendation-margin-fraction` | Float64 | Fraction of usage added as the safety margin to the recommended request | 0.15
 `pod-recommendation-min-cpu-millicores` | Float64 | Minimum CPU recommendation for a pod | 25
 `pod-recommendation-min-memory-mb` | Float64 | Minimum memory recommendation for a pod | 250
+`target-cpu-percentile` | Float64 | CPU usage percentile that will be used as a base for CPU target recommendation | 0.9
+`recommendation-lower-bound-cpu-percentile` | Float64 | CPU usage percentile that will be used for the lower bound on CPU recommendation | 0.5
+`recommendation-upper-bound-cpu-percentile` | Float64 | CPU usage percentile that will be used for the upper bound on CPU recommendation | 0.95
+`target-memory-percentile` | Float64 | Memory usage percentile that will be used as a base for memory target recommendation | 0.9
+`recommendation-lower-bound-memory-percentile` | Float64 | Memory usage percentile that will be used for the lower bound on memory recommendation | 0.5
+`recommendation-upper-bound-memory-percentile` | Float64 | Memory usage percentile that will be used for the upper bound on memory recommendation | 0.95
 `checkpoints-timeout` | Duration | Timeout for writing checkpoints since the start of the recommender's main loop | time.Minute
 `min-checkpoints` | Int | Minimum number of checkpoints to write per recommender's main loop | 10
 `memory-saver` | Bool | If true, only track pods which have an associated VPA | false

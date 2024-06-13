@@ -26,9 +26,9 @@ import (
 	vpa_api "k8s.io/autoscaler/vertical-pod-autoscaler/pkg/client/clientset/versioned/typed/autoscaling.k8s.io/v1"
 	"k8s.io/autoscaler/vertical-pod-autoscaler/pkg/recommender/checkpoint"
 	"k8s.io/autoscaler/vertical-pod-autoscaler/pkg/recommender/input"
-	controllerfetcher "k8s.io/autoscaler/vertical-pod-autoscaler/pkg/recommender/input/controller_fetcher"
 	"k8s.io/autoscaler/vertical-pod-autoscaler/pkg/recommender/logic"
 	"k8s.io/autoscaler/vertical-pod-autoscaler/pkg/recommender/model"
+	"k8s.io/autoscaler/vertical-pod-autoscaler/pkg/target/controller_fetcher"
 	metrics_recommender "k8s.io/autoscaler/vertical-pod-autoscaler/pkg/utils/metrics/recommender"
 	vpa_utils "k8s.io/autoscaler/vertical-pod-autoscaler/pkg/utils/vpa"
 )
@@ -76,7 +76,7 @@ func (r *recommender) GetClusterStateFeeder() input.ClusterStateFeeder {
 	return r.clusterStateFeeder
 }
 
-// Updates VPA CRD objects' statuses.
+// UpdateVPAs update VPA CRD objects' status.
 func (r *recommender) UpdateVPAs() {
 	cnt := metrics_recommender.NewObjectCounter()
 	defer cnt.Observe()
@@ -97,7 +97,7 @@ func (r *recommender) UpdateVPAs() {
 		listOfResourceRecommendation := logic.MapToListOfRecommendedContainerResources(resources)
 
 		for _, postProcessor := range r.recommendationPostProcessor {
-			listOfResourceRecommendation = postProcessor.Process(vpa, listOfResourceRecommendation, observedVpa.Spec.ResourcePolicy)
+			listOfResourceRecommendation = postProcessor.Process(observedVpa, listOfResourceRecommendation)
 		}
 
 		vpa.UpdateRecommendation(listOfResourceRecommendation)
@@ -126,7 +126,7 @@ func (r *recommender) UpdateVPAs() {
 			r.vpaClient.VerticalPodAutoscalers(vpa.ID.Namespace), vpa.ID.VpaName, vpa.AsStatus(), &observedVpa.Status)
 		if err != nil {
 			klog.Errorf(
-				"Cannot update VPA %v object. Reason: %+v", vpa.ID.VpaName, err)
+				"Cannot update VPA %v/%v object. Reason: %+v", vpa.ID.Namespace, vpa.ID.VpaName, err)
 		}
 	}
 }
