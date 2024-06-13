@@ -181,10 +181,10 @@ type resourceGatherWorker struct {
 	printVerboseLogs            bool
 }
 
-func (w *resourceGatherWorker) singleProbe(ctx context.Context) {
+func (w *resourceGatherWorker) singleProbe() {
 	data := make(ResourceUsagePerContainer)
 	if w.inKubemark {
-		kubemarkData := getKubemarkMasterComponentsResourceUsage(ctx)
+		kubemarkData := getKubemarkMasterComponentsResourceUsage()
 		if kubemarkData == nil {
 			return
 		}
@@ -319,26 +319,22 @@ func removeUint64Ptr(ptr *uint64) uint64 {
 	return *ptr
 }
 
-func (w *resourceGatherWorker) gather(ctx context.Context, initialSleep time.Duration) {
+func (w *resourceGatherWorker) gather(initialSleep time.Duration) {
 	defer utilruntime.HandleCrash()
 	defer w.wg.Done()
 	defer framework.Logf("Closing worker for %v", w.nodeName)
 	defer func() { w.finished = true }()
 	select {
 	case <-time.After(initialSleep):
-		w.singleProbe(ctx)
+		w.singleProbe()
 		for {
 			select {
 			case <-time.After(w.resourceDataGatheringPeriod):
-				w.singleProbe(ctx)
-			case <-ctx.Done():
-				return
+				w.singleProbe()
 			case <-w.stopCh:
 				return
 			}
 		}
-	case <-ctx.Done():
-		return
 	case <-w.stopCh:
 		return
 	}
@@ -377,11 +373,11 @@ const (
 
 // nodeHasControlPlanePods returns true if specified node has control plane pods
 // (kube-scheduler and/or kube-controller-manager).
-func nodeHasControlPlanePods(ctx context.Context, c clientset.Interface, nodeName string) (bool, error) {
+func nodeHasControlPlanePods(c clientset.Interface, nodeName string) (bool, error) {
 	regKubeScheduler := regexp.MustCompile("kube-scheduler-.*")
 	regKubeControllerManager := regexp.MustCompile("kube-controller-manager-.*")
 
-	podList, err := c.CoreV1().Pods(metav1.NamespaceSystem).List(ctx, metav1.ListOptions{
+	podList, err := c.CoreV1().Pods(metav1.NamespaceSystem).List(context.TODO(), metav1.ListOptions{
 		FieldSelector: fields.OneTermEqualSelector("spec.nodeName", nodeName).String(),
 	})
 	if err != nil {
@@ -399,7 +395,7 @@ func nodeHasControlPlanePods(ctx context.Context, c clientset.Interface, nodeNam
 }
 
 // NewResourceUsageGatherer returns a new ContainerResourceGatherer.
-func NewResourceUsageGatherer(ctx context.Context, c clientset.Interface, options ResourceGathererOptions, pods *v1.PodList) (*ContainerResourceGatherer, error) {
+func NewResourceUsageGatherer(c clientset.Interface, options ResourceGathererOptions, pods *v1.PodList) (*ContainerResourceGatherer, error) {
 	g := ContainerResourceGatherer{
 		client:       c,
 		stopCh:       make(chan struct{}),
@@ -424,7 +420,7 @@ func NewResourceUsageGatherer(ctx context.Context, c clientset.Interface, option
 	// Tracks kube-system pods if no valid PodList is passed in.
 	var err error
 	if pods == nil {
-		pods, err = c.CoreV1().Pods("kube-system").List(ctx, metav1.ListOptions{})
+		pods, err = c.CoreV1().Pods("kube-system").List(context.TODO(), metav1.ListOptions{})
 		if err != nil {
 			framework.Logf("Error while listing Pods: %v", err)
 			return nil, err
@@ -433,7 +429,7 @@ func NewResourceUsageGatherer(ctx context.Context, c clientset.Interface, option
 	dnsNodes := make(map[string]bool)
 	for _, pod := range pods.Items {
 		if options.Nodes == MasterNodes {
-			isControlPlane, err := nodeHasControlPlanePods(ctx, c, pod.Spec.NodeName)
+			isControlPlane, err := nodeHasControlPlanePods(c, pod.Spec.NodeName)
 			if err != nil {
 				return nil, err
 			}
@@ -442,7 +438,7 @@ func NewResourceUsageGatherer(ctx context.Context, c clientset.Interface, option
 			}
 		}
 		if options.Nodes == MasterAndDNSNodes {
-			isControlPlane, err := nodeHasControlPlanePods(ctx, c, pod.Spec.NodeName)
+			isControlPlane, err := nodeHasControlPlanePods(c, pod.Spec.NodeName)
 			if err != nil {
 				return nil, err
 			}
@@ -460,14 +456,14 @@ func NewResourceUsageGatherer(ctx context.Context, c clientset.Interface, option
 			dnsNodes[pod.Spec.NodeName] = true
 		}
 	}
-	nodeList, err := c.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+	nodeList, err := c.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		framework.Logf("Error while listing Nodes: %v", err)
 		return nil, err
 	}
 
 	for _, node := range nodeList.Items {
-		isControlPlane, err := nodeHasControlPlanePods(ctx, c, node.Name)
+		isControlPlane, err := nodeHasControlPlanePods(c, node.Name)
 		if err != nil {
 			return nil, err
 		}
@@ -495,14 +491,14 @@ func NewResourceUsageGatherer(ctx context.Context, c clientset.Interface, option
 
 // StartGatheringData starts a stat gathering worker blocks for each node to track,
 // and blocks until StopAndSummarize is called.
-func (g *ContainerResourceGatherer) StartGatheringData(ctx context.Context) {
+func (g *ContainerResourceGatherer) StartGatheringData() {
 	if len(g.workers) == 0 {
 		return
 	}
 	delayPeriod := g.options.ResourceDataGatheringPeriod / time.Duration(len(g.workers))
 	delay := time.Duration(0)
 	for i := range g.workers {
-		go g.workers[i].gather(ctx, delay)
+		go g.workers[i].gather(delay)
 		delay += delayPeriod
 	}
 	g.workerWg.Wait()
@@ -607,8 +603,8 @@ type kubemarkResourceUsage struct {
 	CPUUsageInCores         float64
 }
 
-func getMasterUsageByPrefix(ctx context.Context, prefix string) (string, error) {
-	sshResult, err := e2essh.SSH(ctx, fmt.Sprintf("ps ax -o %%cpu,rss,command | tail -n +2 | grep %v | sed 's/\\s+/ /g'", prefix), framework.APIAddress()+":22", framework.TestContext.Provider)
+func getMasterUsageByPrefix(prefix string) (string, error) {
+	sshResult, err := e2essh.SSH(fmt.Sprintf("ps ax -o %%cpu,rss,command | tail -n +2 | grep %v | sed 's/\\s+/ /g'", prefix), framework.APIAddress()+":22", framework.TestContext.Provider)
 	if err != nil {
 		return "", err
 	}
@@ -616,10 +612,10 @@ func getMasterUsageByPrefix(ctx context.Context, prefix string) (string, error) 
 }
 
 // getKubemarkMasterComponentsResourceUsage returns the resource usage of kubemark which contains multiple combinations of cpu and memory usage for each pod name.
-func getKubemarkMasterComponentsResourceUsage(ctx context.Context) map[string]*kubemarkResourceUsage {
+func getKubemarkMasterComponentsResourceUsage() map[string]*kubemarkResourceUsage {
 	result := make(map[string]*kubemarkResourceUsage)
 	// Get kubernetes component resource usage
-	sshResult, err := getMasterUsageByPrefix(ctx, "kube")
+	sshResult, err := getMasterUsageByPrefix("kube")
 	if err != nil {
 		framework.Logf("Error when trying to SSH to master machine. Skipping probe. %v", err)
 		return nil
@@ -637,7 +633,7 @@ func getKubemarkMasterComponentsResourceUsage(ctx context.Context) map[string]*k
 		}
 	}
 	// Get etcd resource usage
-	sshResult, err = getMasterUsageByPrefix(ctx, "bin/etcd")
+	sshResult, err = getMasterUsageByPrefix("bin/etcd")
 	if err != nil {
 		framework.Logf("Error when trying to SSH to master machine. Skipping probe")
 		return nil

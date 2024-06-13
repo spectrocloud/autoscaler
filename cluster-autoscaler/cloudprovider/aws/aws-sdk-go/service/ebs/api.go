@@ -61,11 +61,6 @@ func (c *EBS) CompleteSnapshotRequest(input *CompleteSnapshotInput) (req *reques
 // have been written to it. Completing the snapshot changes the status to completed.
 // You cannot write new blocks to a snapshot after it has been completed.
 //
-// You should always retry requests that receive server (5xx) error responses,
-// and ThrottlingException and RequestThrottledException client error responses.
-// For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html)
-// in the Amazon Elastic Compute Cloud User Guide.
-//
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
 // the error.
@@ -85,14 +80,14 @@ func (c *EBS) CompleteSnapshotRequest(input *CompleteSnapshotInput) (req *reques
 //     The specified resource does not exist.
 //
 //   - RequestThrottledException
-//     The number of API requests has exceeded the maximum allowed API request throttling
-//     limit for the snapshot. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+//     The number of API requests has exceed the maximum allowed API request throttling
+//     limit.
 //
 //   - ServiceQuotaExceededException
 //     Your current service quotas do not allow you to perform this action.
 //
 //   - InternalServerException
-//     An internal error has occurred. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+//     An internal error has occurred.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ebs-2019-11-02/CompleteSnapshot
 func (c *EBS) CompleteSnapshot(input *CompleteSnapshotInput) (*CompleteSnapshotOutput, error) {
@@ -161,11 +156,6 @@ func (c *EBS) GetSnapshotBlockRequest(input *GetSnapshotBlockInput) (req *reques
 //
 // Returns the data in a block in an Amazon Elastic Block Store snapshot.
 //
-// You should always retry requests that receive server (5xx) error responses,
-// and ThrottlingException and RequestThrottledException client error responses.
-// For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html)
-// in the Amazon Elastic Compute Cloud User Guide.
-//
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
 // the error.
@@ -185,14 +175,14 @@ func (c *EBS) GetSnapshotBlockRequest(input *GetSnapshotBlockInput) (req *reques
 //     The specified resource does not exist.
 //
 //   - RequestThrottledException
-//     The number of API requests has exceeded the maximum allowed API request throttling
-//     limit for the snapshot. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+//     The number of API requests has exceed the maximum allowed API request throttling
+//     limit.
 //
 //   - ServiceQuotaExceededException
 //     Your current service quotas do not allow you to perform this action.
 //
 //   - InternalServerException
-//     An internal error has occurred. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+//     An internal error has occurred.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ebs-2019-11-02/GetSnapshotBlock
 func (c *EBS) GetSnapshotBlock(input *GetSnapshotBlockInput) (*GetSnapshotBlockOutput, error) {
@@ -268,11 +258,6 @@ func (c *EBS) ListChangedBlocksRequest(input *ListChangedBlocksInput) (req *requ
 // Returns information about the blocks that are different between two Amazon
 // Elastic Block Store snapshots of the same volume/snapshot lineage.
 //
-// You should always retry requests that receive server (5xx) error responses,
-// and ThrottlingException and RequestThrottledException client error responses.
-// For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html)
-// in the Amazon Elastic Compute Cloud User Guide.
-//
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
 // the error.
@@ -292,14 +277,14 @@ func (c *EBS) ListChangedBlocksRequest(input *ListChangedBlocksInput) (req *requ
 //     The specified resource does not exist.
 //
 //   - RequestThrottledException
-//     The number of API requests has exceeded the maximum allowed API request throttling
-//     limit for the snapshot. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+//     The number of API requests has exceed the maximum allowed API request throttling
+//     limit.
 //
 //   - ServiceQuotaExceededException
 //     Your current service quotas do not allow you to perform this action.
 //
 //   - InternalServerException
-//     An internal error has occurred. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+//     An internal error has occurred.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ebs-2019-11-02/ListChangedBlocks
 func (c *EBS) ListChangedBlocks(input *ListChangedBlocksInput) (*ListChangedBlocksOutput, error) {
@@ -425,11 +410,6 @@ func (c *EBS) ListSnapshotBlocksRequest(input *ListSnapshotBlocksInput) (req *re
 //
 // Returns information about the blocks in an Amazon Elastic Block Store snapshot.
 //
-// You should always retry requests that receive server (5xx) error responses,
-// and ThrottlingException and RequestThrottledException client error responses.
-// For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html)
-// in the Amazon Elastic Compute Cloud User Guide.
-//
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
 // the error.
@@ -449,14 +429,14 @@ func (c *EBS) ListSnapshotBlocksRequest(input *ListSnapshotBlocksInput) (req *re
 //     The specified resource does not exist.
 //
 //   - RequestThrottledException
-//     The number of API requests has exceeded the maximum allowed API request throttling
-//     limit for the snapshot. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+//     The number of API requests has exceed the maximum allowed API request throttling
+//     limit.
 //
 //   - ServiceQuotaExceededException
 //     Your current service quotas do not allow you to perform this action.
 //
 //   - InternalServerException
-//     An internal error has occurred. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+//     An internal error has occurred.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ebs-2019-11-02/ListSnapshotBlocks
 func (c *EBS) ListSnapshotBlocks(input *ListSnapshotBlocksInput) (*ListSnapshotBlocksOutput, error) {
@@ -583,11 +563,6 @@ func (c *EBS) PutSnapshotBlockRequest(input *PutSnapshotBlockInput) (req *reques
 //
 // Data written to a snapshot must be aligned with 512-KiB sectors.
 //
-// You should always retry requests that receive server (5xx) error responses,
-// and ThrottlingException and RequestThrottledException client error responses.
-// For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html)
-// in the Amazon Elastic Compute Cloud User Guide.
-//
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
 // the error.
@@ -607,14 +582,14 @@ func (c *EBS) PutSnapshotBlockRequest(input *PutSnapshotBlockInput) (req *reques
 //     The specified resource does not exist.
 //
 //   - RequestThrottledException
-//     The number of API requests has exceeded the maximum allowed API request throttling
-//     limit for the snapshot. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+//     The number of API requests has exceed the maximum allowed API request throttling
+//     limit.
 //
 //   - ServiceQuotaExceededException
 //     Your current service quotas do not allow you to perform this action.
 //
 //   - InternalServerException
-//     An internal error has occurred. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+//     An internal error has occurred.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ebs-2019-11-02/PutSnapshotBlock
 func (c *EBS) PutSnapshotBlock(input *PutSnapshotBlockInput) (*PutSnapshotBlockOutput, error) {
@@ -687,11 +662,6 @@ func (c *EBS) StartSnapshotRequest(input *StartSnapshotInput) (req *request.Requ
 // After creating the snapshot, use PutSnapshotBlock (https://docs.aws.amazon.com/ebs/latest/APIReference/API_PutSnapshotBlock.html)
 // to write blocks of data to the snapshot.
 //
-// You should always retry requests that receive server (5xx) error responses,
-// and ThrottlingException and RequestThrottledException client error responses.
-// For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html)
-// in the Amazon Elastic Compute Cloud User Guide.
-//
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
 // the error.
@@ -708,8 +678,8 @@ func (c *EBS) StartSnapshotRequest(input *StartSnapshotInput) (req *request.Requ
 //     The input fails to satisfy the constraints of the EBS direct APIs.
 //
 //   - RequestThrottledException
-//     The number of API requests has exceeded the maximum allowed API request throttling
-//     limit for the snapshot. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+//     The number of API requests has exceed the maximum allowed API request throttling
+//     limit.
 //
 //   - ResourceNotFoundException
 //     The specified resource does not exist.
@@ -718,7 +688,7 @@ func (c *EBS) StartSnapshotRequest(input *StartSnapshotInput) (req *request.Requ
 //     Your current service quotas do not allow you to perform this action.
 //
 //   - InternalServerException
-//     An internal error has occurred. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+//     An internal error has occurred.
 //
 //   - ConcurrentLimitExceededException
 //     You have reached the limit for concurrent API requests. For more information,
@@ -1322,7 +1292,7 @@ func (s *GetSnapshotBlockOutput) SetDataLength(v int64) *GetSnapshotBlockOutput 
 	return s
 }
 
-// An internal error has occurred. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+// An internal error has occurred.
 type InternalServerException struct {
 	_            struct{}                  `type:"structure"`
 	RespMetadata protocol.ResponseMetadata `json:"-" xml:"-"`
@@ -1929,8 +1899,8 @@ func (s *PutSnapshotBlockOutput) SetChecksumAlgorithm(v string) *PutSnapshotBloc
 	return s
 }
 
-// The number of API requests has exceeded the maximum allowed API request throttling
-// limit for the snapshot. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+// The number of API requests has exceed the maximum allowed API request throttling
+// limit.
 type RequestThrottledException struct {
 	_            struct{}                  `type:"structure"`
 	RespMetadata protocol.ResponseMetadata `json:"-" xml:"-"`
@@ -2340,9 +2310,6 @@ type StartSnapshotOutput struct {
 	// The ID of the snapshot.
 	SnapshotId *string `min:"1" type:"string"`
 
-	// Reserved for future use.
-	SseType *string `type:"string" enum:"SSEType"`
-
 	// The timestamp when the snapshot was created.
 	StartTime *time.Time `type:"timestamp"`
 
@@ -2409,12 +2376,6 @@ func (s *StartSnapshotOutput) SetParentSnapshotId(v string) *StartSnapshotOutput
 // SetSnapshotId sets the SnapshotId field's value.
 func (s *StartSnapshotOutput) SetSnapshotId(v string) *StartSnapshotOutput {
 	s.SnapshotId = &v
-	return s
-}
-
-// SetSseType sets the SseType field's value.
-func (s *StartSnapshotOutput) SetSseType(v string) *StartSnapshotOutput {
-	s.SseType = &v
 	return s
 }
 
@@ -2614,43 +2575,15 @@ const (
 	// ResourceNotFoundExceptionReasonSnapshotNotFound is a ResourceNotFoundExceptionReason enum value
 	ResourceNotFoundExceptionReasonSnapshotNotFound = "SNAPSHOT_NOT_FOUND"
 
-	// ResourceNotFoundExceptionReasonGrantNotFound is a ResourceNotFoundExceptionReason enum value
-	ResourceNotFoundExceptionReasonGrantNotFound = "GRANT_NOT_FOUND"
-
 	// ResourceNotFoundExceptionReasonDependencyResourceNotFound is a ResourceNotFoundExceptionReason enum value
 	ResourceNotFoundExceptionReasonDependencyResourceNotFound = "DEPENDENCY_RESOURCE_NOT_FOUND"
-
-	// ResourceNotFoundExceptionReasonImageNotFound is a ResourceNotFoundExceptionReason enum value
-	ResourceNotFoundExceptionReasonImageNotFound = "IMAGE_NOT_FOUND"
 )
 
 // ResourceNotFoundExceptionReason_Values returns all elements of the ResourceNotFoundExceptionReason enum
 func ResourceNotFoundExceptionReason_Values() []string {
 	return []string{
 		ResourceNotFoundExceptionReasonSnapshotNotFound,
-		ResourceNotFoundExceptionReasonGrantNotFound,
 		ResourceNotFoundExceptionReasonDependencyResourceNotFound,
-		ResourceNotFoundExceptionReasonImageNotFound,
-	}
-}
-
-const (
-	// SSETypeSseEbs is a SSEType enum value
-	SSETypeSseEbs = "sse-ebs"
-
-	// SSETypeSseKms is a SSEType enum value
-	SSETypeSseKms = "sse-kms"
-
-	// SSETypeNone is a SSEType enum value
-	SSETypeNone = "none"
-)
-
-// SSEType_Values returns all elements of the SSEType enum
-func SSEType_Values() []string {
-	return []string{
-		SSETypeSseEbs,
-		SSETypeSseKms,
-		SSETypeNone,
 	}
 }
 
@@ -2696,9 +2629,6 @@ const (
 	// ValidationExceptionReasonInvalidBlockToken is a ValidationExceptionReason enum value
 	ValidationExceptionReasonInvalidBlockToken = "INVALID_BLOCK_TOKEN"
 
-	// ValidationExceptionReasonInvalidGrantToken is a ValidationExceptionReason enum value
-	ValidationExceptionReasonInvalidGrantToken = "INVALID_GRANT_TOKEN"
-
 	// ValidationExceptionReasonInvalidSnapshotId is a ValidationExceptionReason enum value
 	ValidationExceptionReasonInvalidSnapshotId = "INVALID_SNAPSHOT_ID"
 
@@ -2725,12 +2655,6 @@ const (
 
 	// ValidationExceptionReasonConflictingBlockUpdate is a ValidationExceptionReason enum value
 	ValidationExceptionReasonConflictingBlockUpdate = "CONFLICTING_BLOCK_UPDATE"
-
-	// ValidationExceptionReasonInvalidImageId is a ValidationExceptionReason enum value
-	ValidationExceptionReasonInvalidImageId = "INVALID_IMAGE_ID"
-
-	// ValidationExceptionReasonWriteRequestTimeout is a ValidationExceptionReason enum value
-	ValidationExceptionReasonWriteRequestTimeout = "WRITE_REQUEST_TIMEOUT"
 )
 
 // ValidationExceptionReason_Values returns all elements of the ValidationExceptionReason enum
@@ -2739,7 +2663,6 @@ func ValidationExceptionReason_Values() []string {
 		ValidationExceptionReasonInvalidCustomerKey,
 		ValidationExceptionReasonInvalidPageToken,
 		ValidationExceptionReasonInvalidBlockToken,
-		ValidationExceptionReasonInvalidGrantToken,
 		ValidationExceptionReasonInvalidSnapshotId,
 		ValidationExceptionReasonUnrelatedSnapshots,
 		ValidationExceptionReasonInvalidBlock,
@@ -2749,7 +2672,5 @@ func ValidationExceptionReason_Values() []string {
 		ValidationExceptionReasonInvalidParameterValue,
 		ValidationExceptionReasonInvalidVolumeSize,
 		ValidationExceptionReasonConflictingBlockUpdate,
-		ValidationExceptionReasonInvalidImageId,
-		ValidationExceptionReasonWriteRequestTimeout,
 	}
 }

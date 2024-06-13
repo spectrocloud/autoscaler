@@ -8,12 +8,6 @@ import (
 
 const (
 
-	// ErrCodeAccessDeniedException for service response error code
-	// "AccessDeniedException".
-	//
-	// General authentication failure. The request wasn't signed correctly.
-	ErrCodeAccessDeniedException = "AccessDeniedException"
-
 	// ErrCodeExpiredNextTokenException for service response error code
 	// "ExpiredNextTokenException".
 	//
@@ -47,7 +41,6 @@ const (
 )
 
 var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"AccessDeniedException":     newErrorAccessDeniedException,
 	"ExpiredNextTokenException": newErrorExpiredNextTokenException,
 	"InternalErrorException":    newErrorInternalErrorException,
 	"InvalidNextTokenException": newErrorInvalidNextTokenException,

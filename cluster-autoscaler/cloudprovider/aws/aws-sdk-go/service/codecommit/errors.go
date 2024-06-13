@@ -11,8 +11,7 @@ const (
 	// ErrCodeActorDoesNotExistException for service response error code
 	// "ActorDoesNotExistException".
 	//
-	// The specified Amazon Resource Name (ARN) does not exist in the Amazon Web
-	// Services account.
+	// The specified Amazon Resource Name (ARN) does not exist in the AWS account.
 	ErrCodeActorDoesNotExistException = "ActorDoesNotExistException"
 
 	// ErrCodeApprovalRuleContentRequiredException for service response error code
@@ -52,8 +51,8 @@ const (
 	// "ApprovalRuleTemplateDoesNotExistException".
 	//
 	// The specified approval rule template does not exist. Verify that the name
-	// is correct and that you are signed in to the Amazon Web Services Region where
-	// the template was created, and then try again.
+	// is correct and that you are signed in to the AWS Region where the template
+	// was created, and then try again.
 	ErrCodeApprovalRuleTemplateDoesNotExistException = "ApprovalRuleTemplateDoesNotExistException"
 
 	// ErrCodeApprovalRuleTemplateInUseException for service response error code
@@ -68,8 +67,8 @@ const (
 	// "ApprovalRuleTemplateNameAlreadyExistsException".
 	//
 	// You cannot create an approval rule template with that name because a template
-	// with that name already exists in this Amazon Web Services Region for your
-	// Amazon Web Services account. Approval rule template names must be unique.
+	// with that name already exists in this AWS Region for your AWS account. Approval
+	// rule template names must be unique.
 	ErrCodeApprovalRuleTemplateNameAlreadyExistsException = "ApprovalRuleTemplateNameAlreadyExistsException"
 
 	// ErrCodeApprovalRuleTemplateNameRequiredException for service response error code
@@ -87,8 +86,7 @@ const (
 	// ErrCodeAuthorDoesNotExistException for service response error code
 	// "AuthorDoesNotExistException".
 	//
-	// The specified Amazon Resource Name (ARN) does not exist in the Amazon Web
-	// Services account.
+	// The specified Amazon Resource Name (ARN) does not exist in the AWS account.
 	ErrCodeAuthorDoesNotExistException = "AuthorDoesNotExistException"
 
 	// ErrCodeBeforeCommitIdAndAfterCommitIdAreSameException for service response error code
@@ -171,7 +169,7 @@ const (
 	// ErrCodeCommentContentSizeLimitExceededException for service response error code
 	// "CommentContentSizeLimitExceededException".
 	//
-	// The comment is too large. Comments are limited to 10,240 characters.
+	// The comment is too large. Comments are limited to 1,000 characters.
 	ErrCodeCommentContentSizeLimitExceededException = "CommentContentSizeLimitExceededException"
 
 	// ErrCodeCommentDeletedException for service response error code
@@ -366,9 +364,9 @@ const (
 	// ErrCodeFileTooLargeException for service response error code
 	// "FileTooLargeException".
 	//
-	// The specified file exceeds the file size limit for CodeCommit. For more information
-	// about limits in CodeCommit, see Quotas (https://docs.aws.amazon.com/codecommit/latest/userguide/limits.html)
-	// in the CodeCommit User Guide.
+	// The specified file exceeds the file size limit for AWS CodeCommit. For more
+	// information about limits in AWS CodeCommit, see AWS CodeCommit User Guide
+	// (https://docs.aws.amazon.com/codecommit/latest/userguide/limits.html).
 	ErrCodeFileTooLargeException = "FileTooLargeException"
 
 	// ErrCodeFolderContentSizeLimitExceededException for service response error code
@@ -425,8 +423,7 @@ const (
 	//
 	// The description for the approval rule template is not valid because it exceeds
 	// the maximum characters allowed for a description. For more information about
-	// limits in CodeCommit, see Quotas (https://docs.aws.amazon.com/codecommit/latest/userguide/limits.html)
-	// in the CodeCommit User Guide.
+	// limits in AWS CodeCommit, see AWS CodeCommit User Guide (https://docs.aws.amazon.com/codecommit/latest/userguide/limits.html).
 	ErrCodeInvalidApprovalRuleTemplateDescriptionException = "InvalidApprovalRuleTemplateDescriptionException"
 
 	// ErrCodeInvalidApprovalRuleTemplateNameException for service response error code
@@ -434,8 +431,7 @@ const (
 	//
 	// The name of the approval rule template is not valid. Template names must
 	// be between 1 and 100 valid characters in length. For more information about
-	// limits in CodeCommit, see Quotas (https://docs.aws.amazon.com/codecommit/latest/userguide/limits.html)
-	// in the CodeCommit User Guide.
+	// limits in AWS CodeCommit, see AWS CodeCommit User Guide (https://docs.aws.amazon.com/codecommit/latest/userguide/limits.html).
 	ErrCodeInvalidApprovalRuleTemplateNameException = "InvalidApprovalRuleTemplateNameException"
 
 	// ErrCodeInvalidApprovalStateException for service response error code
@@ -650,15 +646,15 @@ const (
 	// ErrCodeInvalidReactionValueException for service response error code
 	// "InvalidReactionValueException".
 	//
-	// The value of the reaction is not valid. For more information, see the CodeCommit
-	// User Guide (https://docs.aws.amazon.com/codecommit/latest/userguide/welcome.html).
+	// The value of the reaction is not valid. For more information, see the AWS
+	// CodeCommit User Guide (https://docs.aws.amazon.com/codecommit/latest/userguide/welcome.html).
 	ErrCodeInvalidReactionValueException = "InvalidReactionValueException"
 
 	// ErrCodeInvalidReferenceNameException for service response error code
 	// "InvalidReferenceNameException".
 	//
 	// The specified reference name format is not valid. Reference names must conform
-	// to the Git references format (for example, refs/heads/main). For more information,
+	// to the Git references format (for example, refs/heads/master). For more information,
 	// see Git Internals - Git References (https://git-scm.com/book/en/v2/Git-Internals-Git-References)
 	// or consult your Git documentation.
 	ErrCodeInvalidReferenceNameException = "InvalidReferenceNameException"
@@ -736,17 +732,17 @@ const (
 	// ErrCodeInvalidRepositoryTriggerRegionException for service response error code
 	// "InvalidRepositoryTriggerRegionException".
 	//
-	// The Amazon Web Services Region for the trigger target does not match the
-	// Amazon Web Services Region for the repository. Triggers must be created in
-	// the same Amazon Web Services Region as the target for the trigger.
+	// The AWS Region for the trigger target does not match the AWS Region for the
+	// repository. Triggers must be created in the same Region as the target for
+	// the trigger.
 	ErrCodeInvalidRepositoryTriggerRegionException = "InvalidRepositoryTriggerRegionException"
 
 	// ErrCodeInvalidResourceArnException for service response error code
 	// "InvalidResourceArnException".
 	//
 	// The value for the resource ARN is not valid. For more information about resources
-	// in CodeCommit, see CodeCommit Resources and Operations (https://docs.aws.amazon.com/codecommit/latest/userguide/auth-and-access-control-iam-access-control-identity-based.html#arn-formats)
-	// in the CodeCommit User Guide.
+	// in AWS CodeCommit, see CodeCommit Resources and Operations (https://docs.aws.amazon.com/codecommit/latest/userguide/auth-and-access-control-iam-access-control-identity-based.html#arn-formats)
+	// in the AWS CodeCommit User Guide.
 	ErrCodeInvalidResourceArnException = "InvalidResourceArnException"
 
 	// ErrCodeInvalidRevisionIdException for service response error code
@@ -936,7 +932,7 @@ const (
 	// "NumberOfRuleTemplatesExceededException".
 	//
 	// The maximum number of approval rule templates has been exceeded for this
-	// Amazon Web Services Region.
+	// AWS Region.
 	ErrCodeNumberOfRuleTemplatesExceededException = "NumberOfRuleTemplatesExceededException"
 
 	// ErrCodeNumberOfRulesExceededException for service response error code
@@ -1157,10 +1153,10 @@ const (
 	// ErrCodeResourceArnRequiredException for service response error code
 	// "ResourceArnRequiredException".
 	//
-	// A valid Amazon Resource Name (ARN) for an CodeCommit resource is required.
-	// For a list of valid resources in CodeCommit, see CodeCommit Resources and
-	// Operations (https://docs.aws.amazon.com/codecommit/latest/userguide/auth-and-access-control-iam-access-control-identity-based.html#arn-formats)
-	// in the CodeCommit User Guide.
+	// A valid Amazon Resource Name (ARN) for an AWS CodeCommit resource is required.
+	// For a list of valid resources in AWS CodeCommit, see CodeCommit Resources
+	// and Operations (https://docs.aws.amazon.com/codecommit/latest/userguide/auth-and-access-control-iam-access-control-identity-based.html#arn-formats)
+	// in the AWS CodeCommit User Guide.
 	ErrCodeResourceArnRequiredException = "ResourceArnRequiredException"
 
 	// ErrCodeRestrictedSourceFileException for service response error code
@@ -1271,7 +1267,7 @@ const (
 	// ErrCodeTooManyTagsException for service response error code
 	// "TooManyTagsException".
 	//
-	// The maximum number of tags for an CodeCommit resource has been exceeded.
+	// The maximum number of tags for an AWS CodeCommit resource has been exceeded.
 	ErrCodeTooManyTagsException = "TooManyTagsException"
 )
 

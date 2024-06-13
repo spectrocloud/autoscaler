@@ -17,7 +17,6 @@ limitations under the License.
 package manifest
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -95,19 +94,14 @@ func StatefulSetFromManifest(fileName, ns string) (*appsv1.StatefulSet, error) {
 }
 
 // DaemonSetFromURL reads from a url and returns the daemonset in it.
-func DaemonSetFromURL(ctx context.Context, url string) (*appsv1.DaemonSet, error) {
+func DaemonSetFromURL(url string) (*appsv1.DaemonSet, error) {
 	framework.Logf("Parsing ds from %v", url)
 
 	var response *http.Response
 	var err error
 
 	for i := 1; i <= 5; i++ {
-		request, reqErr := http.NewRequestWithContext(ctx, "GET", url, nil)
-		if reqErr != nil {
-			err = reqErr
-			continue
-		}
-		response, err = http.DefaultClient.Do(request)
+		response, err = http.Get(url)
 		if err == nil && response.StatusCode == 200 {
 			break
 		}
@@ -115,7 +109,7 @@ func DaemonSetFromURL(ctx context.Context, url string) (*appsv1.DaemonSet, error
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("Failed to get url: %w", err)
+		return nil, fmt.Errorf("Failed to get url: %v", err)
 	}
 	if response.StatusCode != 200 {
 		return nil, fmt.Errorf("invalid http response status: %v", response.StatusCode)
@@ -124,7 +118,7 @@ func DaemonSetFromURL(ctx context.Context, url string) (*appsv1.DaemonSet, error
 
 	data, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to read html response body: %w", err)
+		return nil, fmt.Errorf("Failed to read html response body: %v", err)
 	}
 	return DaemonSetFromData(data)
 }
@@ -134,12 +128,12 @@ func DaemonSetFromData(data []byte) (*appsv1.DaemonSet, error) {
 	var ds appsv1.DaemonSet
 	dataJSON, err := utilyaml.ToJSON(data)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to parse data to json: %w", err)
+		return nil, fmt.Errorf("Failed to parse data to json: %v", err)
 	}
 
 	err = runtime.DecodeInto(scheme.Codecs.UniversalDecoder(), dataJSON, &ds)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to decode DaemonSet spec: %w", err)
+		return nil, fmt.Errorf("Failed to decode DaemonSet spec: %v", err)
 	}
 	return &ds, nil
 }

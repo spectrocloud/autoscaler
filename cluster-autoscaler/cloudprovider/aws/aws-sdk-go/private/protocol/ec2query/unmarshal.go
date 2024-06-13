@@ -4,7 +4,6 @@ package ec2query
 
 import (
 	"encoding/xml"
-	"strings"
 
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/aws/aws-sdk-go/aws/awserr"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/aws/aws-sdk-go/aws/request"
@@ -71,7 +70,7 @@ func UnmarshalError(r *request.Request) {
 	}
 
 	r.Error = awserr.NewRequestFailure(
-		awserr.New(strings.TrimSpace(respErr.Code), strings.TrimSpace(respErr.Message), nil),
+		awserr.New(respErr.Code, respErr.Message, nil),
 		r.HTTPResponse.StatusCode,
 		respErr.RequestID,
 	)

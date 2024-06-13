@@ -61,7 +61,7 @@ func (c *ServiceDiscovery) CreateHttpNamespaceRequest(input *CreateHttpNamespace
 // using DNS.
 //
 // For the current quota on the number of namespaces that you can create using
-// the same Amazon Web Services account, see Cloud Map quotas (https://docs.aws.amazon.com/cloud-map/latest/dg/cloud-map-limits.html)
+// the same account, see Cloud Map quotas (https://docs.aws.amazon.com/cloud-map/latest/dg/cloud-map-limits.html)
 // in the Cloud Map Developer Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -163,8 +163,8 @@ func (c *ServiceDiscovery) CreatePrivateDnsNamespaceRequest(input *CreatePrivate
 // the resulting DNS name for the service is backend.example.com. Service instances
 // that are registered using a private DNS namespace can be discovered using
 // either a DiscoverInstances request or using DNS. For the current quota on
-// the number of namespaces that you can create using the same Amazon Web Services
-// account, see Cloud Map quotas (https://docs.aws.amazon.com/cloud-map/latest/dg/cloud-map-limits.html)
+// the number of namespaces that you can create using the same account, see
+// Cloud Map quotas (https://docs.aws.amazon.com/cloud-map/latest/dg/cloud-map-limits.html)
 // in the Cloud Map Developer Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -266,12 +266,8 @@ func (c *ServiceDiscovery) CreatePublicDnsNamespaceRequest(input *CreatePublicDn
 // name for the service is backend.example.com. You can discover instances that
 // were registered with a public DNS namespace by using either a DiscoverInstances
 // request or using DNS. For the current quota on the number of namespaces that
-// you can create using the same Amazon Web Services account, see Cloud Map
-// quotas (https://docs.aws.amazon.com/cloud-map/latest/dg/cloud-map-limits.html)
+// you can create using the same account, see Cloud Map quotas (https://docs.aws.amazon.com/cloud-map/latest/dg/cloud-map-limits.html)
 // in the Cloud Map Developer Guide.
-//
-// The CreatePublicDnsNamespace API operation is not supported in the Amazon
-// Web Services GovCloud (US) Regions.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -758,9 +754,8 @@ func (c *ServiceDiscovery) DiscoverInstancesRequest(input *DiscoverInstancesInpu
 //
 // Discovers registered instances for a specified namespace and service. You
 // can use DiscoverInstances to discover instances for any type of namespace.
-// DiscoverInstances returns a randomized list of instances allowing customers
-// to distribute traffic evenly across instances. For public and private DNS
-// namespaces, you can also use DNS queries to discover instances.
+// For public and private DNS namespaces, you can also use DNS queries to discover
+// instances.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -805,101 +800,6 @@ func (c *ServiceDiscovery) DiscoverInstances(input *DiscoverInstancesInput) (*Di
 // for more information on using Contexts.
 func (c *ServiceDiscovery) DiscoverInstancesWithContext(ctx aws.Context, input *DiscoverInstancesInput, opts ...request.Option) (*DiscoverInstancesOutput, error) {
 	req, out := c.DiscoverInstancesRequest(input)
-	req.SetContext(ctx)
-	req.ApplyOptions(opts...)
-	return out, req.Send()
-}
-
-const opDiscoverInstancesRevision = "DiscoverInstancesRevision"
-
-// DiscoverInstancesRevisionRequest generates a "aws/request.Request" representing the
-// client's request for the DiscoverInstancesRevision operation. The "output" return
-// value will be populated with the request's response once the request completes
-// successfully.
-//
-// Use "Send" method on the returned Request to send the API call to the service.
-// the "output" return value is not valid until after Send returns without error.
-//
-// See DiscoverInstancesRevision for more information on using the DiscoverInstancesRevision
-// API call, and error handling.
-//
-// This method is useful when you want to inject custom logic or configuration
-// into the SDK's request lifecycle. Such as custom headers, or retry logic.
-//
-//	// Example sending a request using the DiscoverInstancesRevisionRequest method.
-//	req, resp := client.DiscoverInstancesRevisionRequest(params)
-//
-//	err := req.Send()
-//	if err == nil { // resp is now filled
-//	    fmt.Println(resp)
-//	}
-//
-// See also, https://docs.aws.amazon.com/goto/WebAPI/servicediscovery-2017-03-14/DiscoverInstancesRevision
-func (c *ServiceDiscovery) DiscoverInstancesRevisionRequest(input *DiscoverInstancesRevisionInput) (req *request.Request, output *DiscoverInstancesRevisionOutput) {
-	op := &request.Operation{
-		Name:       opDiscoverInstancesRevision,
-		HTTPMethod: "POST",
-		HTTPPath:   "/",
-	}
-
-	if input == nil {
-		input = &DiscoverInstancesRevisionInput{}
-	}
-
-	output = &DiscoverInstancesRevisionOutput{}
-	req = c.newRequest(op, input, output)
-	req.Handlers.Build.PushBackNamed(protocol.NewHostPrefixHandler("data-", nil))
-	req.Handlers.Build.PushBackNamed(protocol.ValidateEndpointHostHandler)
-	return
-}
-
-// DiscoverInstancesRevision API operation for AWS Cloud Map.
-//
-// Discovers the increasing revision associated with an instance.
-//
-// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
-// with awserr.Error's Code and Message methods to get detailed information about
-// the error.
-//
-// See the AWS API reference guide for AWS Cloud Map's
-// API operation DiscoverInstancesRevision for usage and error information.
-//
-// Returned Error Types:
-//
-//   - ServiceNotFound
-//     No service exists with the specified ID.
-//
-//   - NamespaceNotFound
-//     No namespace exists with the specified ID.
-//
-//   - InvalidInput
-//     One or more specified values aren't valid. For example, a required value
-//     might be missing, a numeric value might be outside the allowed range, or
-//     a string value might exceed length constraints.
-//
-//   - RequestLimitExceeded
-//     The operation can't be completed because you've reached the quota for the
-//     number of requests. For more information, see Cloud Map API request throttling
-//     quota (https://docs.aws.amazon.com/cloud-map/latest/dg/throttling.html) in
-//     the Cloud Map Developer Guide.
-//
-// See also, https://docs.aws.amazon.com/goto/WebAPI/servicediscovery-2017-03-14/DiscoverInstancesRevision
-func (c *ServiceDiscovery) DiscoverInstancesRevision(input *DiscoverInstancesRevisionInput) (*DiscoverInstancesRevisionOutput, error) {
-	req, out := c.DiscoverInstancesRevisionRequest(input)
-	return out, req.Send()
-}
-
-// DiscoverInstancesRevisionWithContext is the same as DiscoverInstancesRevision with the addition of
-// the ability to pass a context and additional request options.
-//
-// See DiscoverInstancesRevision for details on how to use this API operation.
-//
-// The context must be non-nil and will be used for request cancellation. If
-// the context is nil a panic will occur. In the future the SDK may create
-// sub-contexts for http.Requests. See https://golang.org/pkg/context/
-// for more information on using Contexts.
-func (c *ServiceDiscovery) DiscoverInstancesRevisionWithContext(ctx aws.Context, input *DiscoverInstancesRevisionInput, opts ...request.Option) (*DiscoverInstancesRevisionOutput, error) {
-	req, out := c.DiscoverInstancesRevisionRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -1270,7 +1170,7 @@ func (c *ServiceDiscovery) GetOperationRequest(input *GetOperationInput) (req *r
 // GetOperation API operation for AWS Cloud Map.
 //
 // Gets information about any operation that returns an operation ID in the
-// response, such as a CreateHttpNamespace request.
+// response, such as a CreateService request.
 //
 // To get a list of operations that match specified criteria, see ListOperations
 // (https://docs.aws.amazon.com/cloud-map/latest/api/API_ListOperations.html).
@@ -1590,7 +1490,7 @@ func (c *ServiceDiscovery) ListNamespacesRequest(input *ListNamespacesInput) (re
 // ListNamespaces API operation for AWS Cloud Map.
 //
 // Lists summary information about the namespaces that were created by the current
-// Amazon Web Services account.
+// account.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -3098,9 +2998,6 @@ type CreatePublicDnsNamespaceInput struct {
 
 	// The name that you want to assign to this namespace.
 	//
-	// Do not include sensitive information in the name. The name is publicly available
-	// using DNS queries.
-	//
 	// Name is a required field
 	Name *string `type:"string" required:"true"`
 
@@ -3259,9 +3156,6 @@ type CreateServiceInput struct {
 	HealthCheckCustomConfig *HealthCheckCustomConfig `type:"structure"`
 
 	// The name that you want to assign to the service.
-	//
-	// Do not include sensitive information in the name if the namespace is discoverable
-	// by public DNS queries.
 	//
 	// If you want Cloud Map to create an SRV record when you register an instance
 	// and you're using a system that requires a specific SRV format, such as HAProxy
@@ -3880,11 +3774,6 @@ type DiscoverInstancesOutput struct {
 	// A complex type that contains one HttpInstanceSummary for each registered
 	// instance.
 	Instances []*HttpInstanceSummary `type:"list"`
-
-	// The increasing revision associated to the response Instances list. If a new
-	// instance is registered or deregistered, the InstancesRevision updates. The
-	// health status updates don't update InstancesRevision.
-	InstancesRevision *int64 `type:"long"`
 }
 
 // String returns the string representation.
@@ -3911,111 +3800,8 @@ func (s *DiscoverInstancesOutput) SetInstances(v []*HttpInstanceSummary) *Discov
 	return s
 }
 
-// SetInstancesRevision sets the InstancesRevision field's value.
-func (s *DiscoverInstancesOutput) SetInstancesRevision(v int64) *DiscoverInstancesOutput {
-	s.InstancesRevision = &v
-	return s
-}
-
-type DiscoverInstancesRevisionInput struct {
-	_ struct{} `type:"structure"`
-
-	// The HttpName name of the namespace. It's found in the HttpProperties member
-	// of the Properties member of the namespace.
-	//
-	// NamespaceName is a required field
-	NamespaceName *string `type:"string" required:"true"`
-
-	// The name of the service that you specified when you registered the instance.
-	//
-	// ServiceName is a required field
-	ServiceName *string `type:"string" required:"true"`
-}
-
-// String returns the string representation.
-//
-// API parameter values that are decorated as "sensitive" in the API will not
-// be included in the string output. The member name will be present, but the
-// value will be replaced with "sensitive".
-func (s DiscoverInstancesRevisionInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation.
-//
-// API parameter values that are decorated as "sensitive" in the API will not
-// be included in the string output. The member name will be present, but the
-// value will be replaced with "sensitive".
-func (s DiscoverInstancesRevisionInput) GoString() string {
-	return s.String()
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *DiscoverInstancesRevisionInput) Validate() error {
-	invalidParams := request.ErrInvalidParams{Context: "DiscoverInstancesRevisionInput"}
-	if s.NamespaceName == nil {
-		invalidParams.Add(request.NewErrParamRequired("NamespaceName"))
-	}
-	if s.ServiceName == nil {
-		invalidParams.Add(request.NewErrParamRequired("ServiceName"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-// SetNamespaceName sets the NamespaceName field's value.
-func (s *DiscoverInstancesRevisionInput) SetNamespaceName(v string) *DiscoverInstancesRevisionInput {
-	s.NamespaceName = &v
-	return s
-}
-
-// SetServiceName sets the ServiceName field's value.
-func (s *DiscoverInstancesRevisionInput) SetServiceName(v string) *DiscoverInstancesRevisionInput {
-	s.ServiceName = &v
-	return s
-}
-
-type DiscoverInstancesRevisionOutput struct {
-	_ struct{} `type:"structure"`
-
-	// The increasing revision associated to the response Instances list. If a new
-	// instance is registered or deregistered, the InstancesRevision updates. The
-	// health status updates don't update InstancesRevision.
-	InstancesRevision *int64 `type:"long"`
-}
-
-// String returns the string representation.
-//
-// API parameter values that are decorated as "sensitive" in the API will not
-// be included in the string output. The member name will be present, but the
-// value will be replaced with "sensitive".
-func (s DiscoverInstancesRevisionOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation.
-//
-// API parameter values that are decorated as "sensitive" in the API will not
-// be included in the string output. The member name will be present, but the
-// value will be replaced with "sensitive".
-func (s DiscoverInstancesRevisionOutput) GoString() string {
-	return s.String()
-}
-
-// SetInstancesRevision sets the InstancesRevision field's value.
-func (s *DiscoverInstancesRevisionOutput) SetInstancesRevision(v int64) *DiscoverInstancesRevisionOutput {
-	s.InstancesRevision = &v
-	return s
-}
-
 // A complex type that contains information about the Amazon Route 53 DNS records
 // that you want Cloud Map to create when you register an instance.
-//
-// The record types of a service can only be changed by deleting the service
-// and recreating it with a new Dnsconfig.
 type DnsConfig struct {
 	_ struct{} `type:"structure"`
 
@@ -4025,9 +3811,6 @@ type DnsConfig struct {
 	// DnsRecords is a required field
 	DnsRecords []*DnsRecord `type:"list" required:"true"`
 
-	// Use NamespaceId in Service (https://docs.aws.amazon.com/cloud-map/latest/api/API_Service.html)
-	// instead.
-	//
 	// The ID of the namespace to use for DNS configuration.
 	//
 	// Deprecated: Top level attribute in request should be used to reference namespace-id
@@ -5339,9 +5122,6 @@ type Instance struct {
 	//
 	//    * For each attribute, the applicable value.
 	//
-	// Do not include sensitive information in the attributes if the namespace is
-	// discoverable by public DNS queries.
-	//
 	// Supported attribute keys include the following:
 	//
 	// AWS_ALIAS_DNS_NAME
@@ -6507,37 +6287,34 @@ func (s *NamespaceAlreadyExists) RequestID() string {
 type NamespaceFilter struct {
 	_ struct{} `type:"structure"`
 
-	// Specify the operator that you want to use to determine whether a namespace
-	// matches the specified value. Valid values for Condition are one of the following.
+	// The operator that you want to use to determine whether ListNamespaces returns
+	// a namespace. Valid values for condition include:
 	//
-	//    * EQ: When you specify EQ for Condition, you can specify only one value.
-	//    EQ is supported for TYPE, NAME, and HTTP_NAME. EQ is the default condition
-	//    and can be omitted.
+	// EQ
 	//
-	//    * BEGINS_WITH: When you specify BEGINS_WITH for Condition, you can specify
-	//    only one value. BEGINS_WITH is supported for TYPE, NAME, and HTTP_NAME.
+	// When you specify EQ for the condition, you can choose to list only public
+	// namespaces or private namespaces, but not both. EQ is the default condition
+	// and can be omitted.
+	//
+	// IN
+	//
+	// When you specify IN for the condition, you can choose to list public namespaces,
+	// private namespaces, or both.
+	//
+	// BETWEEN
+	//
+	// Not applicable
 	Condition *string `type:"string" enum:"FilterCondition"`
 
-	// Specify the namespaces that you want to get using one of the following.
-	//
-	//    * TYPE: Gets the namespaces of the specified type.
-	//
-	//    * NAME: Gets the namespaces with the specified name.
-	//
-	//    * HTTP_NAME: Gets the namespaces with the specified HTTP name.
+	// Specify TYPE.
 	//
 	// Name is a required field
 	Name *string `type:"string" required:"true" enum:"NamespaceFilterName"`
 
-	// Specify the values that are applicable to the value that you specify for
-	// Name.
+	// If you specify EQ for Condition, specify either DNS_PUBLIC or DNS_PRIVATE.
 	//
-	//    * TYPE: Specify HTTP, DNS_PUBLIC, or DNS_PRIVATE.
-	//
-	//    * NAME: Specify the name of the namespace, which is found in Namespace.Name.
-	//
-	//    * HTTP_NAME: Specify the HTTP name of the namespace, which is found in
-	//    Namespace.Properties.HttpProperties.HttpName.
+	// If you specify IN for Condition, you can specify DNS_PUBLIC, DNS_PRIVATE,
+	// or both.
 	//
 	// Values is a required field
 	Values []*string `type:"list" required:"true"`
@@ -7708,9 +7485,6 @@ type RegisterInstanceInput struct {
 	//
 	//    * For each attribute, the applicable value.
 	//
-	// Do not include sensitive information in the attributes if the namespace is
-	// discoverable by public DNS queries.
-	//
 	// Supported attribute keys include the following:
 	//
 	// AWS_ALIAS_DNS_NAME
@@ -7733,7 +7507,7 @@ type RegisterInstanceInput struct {
 	//    settings, Cloud Map will create the Route 53 health check, but it doesn't
 	//    associate the health check with the alias record.
 	//
-	//    * Cloud Map currently doesn't support creating alias records that route
+	//    * Auto naming currently doesn't support creating alias records that route
 	//    traffic to Amazon Web Services resources other than Elastic Load Balancing
 	//    load balancers.
 	//
@@ -7827,10 +7601,6 @@ type RegisterInstanceInput struct {
 	//    Cloud Map deletes the old health check and creates a new one. The health
 	//    check isn't deleted immediately, so it will still appear for a while if
 	//    you submit a ListHealthChecks request, for example.
-	//
-	// Do not include sensitive information in InstanceId if the namespace is discoverable
-	// by public DNS queries and any Type member of DnsRecord for the service contains
-	// SRV because the InstanceId is discoverable by public DNS queries.
 	//
 	// InstanceId is a required field
 	InstanceId *string `type:"string" required:"true"`
@@ -8313,9 +8083,6 @@ type Service struct {
 
 	// A complex type that contains information about the Route 53 DNS records that
 	// you want Cloud Map to create when you register an instance.
-	//
-	// The record types of a service can only be changed by deleting the service
-	// and recreating it with a new Dnsconfig.
 	DnsConfig *DnsConfig `type:"structure"`
 
 	// Public DNS and HTTP namespaces only. A complex type that contains settings
@@ -8611,6 +8378,11 @@ type ServiceFilter struct {
 	//
 	//    * EQ: When you specify EQ, specify one namespace ID for Values. EQ is
 	//    the default condition and can be omitted.
+	//
+	//    * IN: When you specify IN, specify a list of the IDs for the namespaces
+	//    that you want ListServices to return a list of services for.
+	//
+	//    * BETWEEN: Not applicable.
 	Condition *string `type:"string" enum:"FilterCondition"`
 
 	// Specify NAMESPACE_ID.
@@ -9750,9 +9522,6 @@ const (
 
 	// FilterConditionBetween is a FilterCondition enum value
 	FilterConditionBetween = "BETWEEN"
-
-	// FilterConditionBeginsWith is a FilterCondition enum value
-	FilterConditionBeginsWith = "BEGINS_WITH"
 )
 
 // FilterCondition_Values returns all elements of the FilterCondition enum
@@ -9761,7 +9530,6 @@ func FilterCondition_Values() []string {
 		FilterConditionEq,
 		FilterConditionIn,
 		FilterConditionBetween,
-		FilterConditionBeginsWith,
 	}
 }
 
@@ -9832,20 +9600,12 @@ func HealthStatusFilter_Values() []string {
 const (
 	// NamespaceFilterNameType is a NamespaceFilterName enum value
 	NamespaceFilterNameType = "TYPE"
-
-	// NamespaceFilterNameName is a NamespaceFilterName enum value
-	NamespaceFilterNameName = "NAME"
-
-	// NamespaceFilterNameHttpName is a NamespaceFilterName enum value
-	NamespaceFilterNameHttpName = "HTTP_NAME"
 )
 
 // NamespaceFilterName_Values returns all elements of the NamespaceFilterName enum
 func NamespaceFilterName_Values() []string {
 	return []string{
 		NamespaceFilterNameType,
-		NamespaceFilterNameName,
-		NamespaceFilterNameHttpName,
 	}
 }
 

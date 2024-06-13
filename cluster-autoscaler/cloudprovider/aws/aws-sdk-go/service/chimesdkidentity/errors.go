@@ -27,12 +27,6 @@ const (
 	// The client is permanently forbidden from making the request.
 	ErrCodeForbiddenException = "ForbiddenException"
 
-	// ErrCodeNotFoundException for service response error code
-	// "NotFoundException".
-	//
-	// One or more of the resources in the request does not exist in the system.
-	ErrCodeNotFoundException = "NotFoundException"
-
 	// ErrCodeResourceLimitExceededException for service response error code
 	// "ResourceLimitExceededException".
 	//
@@ -68,7 +62,6 @@ var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
 	"BadRequestException":            newErrorBadRequestException,
 	"ConflictException":              newErrorConflictException,
 	"ForbiddenException":             newErrorForbiddenException,
-	"NotFoundException":              newErrorNotFoundException,
 	"ResourceLimitExceededException": newErrorResourceLimitExceededException,
 	"ServiceFailureException":        newErrorServiceFailureException,
 	"ServiceUnavailableException":    newErrorServiceUnavailableException,

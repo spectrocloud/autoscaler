@@ -55,18 +55,6 @@ const (
 	// this exception is thrown if the resource cannot be found.
 	ErrCodeObjectNotFoundException = "ObjectNotFoundException"
 
-	// ErrCodeResourceNotFoundException for service response error code
-	// "ResourceNotFoundException".
-	//
-	// The specified resource doesn't exist.
-	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
-
-	// ErrCodeTooManyTagsException for service response error code
-	// "TooManyTagsException".
-	//
-	// The request contains too many tags. Try the request again with fewer tags.
-	ErrCodeTooManyTagsException = "TooManyTagsException"
-
 	// ErrCodeValidationException for service response error code
 	// "ValidationException".
 	//
@@ -82,7 +70,5 @@ var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
 	"InvalidNextTokenException":     newErrorInvalidNextTokenException,
 	"LimitExceededException":        newErrorLimitExceededException,
 	"ObjectNotFoundException":       newErrorObjectNotFoundException,
-	"ResourceNotFoundException":     newErrorResourceNotFoundException,
-	"TooManyTagsException":          newErrorTooManyTagsException,
 	"ValidationException":           newErrorValidationException,
 }

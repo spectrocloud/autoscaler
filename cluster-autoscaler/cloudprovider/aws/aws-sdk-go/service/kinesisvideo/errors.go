@@ -73,18 +73,13 @@ const (
 	// ErrCodeResourceInUseException for service response error code
 	// "ResourceInUseException".
 	//
-	// When the input StreamARN or ChannelARN in CLOUD_STORAGE_MODE is already mapped
-	// to a different Kinesis Video Stream resource, or if the provided input StreamARN
-	// or ChannelARN is not in Active status, try one of the following :
+	// The resource is currently not available for this operation. New resources
+	// cannot be created with the same name as existing resources. Also, resources
+	// cannot be updated or deleted unless they are in an ACTIVE state.
 	//
-	// The DescribeMediaStorageConfiguration API to determine what the stream given
-	// channel is mapped to.
-	//
-	// The DescribeMappedResourceConfiguration API to determine the channel that
-	// the given stream is mapped to.
-	//
-	// The DescribeStream or DescribeSignalingChannel API to determine the status
-	// of the resource.
+	// If this exception is returned, do not use it to determine whether the requested
+	// resource already exists. Instead, it is recommended you use the resource-specific
+	// describe API, for example, DescribeStream for video streams.
 	ErrCodeResourceInUseException = "ResourceInUseException"
 
 	// ErrCodeResourceNotFoundException for service response error code
@@ -92,13 +87,6 @@ const (
 	//
 	// Amazon Kinesis Video Streams can't find the stream that you specified.
 	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
-
-	// ErrCodeStreamEdgeConfigurationNotFoundException for service response error code
-	// "StreamEdgeConfigurationNotFoundException".
-	//
-	// The Exception rendered when the Amazon Kinesis Video Stream can't find a
-	// stream's edge configuration that you specified.
-	ErrCodeStreamEdgeConfigurationNotFoundException = "StreamEdgeConfigurationNotFoundException"
 
 	// ErrCodeTagsPerResourceExceededLimitException for service response error code
 	// "TagsPerResourceExceededLimitException".
@@ -117,19 +105,18 @@ const (
 )
 
 var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"AccessDeniedException":                    newErrorAccessDeniedException,
-	"AccountChannelLimitExceededException":     newErrorAccountChannelLimitExceededException,
-	"AccountStreamLimitExceededException":      newErrorAccountStreamLimitExceededException,
-	"ClientLimitExceededException":             newErrorClientLimitExceededException,
-	"DeviceStreamLimitExceededException":       newErrorDeviceStreamLimitExceededException,
-	"InvalidArgumentException":                 newErrorInvalidArgumentException,
-	"InvalidDeviceException":                   newErrorInvalidDeviceException,
-	"InvalidResourceFormatException":           newErrorInvalidResourceFormatException,
-	"NoDataRetentionException":                 newErrorNoDataRetentionException,
-	"NotAuthorizedException":                   newErrorNotAuthorizedException,
-	"ResourceInUseException":                   newErrorResourceInUseException,
-	"ResourceNotFoundException":                newErrorResourceNotFoundException,
-	"StreamEdgeConfigurationNotFoundException": newErrorStreamEdgeConfigurationNotFoundException,
-	"TagsPerResourceExceededLimitException":    newErrorTagsPerResourceExceededLimitException,
-	"VersionMismatchException":                 newErrorVersionMismatchException,
+	"AccessDeniedException":                 newErrorAccessDeniedException,
+	"AccountChannelLimitExceededException":  newErrorAccountChannelLimitExceededException,
+	"AccountStreamLimitExceededException":   newErrorAccountStreamLimitExceededException,
+	"ClientLimitExceededException":          newErrorClientLimitExceededException,
+	"DeviceStreamLimitExceededException":    newErrorDeviceStreamLimitExceededException,
+	"InvalidArgumentException":              newErrorInvalidArgumentException,
+	"InvalidDeviceException":                newErrorInvalidDeviceException,
+	"InvalidResourceFormatException":        newErrorInvalidResourceFormatException,
+	"NoDataRetentionException":              newErrorNoDataRetentionException,
+	"NotAuthorizedException":                newErrorNotAuthorizedException,
+	"ResourceInUseException":                newErrorResourceInUseException,
+	"ResourceNotFoundException":             newErrorResourceNotFoundException,
+	"TagsPerResourceExceededLimitException": newErrorTagsPerResourceExceededLimitException,
+	"VersionMismatchException":              newErrorVersionMismatchException,
 }

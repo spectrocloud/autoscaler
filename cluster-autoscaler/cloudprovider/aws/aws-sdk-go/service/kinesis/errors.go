@@ -8,12 +8,6 @@ import (
 
 const (
 
-	// ErrCodeAccessDeniedException for service response error code
-	// "AccessDeniedException".
-	//
-	// Specifies that you do not have the permissions required to perform this operation.
-	ErrCodeAccessDeniedException = "AccessDeniedException"
-
 	// ErrCodeExpiredIteratorException for service response error code
 	// "ExpiredIteratorException".
 	//
@@ -118,15 +112,10 @@ const (
 
 	// ErrCodeValidationException for service response error code
 	// "ValidationException".
-	//
-	// Specifies that you tried to invoke this API for a data stream with the on-demand
-	// capacity mode. This API is only supported for data streams with the provisioned
-	// capacity mode.
 	ErrCodeValidationException = "ValidationException"
 )
 
 var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"AccessDeniedException":                  newErrorAccessDeniedException,
 	"ExpiredIteratorException":               newErrorExpiredIteratorException,
 	"ExpiredNextTokenException":              newErrorExpiredNextTokenException,
 	"InternalFailureException":               newErrorInternalFailureException,

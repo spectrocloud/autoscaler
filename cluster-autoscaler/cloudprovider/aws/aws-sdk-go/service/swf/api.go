@@ -7152,13 +7152,6 @@ type DecisionTaskCompletedEventAttributes struct {
 	//
 	// StartedEventId is a required field
 	StartedEventId *int64 `locationName:"startedEventId" type:"long" required:"true"`
-
-	// Represents a task list.
-	TaskList *TaskList `locationName:"taskList" type:"structure"`
-
-	// The maximum amount of time the decision task can wait to be assigned to a
-	// worker.
-	TaskListScheduleToStartTimeout *string `locationName:"taskListScheduleToStartTimeout" type:"string"`
 }
 
 // String returns the string representation.
@@ -7197,25 +7190,9 @@ func (s *DecisionTaskCompletedEventAttributes) SetStartedEventId(v int64) *Decis
 	return s
 }
 
-// SetTaskList sets the TaskList field's value.
-func (s *DecisionTaskCompletedEventAttributes) SetTaskList(v *TaskList) *DecisionTaskCompletedEventAttributes {
-	s.TaskList = v
-	return s
-}
-
-// SetTaskListScheduleToStartTimeout sets the TaskListScheduleToStartTimeout field's value.
-func (s *DecisionTaskCompletedEventAttributes) SetTaskListScheduleToStartTimeout(v string) *DecisionTaskCompletedEventAttributes {
-	s.TaskListScheduleToStartTimeout = &v
-	return s
-}
-
 // Provides details about the DecisionTaskScheduled event.
 type DecisionTaskScheduledEventAttributes struct {
 	_ struct{} `type:"structure"`
-
-	// The maximum amount of time the decision task can wait to be assigned to a
-	// worker.
-	ScheduleToStartTimeout *string `locationName:"scheduleToStartTimeout" type:"string"`
 
 	// The maximum duration for this decision task. The task is considered timed
 	// out if it doesn't completed within this duration.
@@ -7255,12 +7232,6 @@ func (s DecisionTaskScheduledEventAttributes) String() string {
 // value will be replaced with "sensitive".
 func (s DecisionTaskScheduledEventAttributes) GoString() string {
 	return s.String()
-}
-
-// SetScheduleToStartTimeout sets the ScheduleToStartTimeout field's value.
-func (s *DecisionTaskScheduledEventAttributes) SetScheduleToStartTimeout(v string) *DecisionTaskScheduledEventAttributes {
-	s.ScheduleToStartTimeout = &v
-	return s
 }
 
 // SetStartToCloseTimeout sets the StartToCloseTimeout field's value.
@@ -8728,7 +8699,7 @@ type GetWorkflowExecutionHistoryInput struct {
 	// If NextPageToken is returned there are more results available. The value
 	// of NextPageToken is a unique pagination token for each page. Make the call
 	// again using the returned token to retrieve the next page. Keep all other
-	// arguments unchanged. Each pagination token expires after 24 hours. Using
+	// arguments unchanged. Each pagination token expires after 60 seconds. Using
 	// an expired pagination token will return a 400 error: "Specified token has
 	// exceeded its maximum lifetime".
 	//
@@ -10031,7 +10002,7 @@ type ListActivityTypesInput struct {
 	// If NextPageToken is returned there are more results available. The value
 	// of NextPageToken is a unique pagination token for each page. Make the call
 	// again using the returned token to retrieve the next page. Keep all other
-	// arguments unchanged. Each pagination token expires after 24 hours. Using
+	// arguments unchanged. Each pagination token expires after 60 seconds. Using
 	// an expired pagination token will return a 400 error: "Specified token has
 	// exceeded its maximum lifetime".
 	//
@@ -10212,7 +10183,7 @@ type ListClosedWorkflowExecutionsInput struct {
 	// If NextPageToken is returned there are more results available. The value
 	// of NextPageToken is a unique pagination token for each page. Make the call
 	// again using the returned token to retrieve the next page. Keep all other
-	// arguments unchanged. Each pagination token expires after 24 hours. Using
+	// arguments unchanged. Each pagination token expires after 60 seconds. Using
 	// an expired pagination token will return a 400 error: "Specified token has
 	// exceeded its maximum lifetime".
 	//
@@ -10380,7 +10351,7 @@ type ListDomainsInput struct {
 	// If NextPageToken is returned there are more results available. The value
 	// of NextPageToken is a unique pagination token for each page. Make the call
 	// again using the returned token to retrieve the next page. Keep all other
-	// arguments unchanged. Each pagination token expires after 24 hours. Using
+	// arguments unchanged. Each pagination token expires after 60 seconds. Using
 	// an expired pagination token will return a 400 error: "Specified token has
 	// exceeded its maximum lifetime".
 	//
@@ -10523,7 +10494,7 @@ type ListOpenWorkflowExecutionsInput struct {
 	// If NextPageToken is returned there are more results available. The value
 	// of NextPageToken is a unique pagination token for each page. Make the call
 	// again using the returned token to retrieve the next page. Keep all other
-	// arguments unchanged. Each pagination token expires after 24 hours. Using
+	// arguments unchanged. Each pagination token expires after 60 seconds. Using
 	// an expired pagination token will return a 400 error: "Specified token has
 	// exceeded its maximum lifetime".
 	//
@@ -10757,7 +10728,7 @@ type ListWorkflowTypesInput struct {
 	// If NextPageToken is returned there are more results available. The value
 	// of NextPageToken is a unique pagination token for each page. Make the call
 	// again using the returned token to retrieve the next page. Keep all other
-	// arguments unchanged. Each pagination token expires after 24 hours. Using
+	// arguments unchanged. Each pagination token expires after 60 seconds. Using
 	// an expired pagination token will return a 400 error: "Specified token has
 	// exceeded its maximum lifetime".
 	//
@@ -11263,7 +11234,7 @@ type PollForDecisionTaskInput struct {
 	// If NextPageToken is returned there are more results available. The value
 	// of NextPageToken is a unique pagination token for each page. Make the call
 	// again using the returned token to retrieve the next page. Keep all other
-	// arguments unchanged. Each pagination token expires after 24 hours. Using
+	// arguments unchanged. Each pagination token expires after 60 seconds. Using
 	// an expired pagination token will return a 400 error: "Specified token has
 	// exceeded its maximum lifetime".
 	//
@@ -11280,16 +11251,11 @@ type PollForDecisionTaskInput struct {
 	// are returned in ascending order of the eventTimestamp of the events.
 	ReverseOrder *bool `locationName:"reverseOrder" type:"boolean"`
 
-	// When set to true, returns the events with eventTimestamp greater than or
-	// equal to eventTimestamp of the most recent DecisionTaskStarted event. By
-	// default, this parameter is set to false.
-	StartAtPreviousStartedEvent *bool `locationName:"startAtPreviousStartedEvent" type:"boolean"`
-
 	// Specifies the task list to poll for decision tasks.
 	//
-	// The specified string must not contain a : (colon), / (slash), | (vertical
-	// bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it
-	// must not be the literal string arn.
+	// The specified string must not start or end with whitespace. It must not contain
+	// a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f
+	// | \u007f-\u009f). Also, it must not be the literal string arn.
 	//
 	// TaskList is a required field
 	TaskList *TaskList `locationName:"taskList" type:"structure" required:"true"`
@@ -11364,12 +11330,6 @@ func (s *PollForDecisionTaskInput) SetNextPageToken(v string) *PollForDecisionTa
 // SetReverseOrder sets the ReverseOrder field's value.
 func (s *PollForDecisionTaskInput) SetReverseOrder(v bool) *PollForDecisionTaskInput {
 	s.ReverseOrder = &v
-	return s
-}
-
-// SetStartAtPreviousStartedEvent sets the StartAtPreviousStartedEvent field's value.
-func (s *PollForDecisionTaskInput) SetStartAtPreviousStartedEvent(v bool) *PollForDecisionTaskInput {
-	s.StartAtPreviousStartedEvent = &v
 	return s
 }
 
@@ -11791,9 +11751,9 @@ type RegisterActivityTypeInput struct {
 
 	// The name of the activity type within the domain.
 	//
-	// The specified string must not contain a : (colon), / (slash), | (vertical
-	// bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it
-	// must not be the literal string arn.
+	// The specified string must not start or end with whitespace. It must not contain
+	// a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f
+	// | \u007f-\u009f). Also, it must not be the literal string arn.
 	//
 	// Name is a required field
 	Name *string `locationName:"name" min:"1" type:"string" required:"true"`
@@ -11803,9 +11763,9 @@ type RegisterActivityTypeInput struct {
 	// The activity type consists of the name and version, the combination of which
 	// must be unique within the domain.
 	//
-	// The specified string must not contain a : (colon), / (slash), | (vertical
-	// bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it
-	// must not be the literal string arn.
+	// The specified string must not start or end with whitespace. It must not contain
+	// a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f
+	// | \u007f-\u009f). Also, it must not be the literal string arn.
 	//
 	// Version is a required field
 	Version *string `locationName:"version" min:"1" type:"string" required:"true"`
@@ -12154,9 +12114,9 @@ type RegisterWorkflowTypeInput struct {
 
 	// The name of the workflow type.
 	//
-	// The specified string must not contain a : (colon), / (slash), | (vertical
-	// bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it
-	// must not be the literal string arn.
+	// The specified string must not start or end with whitespace. It must not contain
+	// a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f
+	// | \u007f-\u009f). Also, it must not be the literal string arn.
 	//
 	// Name is a required field
 	Name *string `locationName:"name" min:"1" type:"string" required:"true"`
@@ -12167,9 +12127,9 @@ type RegisterWorkflowTypeInput struct {
 	// must be unique within the domain. To get a list of all currently registered
 	// workflow types, use the ListWorkflowTypes action.
 	//
-	// The specified string must not contain a : (colon), / (slash), | (vertical
-	// bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it
-	// must not be the literal string arn.
+	// The specified string must not start or end with whitespace. It must not contain
+	// a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f
+	// | \u007f-\u009f). Also, it must not be the literal string arn.
 	//
 	// Version is a required field
 	Version *string `locationName:"version" min:"1" type:"string" required:"true"`
@@ -13134,24 +13094,6 @@ type RespondDecisionTaskCompletedInput struct {
 	// User defined context to add to workflow execution.
 	ExecutionContext *string `locationName:"executionContext" type:"string"`
 
-	// The task list to use for the future decision tasks of this workflow execution.
-	// This list overrides the original task list you specified while starting the
-	// workflow execution.
-	TaskList *TaskList `locationName:"taskList" type:"structure"`
-
-	// Specifies a timeout (in seconds) for the task list override. When this parameter
-	// is missing, the task list override is permanent. This parameter makes it
-	// possible to temporarily override the task list. If a decision task scheduled
-	// on the override task list is not started within the timeout, the decision
-	// task will time out. Amazon SWF will revert the override and schedule a new
-	// decision task to the original task list.
-	//
-	// If a decision task scheduled on the override task list is started within
-	// the timeout, but not completed within the start-to-close timeout, Amazon
-	// SWF will also revert the override and schedule a new decision task to the
-	// original task list.
-	TaskListScheduleToStartTimeout *string `locationName:"taskListScheduleToStartTimeout" type:"string"`
-
 	// The taskToken from the DecisionTask.
 	//
 	// taskToken is generated by the service and should be treated as an opaque
@@ -13199,11 +13141,6 @@ func (s *RespondDecisionTaskCompletedInput) Validate() error {
 			}
 		}
 	}
-	if s.TaskList != nil {
-		if err := s.TaskList.Validate(); err != nil {
-			invalidParams.AddNested("TaskList", err.(request.ErrInvalidParams))
-		}
-	}
 
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -13220,18 +13157,6 @@ func (s *RespondDecisionTaskCompletedInput) SetDecisions(v []*Decision) *Respond
 // SetExecutionContext sets the ExecutionContext field's value.
 func (s *RespondDecisionTaskCompletedInput) SetExecutionContext(v string) *RespondDecisionTaskCompletedInput {
 	s.ExecutionContext = &v
-	return s
-}
-
-// SetTaskList sets the TaskList field's value.
-func (s *RespondDecisionTaskCompletedInput) SetTaskList(v *TaskList) *RespondDecisionTaskCompletedInput {
-	s.TaskList = v
-	return s
-}
-
-// SetTaskListScheduleToStartTimeout sets the TaskListScheduleToStartTimeout field's value.
-func (s *RespondDecisionTaskCompletedInput) SetTaskListScheduleToStartTimeout(v string) *RespondDecisionTaskCompletedInput {
-	s.TaskListScheduleToStartTimeout = &v
 	return s
 }
 
@@ -13292,9 +13217,9 @@ type ScheduleActivityTaskDecisionAttributes struct {
 
 	// The activityId of the activity task.
 	//
-	// The specified string must not contain a : (colon), / (slash), | (vertical
-	// bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it
-	// must not be the literal string arn.
+	// The specified string must not start or end with whitespace. It must not contain
+	// a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f
+	// | \u007f-\u009f). Also, it must not contain the literal string arn.
 	//
 	// ActivityId is a required field
 	ActivityId *string `locationName:"activityId" min:"1" type:"string" required:"true"`
@@ -13368,9 +13293,9 @@ type ScheduleActivityTaskDecisionAttributes struct {
 	// nor a default task list was specified at registration time then a fault is
 	// returned.
 	//
-	// The specified string must not contain a : (colon), / (slash), | (vertical
-	// bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it
-	// must not be the literal string arn.
+	// The specified string must not start or end with whitespace. It must not contain
+	// a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f
+	// | \u007f-\u009f). Also, it must not contain the literal string arn.
 	TaskList *TaskList `locationName:"taskList" type:"structure"`
 
 	// If set, specifies the priority with which the activity task is to be assigned
@@ -13591,9 +13516,8 @@ type ScheduleLambdaFunctionDecisionAttributes struct {
 	Name *string `locationName:"name" min:"1" type:"string" required:"true"`
 
 	// The timeout value, in seconds, after which the Lambda function is considered
-	// to be failed once it has started. This can be any integer from 1-900 (1s-15m).
-	//
-	// If no value is supplied, then a default value of 900s is assumed.
+	// to be failed once it has started. This can be any integer from 1-300 (1s-5m).
+	// If no value is supplied, than a default value of 300s is assumed.
 	StartToCloseTimeout *string `locationName:"startToCloseTimeout" type:"string"`
 }
 
@@ -14258,7 +14182,7 @@ type StartChildWorkflowExecutionDecisionAttributes struct {
 	//
 	// The specified string must not start or end with whitespace. It must not contain
 	// a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f
-	// | \u007f-\u009f). Also, it must not be the literal string arn.
+	// | \u007f-\u009f). Also, it must not contain the literal string arn.
 	TaskList *TaskList `locationName:"taskList" type:"structure"`
 
 	// A task priority that, if set, specifies the priority for a decision task
@@ -14287,9 +14211,9 @@ type StartChildWorkflowExecutionDecisionAttributes struct {
 
 	// The workflowId of the workflow execution.
 	//
-	// The specified string must not contain a : (colon), / (slash), | (vertical
-	// bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it
-	// must not be the literal string arn.
+	// The specified string must not start or end with whitespace. It must not contain
+	// a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f
+	// | \u007f-\u009f). Also, it must not contain the literal string arn.
 	//
 	// WorkflowId is a required field
 	WorkflowId *string `locationName:"workflowId" min:"1" type:"string" required:"true"`
@@ -14789,9 +14713,9 @@ type StartTimerDecisionAttributes struct {
 
 	// The unique ID of the timer.
 	//
-	// The specified string must not contain a : (colon), / (slash), | (vertical
-	// bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it
-	// must not be the literal string arn.
+	// The specified string must not start or end with whitespace. It must not contain
+	// a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f
+	// | \u007f-\u009f). Also, it must not contain the literal string arn.
 	//
 	// TimerId is a required field
 	TimerId *string `locationName:"timerId" min:"1" type:"string" required:"true"`
@@ -14947,10 +14871,6 @@ type StartWorkflowExecutionInput struct {
 
 	// The name of the domain in which the workflow execution is created.
 	//
-	// The specified string must not contain a : (colon), / (slash), | (vertical
-	// bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it
-	// must not be the literal string arn.
-	//
 	// Domain is a required field
 	Domain *string `locationName:"domain" min:"1" type:"string" required:"true"`
 
@@ -14999,9 +14919,9 @@ type StartWorkflowExecutionInput struct {
 	// is set nor a default task list was specified at registration time then a
 	// fault is returned.
 	//
-	// The specified string must not contain a : (colon), / (slash), | (vertical
-	// bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it
-	// must not be the literal string arn.
+	// The specified string must not start or end with whitespace. It must not contain
+	// a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f
+	// | \u007f-\u009f). Also, it must not be the literal string arn.
 	TaskList *TaskList `locationName:"taskList" type:"structure"`
 
 	// The task priority to use for this workflow execution. This overrides any
@@ -15034,9 +14954,9 @@ type StartWorkflowExecutionInput struct {
 	// of a previous execution. You cannot have two open workflow executions with
 	// the same workflowId at the same time within the same domain.
 	//
-	// The specified string must not contain a : (colon), / (slash), | (vertical
-	// bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it
-	// must not be the literal string arn.
+	// The specified string must not start or end with whitespace. It must not contain
+	// a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f
+	// | \u007f-\u009f). Also, it must not be the literal string arn.
 	//
 	// WorkflowId is a required field
 	WorkflowId *string `locationName:"workflowId" min:"1" type:"string" required:"true"`
@@ -18151,16 +18071,12 @@ func ContinueAsNewWorkflowExecutionFailedCause_Values() []string {
 const (
 	// DecisionTaskTimeoutTypeStartToClose is a DecisionTaskTimeoutType enum value
 	DecisionTaskTimeoutTypeStartToClose = "START_TO_CLOSE"
-
-	// DecisionTaskTimeoutTypeScheduleToStart is a DecisionTaskTimeoutType enum value
-	DecisionTaskTimeoutTypeScheduleToStart = "SCHEDULE_TO_START"
 )
 
 // DecisionTaskTimeoutType_Values returns all elements of the DecisionTaskTimeoutType enum
 func DecisionTaskTimeoutType_Values() []string {
 	return []string{
 		DecisionTaskTimeoutTypeStartToClose,
-		DecisionTaskTimeoutTypeScheduleToStart,
 	}
 }
 

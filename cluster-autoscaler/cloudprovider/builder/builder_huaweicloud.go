@@ -23,7 +23,6 @@ import (
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/huaweicloud"
 	"k8s.io/autoscaler/cluster-autoscaler/config"
-	"k8s.io/client-go/informers"
 )
 
 // AvailableCloudProviders supported by the cloud provider builder.
@@ -34,7 +33,7 @@ var AvailableCloudProviders = []string{
 // DefaultCloudProvider for huaweicloud-only build is huaweicloud.
 const DefaultCloudProvider = cloudprovider.HuaweicloudProviderName
 
-func buildCloudProvider(opts config.AutoscalingOptions, do cloudprovider.NodeGroupDiscoveryOptions, rl *cloudprovider.ResourceLimiter, _ informers.SharedInformerFactory) cloudprovider.CloudProvider {
+func buildCloudProvider(opts config.AutoscalingOptions, do cloudprovider.NodeGroupDiscoveryOptions, rl *cloudprovider.ResourceLimiter) cloudprovider.CloudProvider {
 	switch opts.CloudProviderName {
 	case cloudprovider.HuaweicloudProviderName:
 		return huaweicloud.BuildHuaweiCloud(opts, do, rl)

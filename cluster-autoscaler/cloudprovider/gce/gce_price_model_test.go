@@ -24,7 +24,6 @@ import (
 
 	apiv1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
-	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/gce/localssdsize"
 	"k8s.io/autoscaler/cluster-autoscaler/utils/gpu"
 	. "k8s.io/autoscaler/cluster-autoscaler/utils/test"
 	"k8s.io/autoscaler/cluster-autoscaler/utils/units"
@@ -64,10 +63,7 @@ func testNode(t *testing.T, nodeName string, instanceType string, millicpu int64
 func testNodeEphemeralStorage(t *testing.T, nodeName string, isEphemeralStorageLocalSsd bool, localSsdCount int, bootDiskType string, bootDiskSize int, isSpot bool) *apiv1.Node {
 	node := testNode(t, nodeName, "", 8000, 30*units.GiB, "", 0, false, isSpot)
 	if isEphemeralStorageLocalSsd {
-		simpleLocalSSDProvider := localssdsize.NewSimpleLocalSSDProvider()
-		machineType := ""
-		ssdSize := simpleLocalSSDProvider.SSDSizeInGiB(machineType)
-		AddEphemeralStorageToNode(node, int64(localSsdCount)*int64(ssdSize))
+		AddEphemeralStorageToNode(node, int64(localSsdCount)*LocalSSDDiskSizeInGiB)
 	} else {
 		AddEphemeralStorageToNode(node, int64(bootDiskSize))
 	}
@@ -90,6 +86,7 @@ func TestGetNodePrice(t *testing.T) {
 		cheaperNode                *apiv1.Node
 		expensiveNode              *apiv1.Node
 		priceComparisonCoefficient float64
+		expanderSupport            bool
 	}{
 		// instance types
 		"e2 is cheaper than n1": {
@@ -110,7 +107,7 @@ func TestGetNodePrice(t *testing.T) {
 		"custom node price scales linearly": {
 			cheaperNode:                testNode(t, "small_custom", "custom-1", 1000, 3.75*units.GiB, "", 0, false, false),
 			expensiveNode:              testNode(t, "large_custom", "custom-8", 8000, 30*units.GiB, "", 0, false, false),
-			priceComparisonCoefficient: 0.16,
+			priceComparisonCoefficient: 1.0 / 7.9,
 		},
 		"custom node price scales linearly 2": {
 			cheaperNode:                testNode(t, "large_custom", "custom-8", 8000, 30*units.GiB, "", 0, false, false),
@@ -197,32 +194,36 @@ func TestGetNodePrice(t *testing.T) {
 			expensiveNode:              testNode(t, "known", "n1-custom", 8000, 30*units.GiB, "", 0, false, false),
 			priceComparisonCoefficient: 1.001,
 		},
-		// Ephemeral storage
-		"ephemeral storage: less local SSD count is cheaper": {
+		// Ephemeral storage support
+		"ephemeral storage support: less local SSD count is cheaper": {
 			cheaperNode:                testNodeEphemeralStorage(t, "cheapNode", true, 2, "pd-standard", 100, false),
 			expensiveNode:              testNodeEphemeralStorage(t, "expensiveNode", true, 4, "pd-standard", 100, false),
 			priceComparisonCoefficient: 1,
+			expanderSupport:            true,
 		},
-		"ephemeral storage: local SSD cheaper than boot disk": {
+		"ephemeral storage support: local SSD cheaper than boot disk": {
 			cheaperNode:                testNodeEphemeralStorage(t, "cheapNode", true, 1, "pd-standard", 100, true),
 			expensiveNode:              testNodeEphemeralStorage(t, "expensiveNode", false, 0, "pd-ssd", 100, false),
 			priceComparisonCoefficient: 1,
+			expanderSupport:            true,
 		},
-		"ephemeral storage: node with cheaper boot disk option is cheaper": {
+		"ephemeral storage support: node with cheaper boot disk option is cheaper": {
 			cheaperNode:                testNodeEphemeralStorage(t, "cheapNode", false, 0, "pd-standard", 100, false),
 			expensiveNode:              testNodeEphemeralStorage(t, "expensiveNode", false, 0, "pd-ssd", 100, false),
 			priceComparisonCoefficient: 1,
+			expanderSupport:            true,
 		},
 		"node with default boot disk is cheaper that node with more expensive boot disk type": {
 			cheaperNode:                testNode(t, "cheapNode", "", 8000, 30*units.GiB, "", 0, false, false),
 			expensiveNode:              testNodeEphemeralStorage(t, "expensiveNode", false, 0, "pd-ssd", 100, false),
 			priceComparisonCoefficient: 1,
+			expanderSupport:            true,
 		},
 	}
 
 	for tn, tc := range cases {
 		t.Run(tn, func(t *testing.T) {
-			model := NewGcePriceModel(NewGcePriceInfo(), localssdsize.NewSimpleLocalSSDProvider())
+			model := NewGcePriceModel(NewGcePriceInfo(), tc.expanderSupport)
 			now := time.Now()
 
 			price1, err := model.NodePrice(tc.cheaperNode, now, now.Add(time.Hour))
@@ -241,7 +242,7 @@ func TestGetPodPrice(t *testing.T) {
 	pod2 := BuildTestPodWithEphemeralStorage("a2", 2*100, 2*500*units.MiB, 2*100*units.GiB)
 	pod3 := BuildTestPodWithEphemeralStorage("a2", 2*100, 2*500*units.MiB, 100*units.GiB)
 
-	model := NewGcePriceModel(NewGcePriceInfo(), localssdsize.NewSimpleLocalSSDProvider())
+	model := NewGcePriceModel(NewGcePriceInfo(), true)
 	now := time.Now()
 
 	price1, err := model.PodPrice(pod1, now, now.Add(time.Hour))

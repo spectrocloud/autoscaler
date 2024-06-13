@@ -64,7 +64,7 @@ const (
 	// ErrCodeInvalidRequestException for service response error code
 	// "InvalidRequestException".
 	//
-	// You have requested an action that that the service doesn't support.
+	// You have made a request for an action that is not supported by the service.
 	ErrCodeInvalidRequestException = "InvalidRequestException"
 
 	// ErrCodeInvalidVersionNumberException for service response error code

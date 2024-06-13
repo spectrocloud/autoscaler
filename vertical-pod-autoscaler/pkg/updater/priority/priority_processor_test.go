@@ -20,7 +20,6 @@ import (
 	"testing"
 
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
 	vpa_types "k8s.io/autoscaler/vertical-pod-autoscaler/pkg/apis/autoscaling.k8s.io/v1"
 	"k8s.io/autoscaler/vertical-pod-autoscaler/pkg/utils/annotations"
 	"k8s.io/autoscaler/vertical-pod-autoscaler/pkg/utils/test"
@@ -38,7 +37,7 @@ func TestGetUpdatePriority(t *testing.T) {
 	}{
 		{
 			name: "simple scale up",
-			pod:  test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("2")).Get()).Get(),
+			pod:  test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "2", "")).Get(),
 			vpa:  test.VerticalPodAutoscaler().WithContainer(containerName).WithTarget("10", "").Get(),
 			expectedPrio: PodPriority{
 				OutsideRecommendedRange: false,
@@ -47,7 +46,7 @@ func TestGetUpdatePriority(t *testing.T) {
 			},
 		}, {
 			name: "simple scale down",
-			pod:  test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("4")).Get()).Get(),
+			pod:  test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "4", "")).Get(),
 			vpa:  test.VerticalPodAutoscaler().WithContainer(containerName).WithTarget("2", "").Get(),
 			expectedPrio: PodPriority{
 				OutsideRecommendedRange: false,
@@ -56,7 +55,7 @@ func TestGetUpdatePriority(t *testing.T) {
 			},
 		}, {
 			name: "no resource diff",
-			pod:  test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("2")).Get()).Get(),
+			pod:  test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "2", "")).Get(),
 			vpa:  test.VerticalPodAutoscaler().WithContainer(containerName).WithTarget("2", "").Get(),
 			expectedPrio: PodPriority{
 				OutsideRecommendedRange: false,
@@ -65,7 +64,7 @@ func TestGetUpdatePriority(t *testing.T) {
 			},
 		}, {
 			name: "scale up on milliquanitites",
-			pod:  test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("10m")).Get()).Get(),
+			pod:  test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "10m", "")).Get(),
 			vpa:  test.VerticalPodAutoscaler().WithContainer(containerName).WithTarget("900m", "").Get(),
 			expectedPrio: PodPriority{
 				OutsideRecommendedRange: false,
@@ -74,7 +73,7 @@ func TestGetUpdatePriority(t *testing.T) {
 			},
 		}, {
 			name: "scale up outside recommended range",
-			pod:  test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("4")).Get()).Get(),
+			pod:  test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "4", "")).Get(),
 			vpa: test.VerticalPodAutoscaler().WithContainer(containerName).
 				WithTarget("10", "").
 				WithLowerBound("6", "").
@@ -86,7 +85,7 @@ func TestGetUpdatePriority(t *testing.T) {
 			},
 		}, {
 			name: "scale down outside recommended range",
-			pod:  test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("8")).Get()).Get(),
+			pod:  test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "8", "")).Get(),
 			vpa: test.VerticalPodAutoscaler().WithContainer(containerName).
 				WithTarget("2", "").
 				WithLowerBound("1", "").
@@ -98,7 +97,7 @@ func TestGetUpdatePriority(t *testing.T) {
 			},
 		}, {
 			name: "scale up with multiple quantities",
-			pod:  test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("2")).Get()).Get(),
+			pod:  test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "2", "")).Get(),
 			vpa:  test.VerticalPodAutoscaler().WithContainer(containerName).WithTarget("10", "").Get(),
 			expectedPrio: PodPriority{
 				OutsideRecommendedRange: false,
@@ -107,7 +106,7 @@ func TestGetUpdatePriority(t *testing.T) {
 			},
 		}, {
 			name: "multiple resources, both scale up",
-			pod:  test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("3")).WithMemRequest(resource.MustParse("10M")).Get()).Get(),
+			pod:  test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "3", "10M")).Get(),
 			vpa:  test.VerticalPodAutoscaler().WithContainer(containerName).WithTarget("6", "20M").Get(),
 			expectedPrio: PodPriority{
 				OutsideRecommendedRange: false,
@@ -116,7 +115,7 @@ func TestGetUpdatePriority(t *testing.T) {
 			},
 		}, {
 			name: "multiple resources, only one scale up",
-			pod:  test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("4")).WithMemRequest(resource.MustParse("10M")).Get()).Get(),
+			pod:  test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "4", "10M")).Get(),
 			vpa:  test.VerticalPodAutoscaler().WithContainer(containerName).WithTarget("2", "20M").Get(),
 			expectedPrio: PodPriority{
 				OutsideRecommendedRange: false,
@@ -125,7 +124,7 @@ func TestGetUpdatePriority(t *testing.T) {
 			},
 		}, {
 			name: "multiple resources, both scale down",
-			pod:  test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("4")).WithMemRequest(resource.MustParse("20M")).Get()).Get(),
+			pod:  test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "4", "20M")).Get(),
 			vpa:  test.VerticalPodAutoscaler().WithContainer(containerName).WithTarget("2", "10M").Get(),
 			expectedPrio: PodPriority{
 				OutsideRecommendedRange: false,
@@ -134,7 +133,7 @@ func TestGetUpdatePriority(t *testing.T) {
 			},
 		}, {
 			name: "multiple resources, one outside recommended range",
-			pod:  test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("4")).WithMemRequest(resource.MustParse("20M")).Get()).Get(),
+			pod:  test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "4", "20M")).Get(),
 			vpa: test.VerticalPodAutoscaler().WithContainer(containerName).
 				WithTarget("2", "10M").
 				WithLowerBound("1", "5M").
@@ -146,8 +145,8 @@ func TestGetUpdatePriority(t *testing.T) {
 			},
 		}, {
 			name: "multiple containers, both scale up",
-			pod: test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("1")).Get()).
-				AddContainer(test.Container().WithName("test-container-2").WithCPURequest(resource.MustParse("2")).Get()).Get(),
+			pod: test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "1", "")).
+				AddContainer(test.BuildTestContainer("test-container-2", "2", "")).Get(),
 			vpa: test.VerticalPodAutoscaler().WithContainer(containerName).
 				WithTarget("4", "").AppendRecommendation(
 				test.Recommendation().
@@ -160,8 +159,8 @@ func TestGetUpdatePriority(t *testing.T) {
 			},
 		}, {
 			name: "multiple containers, both scale down",
-			pod: test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("3")).Get()).
-				AddContainer(test.Container().WithName("test-container-2").WithCPURequest(resource.MustParse("7")).Get()).Get(),
+			pod: test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "3", "")).
+				AddContainer(test.BuildTestContainer("test-container-2", "7", "")).Get(),
 			vpa: test.VerticalPodAutoscaler().WithContainer(containerName).
 				WithTarget("1", "").AppendRecommendation(
 				test.Recommendation().
@@ -174,8 +173,8 @@ func TestGetUpdatePriority(t *testing.T) {
 			},
 		}, {
 			name: "multiple containers, both scale up, one outside range",
-			pod: test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("1")).Get()).
-				AddContainer(test.Container().WithName("test-container-2").WithCPURequest(resource.MustParse("2")).Get()).Get(),
+			pod: test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "1", "")).
+				AddContainer(test.BuildTestContainer("test-container-2", "2", "")).Get(),
 			vpa: test.VerticalPodAutoscaler().WithContainer(containerName).
 				WithTarget("4", "").
 				WithLowerBound("1", "").AppendRecommendation(
@@ -194,8 +193,8 @@ func TestGetUpdatePriority(t *testing.T) {
 			//   container1: request={6 CPU, 10 MB}, recommended={8 CPU, 20 MB}
 			//   container2: request={4 CPU, 30 MB}, recommended={7 CPU, 30 MB}
 			//   total:      request={10 CPU, 40 MB}, recommended={15 CPU, 50 MB}
-			pod: test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("6")).WithMemRequest(resource.MustParse("10M")).Get()).
-				AddContainer(test.Container().WithName("test-container-2").WithCPURequest(resource.MustParse("4")).WithMemRequest(resource.MustParse("30M")).Get()).Get(),
+			pod: test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "6", "10M")).
+				AddContainer(test.BuildTestContainer("test-container-2", "4", "30M")).Get(),
 			vpa: test.VerticalPodAutoscaler().WithContainer(containerName).
 				WithTarget("8", "20M").AppendRecommendation(
 				test.Recommendation().
@@ -222,7 +221,7 @@ func TestGetUpdatePriority(t *testing.T) {
 // recommendation for a container.
 func TestGetUpdatePriority_NoRecommendationForContainer(t *testing.T) {
 	p := NewProcessor()
-	pod := test.Pod().WithName("POD1").AddContainer(test.Container().WithName("test-container").WithCPURequest(resource.MustParse("5")).WithMemRequest(resource.MustParse("10")).Get()).Get()
+	pod := test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer("test-container", "5", "10")).Get()
 	vpa := test.VerticalPodAutoscaler().WithName("test-vpa").WithContainer("test-container").Get()
 	result := p.GetUpdatePriority(pod, vpa, nil)
 	assert.NotNil(t, result)
@@ -246,28 +245,28 @@ func TestGetUpdatePriority_VpaObservedContainers(t *testing.T) {
 	}{
 		{
 			name:           "with no VpaObservedContainers annotation",
-			pod:            test.Pod().WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("1")).Get()).Get(),
+			pod:            test.Pod().WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "1", "")).Get(),
 			recommendation: test.Recommendation().WithContainer(containerName).WithTarget("10", "").Get(),
 			want:           optedInContainerDiff,
 		},
 		{
 			name: "with container listed in VpaObservedContainers annotation",
 			pod: test.Pod().WithAnnotations(map[string]string{annotations.VpaObservedContainersLabel: containerName}).
-				WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("1")).Get()).Get(),
+				WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "1", "")).Get(),
 			recommendation: test.Recommendation().WithContainer(containerName).WithTarget("10", "").Get(),
 			want:           optedInContainerDiff,
 		},
 		{
 			name: "with container not listed in VpaObservedContainers annotation",
 			pod: test.Pod().WithAnnotations(map[string]string{annotations.VpaObservedContainersLabel: ""}).
-				WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("1")).Get()).Get(),
+				WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "1", "")).Get(),
 			recommendation: test.Recommendation().WithContainer(containerName).WithTarget("10", "").Get(),
 			want:           optedOutContainerDiff,
 		},
 		{
 			name: "with incorrect VpaObservedContainers annotation",
 			pod: test.Pod().WithAnnotations(map[string]string{annotations.VpaObservedContainersLabel: "abcd;';"}).
-				WithName("POD1").AddContainer(test.Container().WithName(containerName).WithCPURequest(resource.MustParse("1")).Get()).Get(),
+				WithName("POD1").AddContainer(test.BuildTestContainer(containerName, "1", "")).Get(),
 			recommendation: test.Recommendation().WithContainer(containerName).WithTarget("10", "").Get(),
 			want:           optedInContainerDiff,
 		},

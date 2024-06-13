@@ -11,7 +11,8 @@ const (
 	// ErrCodeAccessDeniedException for service response error code
 	// "AccessDeniedException".
 	//
-	// An error occurred because you don't have permissions to access the resource.
+	// An error occurred because user does not have permissions to access the resource.
+	// Returns HTTP status code 403.
 	ErrCodeAccessDeniedException = "AccessDeniedException"
 
 	// ErrCodeBaseException for service response error code
@@ -24,72 +25,64 @@ const (
 	// "ConflictException".
 	//
 	// An error occurred because the client attempts to remove a resource that is
-	// currently in use.
+	// currently in use. Returns HTTP status code 409.
 	ErrCodeConflictException = "ConflictException"
-
-	// ErrCodeDependencyFailureException for service response error code
-	// "DependencyFailureException".
-	//
-	// An exception for when a failure in one of the dependencies results in the
-	// service being unable to fetch details about the resource.
-	ErrCodeDependencyFailureException = "DependencyFailureException"
 
 	// ErrCodeDisabledOperationException for service response error code
 	// "DisabledOperationException".
 	//
-	// An error occured because the client wanted to access an unsupported operation.
+	// An error occured because the client wanted to access a not supported operation.
+	// Gives http status code of 409.
 	ErrCodeDisabledOperationException = "DisabledOperationException"
 
 	// ErrCodeInternalException for service response error code
 	// "InternalException".
 	//
-	// Request processing failed because of an unknown error, exception, or internal
-	// failure.
+	// The request processing has failed because of an unknown error, exception
+	// or failure (the failure is internal to the service) . Gives http status code
+	// of 500.
 	ErrCodeInternalException = "InternalException"
 
 	// ErrCodeInvalidPaginationTokenException for service response error code
 	// "InvalidPaginationTokenException".
 	//
-	// Request processing failed because you provided an invalid pagination token.
+	// The request processing has failed because of invalid pagination token provided
+	// by customer. Returns an HTTP status code of 400.
 	ErrCodeInvalidPaginationTokenException = "InvalidPaginationTokenException"
 
 	// ErrCodeInvalidTypeException for service response error code
 	// "InvalidTypeException".
 	//
-	// An exception for trying to create or access a sub-resource that's either
-	// invalid or not supported.
+	// An exception for trying to create or access sub-resource that is either invalid
+	// or not supported. Gives http status code of 409.
 	ErrCodeInvalidTypeException = "InvalidTypeException"
 
 	// ErrCodeLimitExceededException for service response error code
 	// "LimitExceededException".
 	//
-	// An exception for trying to create more than the allowed number of resources
-	// or sub-resources.
+	// An exception for trying to create more than allowed resources or sub-resources.
+	// Gives http status code of 409.
 	ErrCodeLimitExceededException = "LimitExceededException"
 
 	// ErrCodeResourceAlreadyExistsException for service response error code
 	// "ResourceAlreadyExistsException".
 	//
-	// An exception for creating a resource that already exists.
+	// An exception for creating a resource that already exists. Gives http status
+	// code of 400.
 	ErrCodeResourceAlreadyExistsException = "ResourceAlreadyExistsException"
 
 	// ErrCodeResourceNotFoundException for service response error code
 	// "ResourceNotFoundException".
 	//
-	// An exception for accessing or deleting a resource that doesn't exist.
+	// An exception for accessing or deleting a resource that does not exist. Gives
+	// http status code of 400.
 	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
-
-	// ErrCodeSlotNotAvailableException for service response error code
-	// "SlotNotAvailableException".
-	//
-	// An exception for attempting to schedule a domain action during an unavailable
-	// time slot.
-	ErrCodeSlotNotAvailableException = "SlotNotAvailableException"
 
 	// ErrCodeValidationException for service response error code
 	// "ValidationException".
 	//
-	// An exception for accessing or deleting a resource that doesn't exist.
+	// An exception for missing / invalid input fields. Gives http status code of
+	// 400.
 	ErrCodeValidationException = "ValidationException"
 )
 
@@ -97,7 +90,6 @@ var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
 	"AccessDeniedException":           newErrorAccessDeniedException,
 	"BaseException":                   newErrorBaseException,
 	"ConflictException":               newErrorConflictException,
-	"DependencyFailureException":      newErrorDependencyFailureException,
 	"DisabledOperationException":      newErrorDisabledOperationException,
 	"InternalException":               newErrorInternalException,
 	"InvalidPaginationTokenException": newErrorInvalidPaginationTokenException,
@@ -105,6 +97,5 @@ var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
 	"LimitExceededException":          newErrorLimitExceededException,
 	"ResourceAlreadyExistsException":  newErrorResourceAlreadyExistsException,
 	"ResourceNotFoundException":       newErrorResourceNotFoundException,
-	"SlotNotAvailableException":       newErrorSlotNotAvailableException,
 	"ValidationException":             newErrorValidationException,
 }

@@ -18,7 +18,6 @@ package clusterapi
 
 import (
 	"fmt"
-	"k8s.io/klog/v2"
 	"math/rand"
 
 	"github.com/pkg/errors"
@@ -87,11 +86,6 @@ func (ng *nodegroup) IncreaseSize(delta int) error {
 	}
 
 	return ng.scalableResource.SetSize(size + delta)
-}
-
-// AtomicIncreaseSize is not implemented.
-func (ng *nodegroup) AtomicIncreaseSize(delta int) error {
-	return cloudprovider.ErrNotImplemented
 }
 
 // DeleteNodes deletes nodes from this node group. Error is returned
@@ -361,12 +355,7 @@ func newNodeGroupFromScalableResource(controller *machineController, unstructure
 	}
 
 	// Ensure the node group would have the capacity to scale
-	// allow MinSize = 0
-	// allow MaxSize = MinSize
-	// don't allow MaxSize < MinSize
-	// don't allow MaxSize = MinSize = 0
-	if scalableResource.MaxSize()-scalableResource.MinSize() < 0 || scalableResource.MaxSize() == 0 {
-		klog.V(4).Infof("nodegroup %s has no scaling capacity, skipping", scalableResource.Name())
+	if scalableResource.MaxSize()-scalableResource.MinSize() < 1 {
 		return nil, nil
 	}
 
@@ -380,7 +369,7 @@ func buildGenericLabels(nodeName string) map[string]string {
 	// TODO revisit this function and add an explanation about what these
 	// labels are used for, or remove them if not necessary
 	m := make(map[string]string)
-	m[corev1.LabelArchStable] = GetDefaultScaleFromZeroArchitecture().Name()
+	m[corev1.LabelArchStable] = cloudprovider.DefaultArch
 
 	m[corev1.LabelOSStable] = cloudprovider.DefaultOS
 

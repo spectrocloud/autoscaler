@@ -30,10 +30,9 @@ import (
 
 // PodGroup contains a group of pods that are equivalent in terms of schedulability.
 type PodGroup struct {
-	Pods              []*apiv1.Pod
-	SchedulingErrors  map[string]status.Reasons
-	SchedulableGroups []string
-	Schedulable       bool
+	Pods             []*apiv1.Pod
+	SchedulingErrors map[string]status.Reasons
+	Schedulable      bool
 }
 
 // BuildPodGroups prepares pod groups with equivalent scheduling properties.

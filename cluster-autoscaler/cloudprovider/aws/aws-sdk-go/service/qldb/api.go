@@ -239,7 +239,7 @@ func (c *QLDB) DeleteLedgerRequest(input *DeleteLedgerInput) (req *request.Reque
 //
 // If deletion protection is enabled, you must first disable it before you can
 // delete the ledger. You can disable it by calling the UpdateLedger operation
-// to set this parameter to false.
+// to set the flag to false.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -593,6 +593,12 @@ func (c *QLDB) ExportJournalToS3Request(input *ExportJournalToS3Input) (req *req
 // a specified Amazon Simple Storage Service (Amazon S3) bucket. A journal export
 // job can write the data objects in either the text or binary representation
 // of Amazon Ion format, or in JSON Lines text format.
+//
+// In JSON Lines format, each journal block in the exported data object is a
+// valid JSON object that is delimited by a newline. You can use this format
+// to easily integrate JSON exports with analytics tools such as Glue and Amazon
+// Athena because these services can parse newline-delimited JSON automatically.
+// For more information about the format, see JSON Lines (https://jsonlines.org/).
 //
 // If the ledger with the given Name doesn't exist, then throws ResourceNotFoundException.
 //
@@ -957,7 +963,9 @@ func (c *QLDB) ListJournalKinesisStreamsForLedgerRequest(input *ListJournalKines
 
 // ListJournalKinesisStreamsForLedger API operation for Amazon QLDB.
 //
-// Returns all Amazon QLDB journal streams for a given ledger.
+// Returns an array of all Amazon QLDB journal stream descriptors for a given
+// ledger. The output of each stream descriptor includes the same details that
+// are returned by DescribeJournalKinesisStream.
 //
 // This action does not return any expired journal streams. For more information,
 // see Expiration for terminal streams (https://docs.aws.amazon.com/qldb/latest/developerguide/streams.create.html#streams.create.states.expiration)
@@ -1107,8 +1115,8 @@ func (c *QLDB) ListJournalS3ExportsRequest(input *ListJournalS3ExportsInput) (re
 
 // ListJournalS3Exports API operation for Amazon QLDB.
 //
-// Returns all journal export jobs for all ledgers that are associated with
-// the current Amazon Web Services account and Region.
+// Returns an array of journal export job descriptions for all ledgers that
+// are associated with the current Amazon Web Services account and Region.
 //
 // This action returns a maximum of MaxResults items, and is paginated so that
 // you can retrieve all the items by calling ListJournalS3Exports multiple times.
@@ -1245,7 +1253,7 @@ func (c *QLDB) ListJournalS3ExportsForLedgerRequest(input *ListJournalS3ExportsF
 
 // ListJournalS3ExportsForLedger API operation for Amazon QLDB.
 //
-// Returns all journal export jobs for a specified ledger.
+// Returns an array of journal export job descriptions for a specified ledger.
 //
 // This action returns a maximum of MaxResults items, and is paginated so that
 // you can retrieve all the items by calling ListJournalS3ExportsForLedger multiple
@@ -1383,11 +1391,11 @@ func (c *QLDB) ListLedgersRequest(input *ListLedgersInput) (req *request.Request
 
 // ListLedgers API operation for Amazon QLDB.
 //
-// Returns all ledgers that are associated with the current Amazon Web Services
-// account and Region.
+// Returns an array of ledger summaries that are associated with the current
+// Amazon Web Services account and Region.
 //
-// This action returns a maximum of MaxResults items and is paginated so that
-// you can retrieve all the items by calling ListLedgers multiple times.
+// This action returns a maximum of 100 items and is paginated so that you can
+// retrieve all the items by calling ListLedgers multiple times.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -2077,13 +2085,12 @@ func (s *CancelJournalKinesisStreamOutput) SetStreamId(v string) *CancelJournalK
 type CreateLedgerInput struct {
 	_ struct{} `type:"structure"`
 
-	// Specifies whether the ledger is protected from being deleted by any user.
-	// If not defined during ledger creation, this feature is enabled (true) by
-	// default.
+	// The flag that prevents a ledger from being deleted by any user. If not provided
+	// on ledger creation, this feature is enabled (true) by default.
 	//
 	// If deletion protection is enabled, you must first disable it before you can
 	// delete the ledger. You can disable it by calling the UpdateLedger operation
-	// to set this parameter to false.
+	// to set the flag to false.
 	DeletionProtection *bool `type:"boolean"`
 
 	// The key in Key Management Service (KMS) to use for encryption of data at
@@ -2097,10 +2104,10 @@ type CreateLedgerInput struct {
 	//
 	//    * Undefined: By default, use an Amazon Web Services owned KMS key.
 	//
-	//    * A valid symmetric customer managed KMS key: Use the specified symmetric
-	//    encryption KMS key in your account that you create, own, and manage. Amazon
-	//    QLDB does not support asymmetric keys. For more information, see Using
-	//    symmetric and asymmetric keys (https://docs.aws.amazon.com/kms/latest/developerguide/symmetric-asymmetric.html)
+	//    * A valid symmetric customer managed KMS key: Use the specified KMS key
+	//    in your account that you create, own, and manage. Amazon QLDB does not
+	//    support asymmetric keys. For more information, see Using symmetric and
+	//    asymmetric keys (https://docs.aws.amazon.com/kms/latest/developerguide/symmetric-asymmetric.html)
 	//    in the Key Management Service Developer Guide.
 	//
 	// To specify a customer managed KMS key, you can use its key ID, Amazon Resource
@@ -2240,13 +2247,12 @@ type CreateLedgerOutput struct {
 	// 1970 UTC.)
 	CreationDateTime *time.Time `type:"timestamp"`
 
-	// Specifies whether the ledger is protected from being deleted by any user.
-	// If not defined during ledger creation, this feature is enabled (true) by
-	// default.
+	// The flag that prevents a ledger from being deleted by any user. If not provided
+	// on ledger creation, this feature is enabled (true) by default.
 	//
 	// If deletion protection is enabled, you must first disable it before you can
 	// delete the ledger. You can disable it by calling the UpdateLedger operation
-	// to set this parameter to false.
+	// to set the flag to false.
 	DeletionProtection *bool `type:"boolean"`
 
 	// The ARN of the customer managed KMS key that the ledger uses for encryption
@@ -2655,13 +2661,12 @@ type DescribeLedgerOutput struct {
 	// 1970 UTC.)
 	CreationDateTime *time.Time `type:"timestamp"`
 
-	// Specifies whether the ledger is protected from being deleted by any user.
-	// If not defined during ledger creation, this feature is enabled (true) by
-	// default.
+	// The flag that prevents a ledger from being deleted by any user. If not provided
+	// on ledger creation, this feature is enabled (true) by default.
 	//
 	// If deletion protection is enabled, you must first disable it before you can
 	// delete the ledger. You can disable it by calling the UpdateLedger operation
-	// to set this parameter to false.
+	// to set the flag to false.
 	DeletionProtection *bool `type:"boolean"`
 
 	// Information about the encryption of data at rest in the ledger. This includes
@@ -2771,23 +2776,14 @@ type ExportJournalToS3Input struct {
 	// Name is a required field
 	Name *string `location:"uri" locationName:"name" min:"1" type:"string" required:"true"`
 
-	// The output format of your exported journal data. A journal export job can
-	// write the data objects in either the text or binary representation of Amazon
-	// Ion (https://docs.aws.amazon.com/qldb/latest/developerguide/ion.html) format,
-	// or in JSON Lines (https://jsonlines.org/) text format.
-	//
-	// Default: ION_TEXT
-	//
-	// In JSON Lines format, each journal block in an exported data object is a
-	// valid JSON object that is delimited by a newline. You can use this format
-	// to directly integrate JSON exports with analytics tools such as Amazon Athena
-	// and Glue because these services can parse newline-delimited JSON automatically.
+	// The output format of your exported journal data. If this parameter is not
+	// specified, the exported data defaults to ION_TEXT format.
 	OutputFormat *string `type:"string" enum:"OutputFormat"`
 
 	// The Amazon Resource Name (ARN) of the IAM role that grants QLDB permissions
 	// for a journal export job to do the following:
 	//
-	//    * Write objects into your Amazon S3 bucket.
+	//    * Write objects into your Amazon Simple Storage Service (Amazon S3) bucket.
 	//
 	//    * (Optional) Use your customer managed key in Key Management Service (KMS)
 	//    for server-side encryption of your exported data.
@@ -3697,11 +3693,9 @@ type KinesisConfiguration struct {
 	// Enables QLDB to publish multiple data records in a single Kinesis Data Streams
 	// record, increasing the number of records sent per API call.
 	//
-	// Default: True
-	//
-	// Record aggregation has important implications for processing records and
-	// requires de-aggregation in your stream consumer. To learn more, see KPL Key
-	// Concepts (https://docs.aws.amazon.com/streams/latest/dev/kinesis-kpl-concepts.html)
+	// This option is enabled by default. Record aggregation has important implications
+	// for processing records and requires de-aggregation in your stream consumer.
+	// To learn more, see KPL Key Concepts (https://docs.aws.amazon.com/streams/latest/dev/kinesis-kpl-concepts.html)
 	// and Consumer De-aggregation (https://docs.aws.amazon.com/streams/latest/dev/kinesis-kpl-consumer-deaggregation.html)
 	// in the Amazon Kinesis Data Streams Developer Guide.
 	AggregationEnabled *bool `type:"boolean"`
@@ -4048,7 +4042,8 @@ type ListJournalKinesisStreamsForLedgerOutput struct {
 	//    call.
 	NextToken *string `min:"4" type:"string"`
 
-	// The QLDB journal streams that are currently associated with the given ledger.
+	// The array of QLDB journal stream descriptors that are associated with the
+	// given ledger.
 	Streams []*JournalKinesisStreamDescription `type:"list"`
 }
 
@@ -4162,8 +4157,8 @@ func (s *ListJournalS3ExportsForLedgerInput) SetNextToken(v string) *ListJournal
 type ListJournalS3ExportsForLedgerOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The journal export jobs that are currently associated with the specified
-	// ledger.
+	// The array of journal export job descriptions that are associated with the
+	// specified ledger.
 	JournalS3Exports []*JournalS3ExportDescription `type:"list"`
 
 	//    * If NextToken is empty, then the last page of results has been processed
@@ -4267,8 +4262,8 @@ func (s *ListJournalS3ExportsInput) SetNextToken(v string) *ListJournalS3Exports
 type ListJournalS3ExportsOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The journal export jobs for all ledgers that are associated with the current
-	// Amazon Web Services account and Region.
+	// The array of journal export job descriptions for all ledgers that are associated
+	// with the current Amazon Web Services account and Region.
 	JournalS3Exports []*JournalS3ExportDescription `type:"list"`
 
 	//    * If NextToken is empty, then the last page of results has been processed
@@ -4372,8 +4367,8 @@ func (s *ListLedgersInput) SetNextToken(v string) *ListLedgersInput {
 type ListLedgersOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The ledgers that are associated with the current Amazon Web Services account
-	// and Region.
+	// The array of ledger summaries that are associated with the current Amazon
+	// Web Services account and Region.
 	Ledgers []*LedgerSummary `type:"list"`
 
 	// A pagination token, indicating whether there are more results available:
@@ -4784,8 +4779,8 @@ func (s *ResourcePreconditionNotMetException) RequestID() string {
 type S3EncryptionConfiguration struct {
 	_ struct{} `type:"structure"`
 
-	// The Amazon Resource Name (ARN) of a symmetric encryption key in Key Management
-	// Service (KMS). Amazon S3 does not support asymmetric KMS keys.
+	// The Amazon Resource Name (ARN) of a symmetric key in Key Management Service
+	// (KMS). Amazon S3 does not support asymmetric KMS keys.
 	//
 	// You must provide a KmsKeyArn if you specify SSE_KMS as the ObjectEncryptionType.
 	//
@@ -5321,13 +5316,12 @@ func (s UntagResourceOutput) GoString() string {
 type UpdateLedgerInput struct {
 	_ struct{} `type:"structure"`
 
-	// Specifies whether the ledger is protected from being deleted by any user.
-	// If not defined during ledger creation, this feature is enabled (true) by
-	// default.
+	// The flag that prevents a ledger from being deleted by any user. If not provided
+	// on ledger creation, this feature is enabled (true) by default.
 	//
 	// If deletion protection is enabled, you must first disable it before you can
 	// delete the ledger. You can disable it by calling the UpdateLedger operation
-	// to set this parameter to false.
+	// to set the flag to false.
 	DeletionProtection *bool `type:"boolean"`
 
 	// The key in Key Management Service (KMS) to use for encryption of data at
@@ -5341,10 +5335,10 @@ type UpdateLedgerInput struct {
 	//
 	//    * Undefined: Make no changes to the KMS key of the ledger.
 	//
-	//    * A valid symmetric customer managed KMS key: Use the specified symmetric
-	//    encryption KMS key in your account that you create, own, and manage. Amazon
-	//    QLDB does not support asymmetric keys. For more information, see Using
-	//    symmetric and asymmetric keys (https://docs.aws.amazon.com/kms/latest/developerguide/symmetric-asymmetric.html)
+	//    * A valid symmetric customer managed KMS key: Use the specified KMS key
+	//    in your account that you create, own, and manage. Amazon QLDB does not
+	//    support asymmetric keys. For more information, see Using symmetric and
+	//    asymmetric keys (https://docs.aws.amazon.com/kms/latest/developerguide/symmetric-asymmetric.html)
 	//    in the Key Management Service Developer Guide.
 	//
 	// To specify a customer managed KMS key, you can use its key ID, Amazon Resource
@@ -5435,13 +5429,12 @@ type UpdateLedgerOutput struct {
 	// 1970 UTC.)
 	CreationDateTime *time.Time `type:"timestamp"`
 
-	// Specifies whether the ledger is protected from being deleted by any user.
-	// If not defined during ledger creation, this feature is enabled (true) by
-	// default.
+	// The flag that prevents a ledger from being deleted by any user. If not provided
+	// on ledger creation, this feature is enabled (true) by default.
 	//
 	// If deletion protection is enabled, you must first disable it before you can
 	// delete the ledger. You can disable it by calling the UpdateLedger operation
-	// to set this parameter to false.
+	// to set the flag to false.
 	DeletionProtection *bool `type:"boolean"`
 
 	// Information about the encryption of data at rest in the ledger. This includes

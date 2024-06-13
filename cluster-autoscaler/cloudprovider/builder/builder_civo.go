@@ -23,7 +23,6 @@ import (
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/civo"
 	"k8s.io/autoscaler/cluster-autoscaler/config"
-	"k8s.io/client-go/informers"
 )
 
 // AvailableCloudProviders supported by the digtalocean cloud provider builder.
@@ -34,7 +33,7 @@ var AvailableCloudProviders = []string{
 // DefaultCloudProvider for civo-only build is Civo.
 const DefaultCloudProvider = cloudprovider.CivoProviderName
 
-func buildCloudProvider(opts config.AutoscalingOptions, do cloudprovider.NodeGroupDiscoveryOptions, rl *cloudprovider.ResourceLimiter, _ informers.SharedInformerFactory) cloudprovider.CloudProvider {
+func buildCloudProvider(opts config.AutoscalingOptions, do cloudprovider.NodeGroupDiscoveryOptions, rl *cloudprovider.ResourceLimiter) cloudprovider.CloudProvider {
 	switch opts.CloudProviderName {
 	case cloudprovider.CivoProviderName:
 		return civo.BuildCivo(opts, do, rl)

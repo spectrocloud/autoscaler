@@ -129,13 +129,13 @@ func transformAndSanitizeOptionsFromGRPC(bestOptionsResponseOptions []*protos.Op
 	var options []expander.Option
 	for _, option := range bestOptionsResponseOptions {
 		if option == nil {
-			klog.Error("GRPC server returned nil Option")
+			klog.Errorf("GRPC server returned nil Option")
 			continue
 		}
 		if _, ok := nodeGroupIDOptionMap[option.NodeGroupId]; ok {
 			options = append(options, nodeGroupIDOptionMap[option.NodeGroupId])
 		} else {
-			klog.Errorf("GRPC server returned invalid nodeGroup ID: %s", option.NodeGroupId)
+			klog.Errorf("GRPC server returned invalid nodeGroup ID: ", option.NodeGroupId)
 			continue
 		}
 	}

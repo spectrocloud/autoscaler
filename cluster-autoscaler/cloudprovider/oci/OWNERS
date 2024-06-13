@@ -8,6 +8,3 @@ reviewers:
 #- trungng92
 #- sohan-oracle
 #- ericrrath
-
-labels:
-- area/provider/oci

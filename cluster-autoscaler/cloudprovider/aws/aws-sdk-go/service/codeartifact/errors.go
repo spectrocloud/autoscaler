@@ -23,7 +23,8 @@ const (
 	// ErrCodeInternalServerException for service response error code
 	// "InternalServerException".
 	//
-	// The operation did not succeed because of an error that occurred inside CodeArtifact.
+	// The operation did not succeed because of an error that occurred inside AWS
+	// CodeArtifact.
 	ErrCodeInternalServerException = "InternalServerException"
 
 	// ErrCodeResourceNotFoundException for service response error code

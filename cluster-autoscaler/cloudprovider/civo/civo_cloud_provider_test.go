@@ -47,11 +47,6 @@ func (m *civoClientMock) DeleteKubernetesClusterPoolInstance(clusterID, poolID, 
 	return args.Get(0).(*civocloud.SimpleResponse), args.Error(1)
 }
 
-func (m *civoClientMock) FindInstanceSizes(size string) (*civocloud.InstanceSize, error) {
-	args := m.Called(size)
-	return args.Get(0).(*civocloud.InstanceSize), args.Error(1)
-}
-
 func testCloudProvider(t *testing.T, client *civoClientMock) *civoCloudProvider {
 	cfg := `{"cluster_id": "123456", "api_key": "123-123-123", "api_url": "https://api.civo.com", "region": "test"}`
 
@@ -106,13 +101,6 @@ func testCloudProvider(t *testing.T, client *civoClientMock) *civoCloudProvider 
 			},
 			nil,
 		).Once()
-
-		client.On("FindInstanceSizes", "small").Return(
-			&civocloud.InstanceSize{
-				Name:     "small",
-				CPUCores: 1,
-			}, nil,
-		).Times(10)
 	}
 
 	manager.client = client
@@ -203,13 +191,6 @@ func TestCivoCloudProvider_NodeGroupForNode(t *testing.T) {
 			nil,
 		).Once()
 
-		client.On("FindInstanceSizes", "").Return(
-			&civocloud.InstanceSize{
-				Name:     "small",
-				CPUCores: 1,
-			}, nil,
-		).Times(10)
-
 		provider := testCloudProvider(t, client)
 
 		// let's get the nodeGroup for the node with ID 11
@@ -264,13 +245,6 @@ func TestCivoCloudProvider_NodeGroupForNode(t *testing.T) {
 			},
 			nil,
 		).Once()
-
-		client.On("FindInstanceSizes", "").Return(
-			&civocloud.InstanceSize{
-				Name:     "small",
-				CPUCores: 1,
-			}, nil,
-		).Times(10)
 
 		provider := testCloudProvider(t, client)
 

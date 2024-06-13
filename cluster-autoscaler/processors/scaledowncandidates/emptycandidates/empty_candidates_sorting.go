@@ -20,10 +20,9 @@ import (
 	"time"
 
 	apiv1 "k8s.io/api/core/v1"
+	"k8s.io/autoscaler/cluster-autoscaler/config"
 	"k8s.io/autoscaler/cluster-autoscaler/simulator"
 	"k8s.io/autoscaler/cluster-autoscaler/simulator/clustersnapshot"
-	"k8s.io/autoscaler/cluster-autoscaler/simulator/drainability/rules"
-	"k8s.io/autoscaler/cluster-autoscaler/simulator/options"
 	schedulerframework "k8s.io/kubernetes/pkg/scheduler/framework"
 )
 
@@ -47,17 +46,13 @@ func NewNodeInfoGetter(c clustersnapshot.ClusterSnapshot) *nodeInfoGetterImpl {
 // EmptySorting is sorting scale down candidates so that empty nodes appear first.
 type EmptySorting struct {
 	nodeInfoGetter
-	deleteOptions     options.NodeDeleteOptions
-	drainabilityRules rules.Rules
+	deleteOptions simulator.NodeDeleteOptions
 }
 
 // NewEmptySortingProcessor return EmptySorting struct.
-func NewEmptySortingProcessor(n nodeInfoGetter, deleteOptions options.NodeDeleteOptions, drainabilityRules rules.Rules) *EmptySorting {
-	return &EmptySorting{
-		nodeInfoGetter:    n,
-		deleteOptions:     deleteOptions,
-		drainabilityRules: drainabilityRules,
-	}
+func NewEmptySortingProcessor(opts *config.AutoscalingOptions, n nodeInfoGetter) *EmptySorting {
+	deleteOptions := simulator.NewNodeDeleteOptions(*opts)
+	return &EmptySorting{n, deleteOptions}
 }
 
 // ScaleDownEarlierThan return true if node1 is empty and node2 isn't.
@@ -73,7 +68,7 @@ func (p *EmptySorting) isNodeEmpty(node *apiv1.Node) bool {
 	if err != nil {
 		return false
 	}
-	podsToRemove, _, _, err := simulator.GetPodsToMove(nodeInfo, p.deleteOptions, p.drainabilityRules, nil, nil, time.Now())
+	podsToRemove, _, _, err := simulator.GetPodsToMove(nodeInfo, p.deleteOptions, nil, nil, time.Now())
 	if err == nil && len(podsToRemove) == 0 {
 		return true
 	}

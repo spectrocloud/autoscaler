@@ -33,13 +33,6 @@ const (
 	// A resource that is required for the action wasn't found.
 	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
 
-	// ErrCodeThrottlingException for service response error code
-	// "ThrottlingException".
-	//
-	// TPS has been limited to protect against intentional or unintentional high
-	// request volumes.
-	ErrCodeThrottlingException = "ThrottlingException"
-
 	// ErrCodeValidationException for service response error code
 	// "ValidationException".
 	//
@@ -52,6 +45,5 @@ var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
 	"ConflictException":         newErrorConflictException,
 	"InternalServerException":   newErrorInternalServerException,
 	"ResourceNotFoundException": newErrorResourceNotFoundException,
-	"ThrottlingException":       newErrorThrottlingException,
 	"ValidationException":       newErrorValidationException,
 }

@@ -35,7 +35,11 @@ func IsDaemonSetPod(pod *apiv1.Pod) bool {
 		return true
 	}
 
-	return pod.Annotations[DaemonSetPodAnnotationKey] == "true"
+	if val, ok := pod.Annotations[DaemonSetPodAnnotationKey]; ok && val == "true" {
+		return true
+	}
+
+	return false
 }
 
 // IsMirrorPod checks whether the pod is a mirror pod.

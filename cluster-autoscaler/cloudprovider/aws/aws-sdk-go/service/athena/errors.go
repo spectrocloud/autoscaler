@@ -38,12 +38,6 @@ const (
 	// A resource, such as a workgroup, was not found.
 	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
 
-	// ErrCodeSessionAlreadyExistsException for service response error code
-	// "SessionAlreadyExistsException".
-	//
-	// The specified session already exists.
-	ErrCodeSessionAlreadyExistsException = "SessionAlreadyExistsException"
-
 	// ErrCodeTooManyRequestsException for service response error code
 	// "TooManyRequestsException".
 	//
@@ -52,10 +46,9 @@ const (
 )
 
 var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"InternalServerException":       newErrorInternalServerException,
-	"InvalidRequestException":       newErrorInvalidRequestException,
-	"MetadataException":             newErrorMetadataException,
-	"ResourceNotFoundException":     newErrorResourceNotFoundException,
-	"SessionAlreadyExistsException": newErrorSessionAlreadyExistsException,
-	"TooManyRequestsException":      newErrorTooManyRequestsException,
+	"InternalServerException":   newErrorInternalServerException,
+	"InvalidRequestException":   newErrorInvalidRequestException,
+	"MetadataException":         newErrorMetadataException,
+	"ResourceNotFoundException": newErrorResourceNotFoundException,
+	"TooManyRequestsException":  newErrorTooManyRequestsException,
 }

@@ -1,3 +1,19 @@
+/*
+Copyright 2018 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package hcloud
 
 import (
@@ -65,7 +81,7 @@ type Client struct {
 	applicationVersion      string
 	userAgent               string
 	debugWriter             io.Writer
-	instrumentationRegistry prometheus.Registerer
+	instrumentationRegistry *prometheus.Registry
 
 	Action           ActionClient
 	Certificate      CertificateClient
@@ -125,7 +141,7 @@ func WithPollInterval(pollInterval time.Duration) ClientOption {
 // function when polling from the API.
 func WithPollBackoffFunc(f BackoffFunc) ClientOption {
 	return func(client *Client) {
-		client.pollBackoffFunc = f
+		client.backoffFunc = f
 	}
 }
 
@@ -163,7 +179,7 @@ func WithHTTPClient(httpClient *http.Client) ClientOption {
 }
 
 // WithInstrumentation configures a Client to collect metrics about the performed HTTP requests.
-func WithInstrumentation(registry prometheus.Registerer) ClientOption {
+func WithInstrumentation(registry *prometheus.Registry) ClientOption {
 	return func(client *Client) {
 		client.instrumentationRegistry = registry
 	}
@@ -189,25 +205,25 @@ func NewClient(options ...ClientOption) *Client {
 		client.httpClient.Transport = i.InstrumentedRoundTripper()
 	}
 
-	client.Action = ActionClient{action: &ResourceActionClient{client: client}}
+	client.Action = ActionClient{client: client}
 	client.Datacenter = DatacenterClient{client: client}
-	client.FloatingIP = FloatingIPClient{client: client, Action: &ResourceActionClient{client: client, resource: "floating_ips"}}
-	client.Image = ImageClient{client: client, Action: &ResourceActionClient{client: client, resource: "images"}}
+	client.FloatingIP = FloatingIPClient{client: client}
+	client.Image = ImageClient{client: client}
 	client.ISO = ISOClient{client: client}
 	client.Location = LocationClient{client: client}
-	client.Network = NetworkClient{client: client, Action: &ResourceActionClient{client: client, resource: "networks"}}
+	client.Network = NetworkClient{client: client}
 	client.Pricing = PricingClient{client: client}
-	client.Server = ServerClient{client: client, Action: &ResourceActionClient{client: client, resource: "servers"}}
+	client.Server = ServerClient{client: client}
 	client.ServerType = ServerTypeClient{client: client}
 	client.SSHKey = SSHKeyClient{client: client}
-	client.Volume = VolumeClient{client: client, Action: &ResourceActionClient{client: client, resource: "volumes"}}
-	client.LoadBalancer = LoadBalancerClient{client: client, Action: &ResourceActionClient{client: client, resource: "load_balancers"}}
+	client.Volume = VolumeClient{client: client}
+	client.LoadBalancer = LoadBalancerClient{client: client}
 	client.LoadBalancerType = LoadBalancerTypeClient{client: client}
-	client.Certificate = CertificateClient{client: client, Action: &ResourceActionClient{client: client, resource: "certificates"}}
-	client.Firewall = FirewallClient{client: client, Action: &ResourceActionClient{client: client, resource: "firewalls"}}
+	client.Certificate = CertificateClient{client: client}
+	client.Firewall = FirewallClient{client: client}
 	client.PlacementGroup = PlacementGroupClient{client: client}
 	client.RDNS = RDNSClient{client: client}
-	client.PrimaryIP = PrimaryIPClient{client: client, Action: &ResourceActionClient{client: client, resource: "primary_ips"}}
+	client.PrimaryIP = PrimaryIPClient{client: client}
 
 	return client
 }
@@ -236,8 +252,6 @@ func (c *Client) NewRequest(ctx context.Context, method, path string, body io.Re
 }
 
 // Do performs an HTTP request against the API.
-// v can be nil, an io.Writer to write the response body to or a pointer to
-// a struct to json.Unmarshal the response to.
 func (c *Client) Do(r *http.Request, v interface{}) (*Response, error) {
 	var retries int
 	var body []byte
@@ -288,11 +302,11 @@ func (c *Client) Do(r *http.Request, v interface{}) (*Response, error) {
 			return response, fmt.Errorf("hcloud: error reading response meta data: %s", err)
 		}
 
-		if response.StatusCode >= 400 && response.StatusCode <= 599 {
-			err = errorFromResponse(response, body)
+		if resp.StatusCode >= 400 && resp.StatusCode <= 599 {
+			err = errorFromResponse(resp, body)
 			if err == nil {
 				err = fmt.Errorf("hcloud: server responded with status code %d", resp.StatusCode)
-			} else if IsError(err, ErrorCodeConflict) {
+			} else if isConflict(err) {
 				c.backoff(retries)
 				retries++
 				continue
@@ -309,6 +323,14 @@ func (c *Client) Do(r *http.Request, v interface{}) (*Response, error) {
 
 		return response, err
 	}
+}
+
+func isConflict(error error) bool {
+	err, ok := error.(Error)
+	if !ok {
+		return false
+	}
+	return err.Code == ErrorCodeConflict
 }
 
 func (c *Client) backoff(retries int) {
@@ -361,7 +383,7 @@ func dumpRequest(r *http.Request) ([]byte, error) {
 	return dumpReq, nil
 }
 
-func errorFromResponse(resp *Response, body []byte) error {
+func errorFromResponse(resp *http.Response, body []byte) error {
 	if !strings.HasPrefix(resp.Header.Get("Content-Type"), "application/json") {
 		return nil
 	}
@@ -373,15 +395,8 @@ func errorFromResponse(resp *Response, body []byte) error {
 	if respBody.Error.Code == "" && respBody.Error.Message == "" {
 		return nil
 	}
-
-	hcErr := ErrorFromSchema(respBody.Error)
-	hcErr.response = resp
-	return hcErr
+	return ErrorFromSchema(respBody.Error)
 }
-
-const (
-	headerCorrelationID = "X-Correlation-Id"
-)
 
 // Response represents a response from the API. It embeds http.Response.
 type Response struct {
@@ -416,12 +431,6 @@ func (r *Response) readMeta(body []byte) error {
 	return nil
 }
 
-// internalCorrelationID returns the unique ID of the request as set by the API. This ID can help with support requests,
-// as it allows the people working on identify this request in particular.
-func (r *Response) internalCorrelationID() string {
-	return r.Header.Get(headerCorrelationID)
-}
-
 // Meta represents meta information included in an API response.
 type Meta struct {
 	Pagination *Pagination
@@ -452,8 +461,7 @@ type ListOpts struct {
 	LabelSelector string // Label selector for filtering by labels
 }
 
-// Values returns the ListOpts as URL values.
-func (l ListOpts) Values() url.Values {
+func (l ListOpts) values() url.Values {
 	vals := url.Values{}
 	if l.Page > 0 {
 		vals.Add("page", strconv.Itoa(l.Page))

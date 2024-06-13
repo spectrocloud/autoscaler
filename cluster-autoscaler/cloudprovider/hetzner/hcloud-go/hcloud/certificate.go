@@ -1,3 +1,19 @@
+/*
+Copyright 2018 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package hcloud
 
 import (
@@ -50,7 +66,7 @@ const (
 
 // CertificateUsedByRef points to a resource that uses this certificate.
 type CertificateUsedByRef struct {
-	ID   int64
+	ID   int
 	Type CertificateUsedByRefType
 }
 
@@ -68,9 +84,9 @@ func (st *CertificateStatus) IsFailed() bool {
 	return st.Issuance == CertificateStatusTypeFailed || st.Renewal == CertificateStatusTypeFailed
 }
 
-// Certificate represents a certificate in the Hetzner Cloud.
+// Certificate represents an certificate in the Hetzner Cloud.
 type Certificate struct {
-	ID             int64
+	ID             int
 	Name           string
 	Labels         map[string]string
 	Type           CertificateType
@@ -93,11 +109,10 @@ type CertificateCreateResult struct {
 // CertificateClient is a client for the Certificates API.
 type CertificateClient struct {
 	client *Client
-	Action *ResourceActionClient
 }
 
 // GetByID retrieves a Certificate by its ID. If the Certificate does not exist, nil is returned.
-func (c *CertificateClient) GetByID(ctx context.Context, id int64) (*Certificate, *Response, error) {
+func (c *CertificateClient) GetByID(ctx context.Context, id int) (*Certificate, *Response, error) {
 	req, err := c.client.NewRequest(ctx, "GET", fmt.Sprintf("/certificates/%d", id), nil)
 	if err != nil {
 		return nil, nil, err
@@ -129,8 +144,8 @@ func (c *CertificateClient) GetByName(ctx context.Context, name string) (*Certif
 // Get retrieves a Certificate by its ID if the input can be parsed as an integer, otherwise it
 // retrieves a Certificate by its name. If the Certificate does not exist, nil is returned.
 func (c *CertificateClient) Get(ctx context.Context, idOrName string) (*Certificate, *Response, error) {
-	if id, err := strconv.ParseInt(idOrName, 10, 64); err == nil {
-		return c.GetByID(ctx, id)
+	if id, err := strconv.Atoi(idOrName); err == nil {
+		return c.GetByID(ctx, int(id))
 	}
 	return c.GetByName(ctx, idOrName)
 }
@@ -143,7 +158,7 @@ type CertificateListOpts struct {
 }
 
 func (l CertificateListOpts) values() url.Values {
-	vals := l.ListOpts.Values()
+	vals := l.ListOpts.values()
 	if l.Name != "" {
 		vals.Add("name", l.Name)
 	}
@@ -178,12 +193,30 @@ func (c *CertificateClient) List(ctx context.Context, opts CertificateListOpts) 
 
 // All returns all Certificates.
 func (c *CertificateClient) All(ctx context.Context) ([]*Certificate, error) {
-	return c.AllWithOpts(ctx, CertificateListOpts{ListOpts: ListOpts{PerPage: 50}})
+	allCertificates := []*Certificate{}
+
+	opts := CertificateListOpts{}
+	opts.PerPage = 50
+
+	err := c.client.all(func(page int) (*Response, error) {
+		opts.Page = page
+		Certificate, resp, err := c.List(ctx, opts)
+		if err != nil {
+			return resp, err
+		}
+		allCertificates = append(allCertificates, Certificate...)
+		return resp, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return allCertificates, nil
 }
 
 // AllWithOpts returns all Certificates for the given options.
 func (c *CertificateClient) AllWithOpts(ctx context.Context, opts CertificateListOpts) ([]*Certificate, error) {
-	allCertificates := []*Certificate{}
+	var allCertificates []*Certificate
 
 	err := c.client.all(func(page int) (*Response, error) {
 		opts.Page = page
@@ -243,7 +276,7 @@ func (o CertificateCreateOpts) validateUploaded() error {
 	return nil
 }
 
-// Create creates a new uploaded certificate.
+// Create creates a new certificate uploaded certificate.
 //
 // Create returns an error for certificates of any other type. Use
 // CreateCertificate to create such certificates.

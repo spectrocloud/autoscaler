@@ -12,7 +12,7 @@ const (
 	// "InternalServiceException".
 	//
 	// An internal failure occurred. Try your request again. If the problem persists,
-	// contact Amazon Web Services customer support.
+	// contact AWS customer support.
 	ErrCodeInternalServiceException = "InternalServiceException"
 )
 

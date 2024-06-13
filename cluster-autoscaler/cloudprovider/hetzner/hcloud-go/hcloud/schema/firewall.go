@@ -1,10 +1,26 @@
+/*
+Copyright 2018 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package schema
 
 import "time"
 
 // Firewall defines the schema of a Firewall.
 type Firewall struct {
-	ID        int64              `json:"id"`
+	ID        int                `json:"id"`
 	Name      string             `json:"name"`
 	Labels    map[string]string  `json:"labels"`
 	Created   time.Time          `json:"created"`
@@ -12,18 +28,8 @@ type Firewall struct {
 	AppliedTo []FirewallResource `json:"applied_to"`
 }
 
-// FirewallRule defines the schema of a Firewall rule in responses.
+// FirewallRule defines the schema of a Firewall rule.
 type FirewallRule struct {
-	Direction      string   `json:"direction"`
-	SourceIPs      []string `json:"source_ips"`
-	DestinationIPs []string `json:"destination_ips"`
-	Protocol       string   `json:"protocol"`
-	Port           *string  `json:"port"`
-	Description    *string  `json:"description"`
-}
-
-// FirewallRuleRequest defines the schema of a Firewall rule in requests.
-type FirewallRuleRequest struct {
 	Direction      string   `json:"direction"`
 	SourceIPs      []string `json:"source_ips,omitempty"`
 	DestinationIPs []string `json:"destination_ips,omitempty"`
@@ -44,10 +50,10 @@ type FirewallGetResponse struct {
 
 // FirewallCreateRequest defines the schema of the request to create a Firewall.
 type FirewallCreateRequest struct {
-	Name    string                `json:"name"`
-	Labels  *map[string]string    `json:"labels,omitempty"`
-	Rules   []FirewallRuleRequest `json:"rules,omitempty"`
-	ApplyTo []FirewallResource    `json:"apply_to,omitempty"`
+	Name    string             `json:"name"`
+	Labels  *map[string]string `json:"labels,omitempty"`
+	Rules   []FirewallRule     `json:"rules,omitempty"`
+	ApplyTo []FirewallResource `json:"apply_to,omitempty"`
 }
 
 // FirewallResource defines the schema of a resource to apply the new Firewall on.
@@ -64,7 +70,7 @@ type FirewallResourceLabelSelector struct {
 
 // FirewallResourceServer defines the schema of a Server to apply a Firewall on.
 type FirewallResourceServer struct {
-	ID int64 `json:"id"`
+	ID int `json:"id"`
 }
 
 // FirewallCreateResponse defines the schema of the response when creating a Firewall.
@@ -86,7 +92,7 @@ type FirewallUpdateResponse struct {
 
 // FirewallActionSetRulesRequest defines the schema of the request when setting Firewall rules.
 type FirewallActionSetRulesRequest struct {
-	Rules []FirewallRuleRequest `json:"rules"`
+	Rules []FirewallRule `json:"rules"`
 }
 
 // FirewallActionSetRulesResponse defines the schema of the response when setting Firewall rules.

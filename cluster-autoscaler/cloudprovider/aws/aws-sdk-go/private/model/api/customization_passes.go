@@ -413,18 +413,7 @@ func mergeServicesCustomizations(a *API) error {
 
 	file := filepath.Join(p, "api-2.json")
 
-	serviceAPI := API{
-		IgnoreUnsupportedAPIs:        a.IgnoreUnsupportedAPIs,
-		NoRemoveUnusedShapes:         a.NoRemoveUnusedShapes,
-		NoRenameToplevelShapes:       a.NoRenameToplevelShapes,
-		NoInitMethods:                a.NoInitMethods,
-		NoStringerMethods:            a.NoStringerMethods,
-		NoConstServiceNames:          a.NoConstServiceNames,
-		NoValidataShapeMethods:       a.NoValidataShapeMethods,
-		NoGenStructFieldAccessors:    a.NoGenStructFieldAccessors,
-		NoRemoveUnsupportedJSONValue: a.NoRemoveUnsupportedJSONValue,
-		StrictServiceId:              a.StrictServiceId,
-	}
+	serviceAPI := API{}
 	serviceAPI.Attach(file)
 	serviceAPI.Setup()
 

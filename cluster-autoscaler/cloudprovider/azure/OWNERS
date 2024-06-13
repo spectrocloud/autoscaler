@@ -3,16 +3,10 @@ approvers:
 - nilo19
 - gandhipr
 - tallaxes
-- jackfrancis
 reviewers:
 - feiskyer
 - nilo19
 - gandhipr
 - tallaxes
-- jackfrancis
 emeritus_approvers:
 - marwanad
-
-
-labels:
-- area/provider/azure

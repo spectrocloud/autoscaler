@@ -31,9 +31,7 @@ type AutoscalingStatusProcessor interface {
 
 // NewDefaultAutoscalingStatusProcessor creates a default instance of AutoscalingStatusProcessor.
 func NewDefaultAutoscalingStatusProcessor() AutoscalingStatusProcessor {
-	return &MetricsAutoscalingStatusProcessor{
-		backoffReasonStatus: make(map[string]BackoffReasonStatus),
-	}
+	return &NoOpAutoscalingStatusProcessor{}
 }
 
 // NoOpAutoscalingStatusProcessor is an AutoscalingStatusProcessor implementation useful for testing.

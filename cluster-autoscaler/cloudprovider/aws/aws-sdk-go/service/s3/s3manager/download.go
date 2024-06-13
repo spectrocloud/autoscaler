@@ -467,11 +467,7 @@ func (d *downloader) tryDownloadChunk(in *s3.GetObjectInput, w io.Writer) (int64
 	}
 	d.setTotalBytes(resp) // Set total if not yet set.
 
-	var src io.Reader = resp.Body
-	if d.cfg.BufferProvider != nil {
-		src = &suppressWriterAt{suppressed: src}
-	}
-	n, err := io.Copy(w, src)
+	n, err := io.Copy(w, resp.Body)
 	resp.Body.Close()
 	if err != nil {
 		return n, &errReadingBody{err: err}

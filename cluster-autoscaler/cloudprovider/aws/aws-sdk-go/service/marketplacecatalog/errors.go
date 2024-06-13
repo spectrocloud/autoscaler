@@ -12,16 +12,12 @@ const (
 	// "AccessDeniedException".
 	//
 	// Access is denied.
-	//
-	// HTTP status code: 403
 	ErrCodeAccessDeniedException = "AccessDeniedException"
 
 	// ErrCodeInternalServiceException for service response error code
 	// "InternalServiceException".
 	//
 	// There was an internal service exception.
-	//
-	// HTTP status code: 500
 	ErrCodeInternalServiceException = "InternalServiceException"
 
 	// ErrCodeResourceInUseException for service response error code
@@ -34,8 +30,6 @@ const (
 	// "ResourceNotFoundException".
 	//
 	// The specified resource wasn't found.
-	//
-	// HTTP status code: 404
 	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
 
 	// ErrCodeResourceNotSupportedException for service response error code
@@ -54,16 +48,12 @@ const (
 	// "ThrottlingException".
 	//
 	// Too many requests.
-	//
-	// HTTP status code: 429
 	ErrCodeThrottlingException = "ThrottlingException"
 
 	// ErrCodeValidationException for service response error code
 	// "ValidationException".
 	//
 	// An error occurred during validation.
-	//
-	// HTTP status code: 422
 	ErrCodeValidationException = "ValidationException"
 )
 

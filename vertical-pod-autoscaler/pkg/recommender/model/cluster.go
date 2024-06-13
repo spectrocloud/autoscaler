@@ -22,11 +22,10 @@ import (
 
 	apiv1 "k8s.io/api/core/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
-	"k8s.io/klog/v2"
-
 	vpa_types "k8s.io/autoscaler/vertical-pod-autoscaler/pkg/apis/autoscaling.k8s.io/v1"
-	"k8s.io/autoscaler/vertical-pod-autoscaler/pkg/target/controller_fetcher"
+	controllerfetcher "k8s.io/autoscaler/vertical-pod-autoscaler/pkg/recommender/input/controller_fetcher"
 	vpa_utils "k8s.io/autoscaler/vertical-pod-autoscaler/pkg/utils/vpa"
+	"k8s.io/klog/v2"
 )
 
 const (
@@ -280,7 +279,6 @@ func (cluster *ClusterState) AddOrUpdateVpa(apiObject *vpa_types.VerticalPodAuto
 	vpa.Recommendation = currentRecommendation
 	vpa.SetUpdateMode(apiObject.Spec.UpdatePolicy)
 	vpa.SetResourcePolicy(apiObject.Spec.ResourcePolicy)
-	vpa.SetAPIVersion(apiObject.GetObjectKind().GroupVersionKind().Version)
 	return nil
 }
 
@@ -385,7 +383,7 @@ func (cluster *ClusterState) garbageCollectAggregateCollectionStates(now time.Ti
 }
 
 // RateLimitedGarbageCollectAggregateCollectionStates removes obsolete AggregateCollectionStates from the ClusterState.
-// It performs clean up only if more than `gcInterval` passed since the last time it performed a cleanup.
+// It performs clean up only if more than `gcInterval` passed since the last time it performed a clean up.
 // AggregateCollectionState is obsolete in following situations:
 // 1) It has no samples and there are no more contributive pods - a pod is contributive in any of following situations:
 //
@@ -491,7 +489,7 @@ type aggregateStateKey struct {
 	labelSetMap *labelSetMap
 }
 
-// Namespace returns the namespace for the aggregateStateKey.
+// Labels returns the namespace for the aggregateStateKey.
 func (k aggregateStateKey) Namespace() string {
 	return k.namespace
 }

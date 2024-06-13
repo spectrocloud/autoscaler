@@ -1,3 +1,19 @@
+/*
+Copyright 2018 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package hcloud
 
 import (
@@ -11,7 +27,7 @@ import (
 
 // Datacenter represents a datacenter in the Hetzner Cloud.
 type Datacenter struct {
-	ID          int64
+	ID          int
 	Name        string
 	Description string
 	Location    *Location
@@ -20,9 +36,8 @@ type Datacenter struct {
 
 // DatacenterServerTypes represents the server types available and supported in a datacenter.
 type DatacenterServerTypes struct {
-	Supported             []*ServerType
-	AvailableForMigration []*ServerType
-	Available             []*ServerType
+	Supported []*ServerType
+	Available []*ServerType
 }
 
 // DatacenterClient is a client for the datacenter API.
@@ -31,7 +46,7 @@ type DatacenterClient struct {
 }
 
 // GetByID retrieves a datacenter by its ID. If the datacenter does not exist, nil is returned.
-func (c *DatacenterClient) GetByID(ctx context.Context, id int64) (*Datacenter, *Response, error) {
+func (c *DatacenterClient) GetByID(ctx context.Context, id int) (*Datacenter, *Response, error) {
 	req, err := c.client.NewRequest(ctx, "GET", fmt.Sprintf("/datacenters/%d", id), nil)
 	if err != nil {
 		return nil, nil, err
@@ -48,7 +63,7 @@ func (c *DatacenterClient) GetByID(ctx context.Context, id int64) (*Datacenter, 
 	return DatacenterFromSchema(body.Datacenter), resp, nil
 }
 
-// GetByName retrieves a datacenter by its name. If the datacenter does not exist, nil is returned.
+// GetByName retrieves an datacenter by its name. If the datacenter does not exist, nil is returned.
 func (c *DatacenterClient) GetByName(ctx context.Context, name string) (*Datacenter, *Response, error) {
 	if name == "" {
 		return nil, nil, nil
@@ -63,8 +78,8 @@ func (c *DatacenterClient) GetByName(ctx context.Context, name string) (*Datacen
 // Get retrieves a datacenter by its ID if the input can be parsed as an integer, otherwise it
 // retrieves a datacenter by its name. If the datacenter does not exist, nil is returned.
 func (c *DatacenterClient) Get(ctx context.Context, idOrName string) (*Datacenter, *Response, error) {
-	if id, err := strconv.ParseInt(idOrName, 10, 64); err == nil {
-		return c.GetByID(ctx, id)
+	if id, err := strconv.Atoi(idOrName); err == nil {
+		return c.GetByID(ctx, int(id))
 	}
 	return c.GetByName(ctx, idOrName)
 }
@@ -77,7 +92,7 @@ type DatacenterListOpts struct {
 }
 
 func (l DatacenterListOpts) values() url.Values {
-	vals := l.ListOpts.Values()
+	vals := l.ListOpts.values()
 	if l.Name != "" {
 		vals.Add("name", l.Name)
 	}
@@ -112,12 +127,10 @@ func (c *DatacenterClient) List(ctx context.Context, opts DatacenterListOpts) ([
 
 // All returns all datacenters.
 func (c *DatacenterClient) All(ctx context.Context) ([]*Datacenter, error) {
-	return c.AllWithOpts(ctx, DatacenterListOpts{ListOpts: ListOpts{PerPage: 50}})
-}
-
-// AllWithOpts returns all datacenters for the given options.
-func (c *DatacenterClient) AllWithOpts(ctx context.Context, opts DatacenterListOpts) ([]*Datacenter, error) {
 	allDatacenters := []*Datacenter{}
+
+	opts := DatacenterListOpts{}
+	opts.PerPage = 50
 
 	err := c.client.all(func(page int) (*Response, error) {
 		opts.Page = page

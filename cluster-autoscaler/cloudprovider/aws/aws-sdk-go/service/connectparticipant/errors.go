@@ -27,12 +27,6 @@ const (
 	// service.
 	ErrCodeInternalServerException = "InternalServerException"
 
-	// ErrCodeResourceNotFoundException for service response error code
-	// "ResourceNotFoundException".
-	//
-	// The resource was not found.
-	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
-
 	// ErrCodeServiceQuotaExceededException for service response error code
 	// "ServiceQuotaExceededException".
 	//
@@ -56,7 +50,6 @@ var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
 	"AccessDeniedException":         newErrorAccessDeniedException,
 	"ConflictException":             newErrorConflictException,
 	"InternalServerException":       newErrorInternalServerException,
-	"ResourceNotFoundException":     newErrorResourceNotFoundException,
 	"ServiceQuotaExceededException": newErrorServiceQuotaExceededException,
 	"ThrottlingException":           newErrorThrottlingException,
 	"ValidationException":           newErrorValidationException,

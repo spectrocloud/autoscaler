@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"html"
 	"io"
-	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -321,14 +320,10 @@ func (e *htmlTokenEncoder) Encode(token xhtml.Token) error {
 		h.handler.OnEndTagToken(token, handlerBlockClosing)
 
 		// Remove all but the root handler as the handler is no longer needed.
-		if handlerBlockClosing && len(e.handlers) != 0 {
+		if handlerBlockClosing {
 			e.handlers = e.handlers[:len(e.handlers)-1]
 		}
 		e.depth--
-		if e.depth < 0 {
-			log.Printf("ignoring unexpected closing tag, %v", token)
-			e.depth = 0
-		}
 
 	case xhtml.SelfClosingTagToken:
 		h.handler.OnSelfClosingTagToken(token)

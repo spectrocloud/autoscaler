@@ -14,18 +14,6 @@ const (
 	// You do not have sufficient access to perform this action.
 	ErrCodeAccessDeniedException = "AccessDeniedException"
 
-	// ErrCodeConflictException for service response error code
-	// "ConflictException".
-	//
-	// This request cannot be completed for one of the following reasons:
-	//
-	//    * Performing the requested operation would violate an existing uniqueness
-	//    claim in the identity store. Resolve the conflict before retrying this
-	//    request.
-	//
-	//    * The requested resource was being concurrently modified by another request.
-	ErrCodeConflictException = "ConflictException"
-
 	// ErrCodeInternalServerException for service response error code
 	// "InternalServerException".
 	//
@@ -38,13 +26,6 @@ const (
 	//
 	// Indicates that a requested resource is not found.
 	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
-
-	// ErrCodeServiceQuotaExceededException for service response error code
-	// "ServiceQuotaExceededException".
-	//
-	// The request would cause the number of users or groups in the identity store
-	// to exceed the maximum allowed.
-	ErrCodeServiceQuotaExceededException = "ServiceQuotaExceededException"
 
 	// ErrCodeThrottlingException for service response error code
 	// "ThrottlingException".
@@ -61,11 +42,9 @@ const (
 )
 
 var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"AccessDeniedException":         newErrorAccessDeniedException,
-	"ConflictException":             newErrorConflictException,
-	"InternalServerException":       newErrorInternalServerException,
-	"ResourceNotFoundException":     newErrorResourceNotFoundException,
-	"ServiceQuotaExceededException": newErrorServiceQuotaExceededException,
-	"ThrottlingException":           newErrorThrottlingException,
-	"ValidationException":           newErrorValidationException,
+	"AccessDeniedException":     newErrorAccessDeniedException,
+	"InternalServerException":   newErrorInternalServerException,
+	"ResourceNotFoundException": newErrorResourceNotFoundException,
+	"ThrottlingException":       newErrorThrottlingException,
+	"ValidationException":       newErrorValidationException,
 }

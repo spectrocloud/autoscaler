@@ -18,7 +18,6 @@ package debug
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"strconv"
 	"strings"
@@ -157,8 +156,8 @@ func (d *LogsSizeData) addNewData(ip, path string, timestamp time.Time, size int
 }
 
 // NewLogsVerifier creates a new LogsSizeVerifier which will stop when stopChannel is closed
-func NewLogsVerifier(ctx context.Context, c clientset.Interface) *LogsSizeVerifier {
-	nodeAddresses, err := e2essh.NodeSSHHosts(ctx, c)
+func NewLogsVerifier(c clientset.Interface, stopChannel chan bool) *LogsSizeVerifier {
+	nodeAddresses, err := e2essh.NodeSSHHosts(c)
 	framework.ExpectNoError(err)
 	instanceAddress := framework.APIAddress() + ":22"
 
@@ -167,6 +166,7 @@ func NewLogsVerifier(ctx context.Context, c clientset.Interface) *LogsSizeVerifi
 
 	verifier := &LogsSizeVerifier{
 		client:        c,
+		stopChannel:   stopChannel,
 		data:          prepareData(instanceAddress, nodeAddresses),
 		masterAddress: instanceAddress,
 		nodeAddresses: nodeAddresses,
@@ -177,6 +177,7 @@ func NewLogsVerifier(ctx context.Context, c clientset.Interface) *LogsSizeVerifi
 	verifier.wg.Add(workersNo)
 	for i := 0; i < workersNo; i++ {
 		workers[i] = &LogSizeGatherer{
+			stopChannel: stopChannel,
 			data:        verifier.data,
 			wg:          &verifier.wg,
 			workChannel: workChannel,
@@ -206,7 +207,7 @@ func (s *LogsSizeVerifier) GetSummary() *LogsSizeDataSummary {
 }
 
 // Run starts log size gathering. It starts a gorouting for every worker and then blocks until stopChannel is closed
-func (s *LogsSizeVerifier) Run(ctx context.Context) {
+func (s *LogsSizeVerifier) Run() {
 	s.workChannel <- WorkItem{
 		ip:                s.masterAddress,
 		paths:             masterLogsToCheck,
@@ -220,15 +221,15 @@ func (s *LogsSizeVerifier) Run(ctx context.Context) {
 		}
 	}
 	for _, worker := range s.workers {
-		go worker.Run(ctx)
+		go worker.Run()
 	}
 	<-s.stopChannel
 	s.wg.Wait()
 }
 
 // Run starts log size gathering.
-func (g *LogSizeGatherer) Run(ctx context.Context) {
-	for g.Work(ctx) {
+func (g *LogSizeGatherer) Run() {
+	for g.Work() {
 	}
 }
 
@@ -244,7 +245,7 @@ func (g *LogSizeGatherer) pushWorkItem(workItem WorkItem) {
 // Work does a single unit of work: tries to take out a WorkItem from the queue, ssh-es into a given machine,
 // gathers data, writes it to the shared <data> map, and creates a gorouting which reinserts work item into
 // the queue with a <pollingPeriod> delay. Returns false if worker should exit.
-func (g *LogSizeGatherer) Work(ctx context.Context) bool {
+func (g *LogSizeGatherer) Work() bool {
 	var workItem WorkItem
 	select {
 	case <-g.stopChannel:
@@ -253,7 +254,6 @@ func (g *LogSizeGatherer) Work(ctx context.Context) bool {
 	case workItem = <-g.workChannel:
 	}
 	sshResult, err := e2essh.SSH(
-		ctx,
 		fmt.Sprintf("ls -l %v | awk '{print $9, $5}' | tr '\n' ' '", strings.Join(workItem.paths, " ")),
 		workItem.ip,
 		framework.TestContext.Provider,

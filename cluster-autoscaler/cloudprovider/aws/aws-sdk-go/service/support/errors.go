@@ -65,13 +65,6 @@ const (
 	//
 	// An internal server error occurred.
 	ErrCodeInternalServerError = "InternalServerError"
-
-	// ErrCodeThrottlingException for service response error code
-	// "ThrottlingException".
-	//
-	// You have exceeded the maximum allowed TPS (Transactions Per Second) for the
-	// operations.
-	ErrCodeThrottlingException = "ThrottlingException"
 )
 
 var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
@@ -84,5 +77,4 @@ var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
 	"CaseIdNotFound":                  newErrorCaseIdNotFound,
 	"DescribeAttachmentLimitExceeded": newErrorDescribeAttachmentLimitExceeded,
 	"InternalServerError":             newErrorInternalServerError,
-	"ThrottlingException":             newErrorThrottlingException,
 }

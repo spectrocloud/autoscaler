@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Kubernetes Authors.
+Copyright 2016 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,12 +17,11 @@ limitations under the License.
 package tencentcloud
 
 import (
-	"errors"
+	"encoding/json"
 	"fmt"
+	"io"
 	"math/rand"
 	"os"
-	"regexp"
-	"strings"
 	"sync"
 	"time"
 
@@ -33,15 +32,51 @@ import (
 	"k8s.io/klog/v2"
 
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider"
-	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/tencentcloud/client"
-	as "k8s.io/autoscaler/cluster-autoscaler/cloudprovider/tencentcloud/tencentcloud-sdk-go/as/v20180419"
-	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/tencentcloud/tencentcloud-sdk-go/common"
+	as "k8s.io/autoscaler/cluster-autoscaler/cloudprovider/tencentcloud/tencentcloud-sdk-go/tencentcloud/as/v20180419"
+	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
+	cvm "k8s.io/autoscaler/cluster-autoscaler/cloudprovider/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
+	tke "k8s.io/autoscaler/cluster-autoscaler/cloudprovider/tencentcloud/tencentcloud-sdk-go/tencentcloud/tke/v20180525"
+	vpc "k8s.io/autoscaler/cluster-autoscaler/cloudprovider/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
 	"k8s.io/autoscaler/cluster-autoscaler/config/dynamic"
+	"k8s.io/autoscaler/cluster-autoscaler/utils/gpu"
 )
 
 const (
+	retryCountStop   = 5
+	intervalTimeStop = 5 * time.Second
+	tokenExpiredTime = 7200
+
+	serviceName          = "cluster-autoscaler"
 	refreshInterval      = 1 * time.Minute
 	scaleToZeroSupported = true
+)
+
+// network extended resources
+const (
+	TKERouteENIIP = "tke.cloud.tencent.com/eni-ip"
+	TKEDirectENI  = "tke.cloud.tencent.com/direct-eni"
+)
+
+// vcuda resources
+const (
+	VCudaCore   = "tencent.com/vcuda-core"
+	VCudaMemory = "tencent.com/vcuda-memory"
+)
+
+// GPUMemoryMap is a coefficient to get gpu extended resources
+var (
+	GPUMemoryMap = map[string]int64{
+		"GN10X": 32,
+		"GN10S": 16,
+		"GN10":  16,
+		"GN8":   24,
+		"GN7":   16,
+		"GN6":   8,
+		"GN6S":  8,
+		"GN2":   24,
+		"GN7vw": 16,
+		"GC1":   11,
+	}
 )
 
 // TencentcloudManager is handles tencentcloud communication and data caching.
@@ -83,7 +118,14 @@ type tencentcloudManagerImpl struct {
 
 // CloudConfig represent tencentcloud configuration
 type CloudConfig struct {
-	Region string `json:"region"`
+	Region     string `json:"region"`
+	RegionName string `json:"regionName"`
+	Zone       string `json:"zone"`
+	DryRun     bool   `json:dryRun`
+	SecretID   string
+	SecretKey  string
+	ClusterID  string
+	IsTest     bool
 }
 
 // LabelAutoScalingGroupID represents the label of AutoScalingGroup
@@ -91,11 +133,50 @@ const LabelAutoScalingGroupID = "cloud.tencent.com/auto-scaling-group-id"
 
 var cloudConfig CloudConfig
 
-func readCloudConfig() error {
-	cloudConfig.Region = os.Getenv("REGION")
-	if cloudConfig.Region == "" {
-		return errors.New("invalid REGION")
+func readCloudConfig(configReader io.Reader) error {
+	if configReader == nil {
+		return fmt.Errorf("tencentcloud cloud config is not exists")
 	}
+
+	if err := json.NewDecoder(configReader).Decode(&cloudConfig); err != nil {
+		return err
+	}
+
+	testEnv := os.Getenv("TEST_ENV")
+	if testEnv == "true" {
+		cloudConfig.IsTest = true
+	}
+
+	dryRun := os.Getenv("DRY_RUN")
+	if dryRun == "true" {
+		cloudConfig.DryRun = true
+	}
+
+	secretID := os.Getenv("SECRET_ID")
+	secretKey := os.Getenv("SECRET_KEY")
+	region := os.Getenv("REGION")
+	regionName := os.Getenv("REGION_NAME")
+	clusterID := os.Getenv("CLUSTER_ID")
+	if secretID == "" {
+		return fmt.Errorf("please specify the environment variable: SECRET_ID")
+	}
+	if secretKey == "" {
+		return fmt.Errorf("please specify the environment variable: SECRET_KEY")
+	}
+	if region == "" {
+		return fmt.Errorf("please specify the environment variable: REGION")
+	}
+	if regionName == "" {
+		return fmt.Errorf("please specify the environment variable: REGION_NAME")
+	}
+	if clusterID == "" {
+		return fmt.Errorf("please specify the environment variable: CLUSTER_ID")
+	}
+	cloudConfig.SecretID = secretID
+	cloudConfig.SecretKey = secretKey
+	cloudConfig.Region = region
+	cloudConfig.RegionName = regionName
+	cloudConfig.ClusterID = clusterID
 
 	klog.V(4).Infof("tencentcloud config %+v", cloudConfig)
 
@@ -103,21 +184,36 @@ func readCloudConfig() error {
 }
 
 // CreateTencentcloudManager constructs tencentcloudManager object.
-func CreateTencentcloudManager(discoveryOpts cloudprovider.NodeGroupDiscoveryOptions, regional bool) (TencentcloudManager, error) {
-	err := readCloudConfig()
+func CreateTencentcloudManager(configReader io.Reader, discoveryOpts cloudprovider.NodeGroupDiscoveryOptions, regional bool) (TencentcloudManager, error) {
+	err := readCloudConfig(configReader)
 	if err != nil {
 		return nil, err
 	}
 
-	credential := common.NewCredential(
-		os.Getenv("SECRET_ID"),
-		os.Getenv("SECRET_KEY"),
-	)
-	cvmClient := client.NewClient(credential, cloudConfig.Region, newCVMClientProfile())
-	vpcClient := client.NewClient(credential, cloudConfig.Region, newVPCClientProfile())
-	asClient := client.NewClient(credential, cloudConfig.Region, newASClientProfile())
+	credential := common.NewCredential(cloudConfig.SecretID, cloudConfig.SecretKey)
+	cvmClient, err := cvm.NewClient(credential, cloudConfig.RegionName, newCVMClientProfile())
+	if err != nil {
+		return nil, err
+	}
+	vpcClient, err := vpc.NewClient(credential, cloudConfig.RegionName, newVPCClientProfile())
+	if err != nil {
+		return nil, err
+	}
+	asClient, err := as.NewClient(credential, cloudConfig.RegionName, newASClientProfile())
+	if err != nil {
+		return nil, err
+	}
+	tkeClient, err := tke.NewClient(credential, cloudConfig.RegionName, newTKEClientProfile())
+	if err != nil {
+		return nil, err
+	}
 
-	service := NewCloudService(cvmClient, vpcClient, asClient)
+	var service CloudService
+	if cloudConfig.DryRun {
+		service = NewCloudMockService(cvmClient, vpcClient, asClient, tkeClient)
+	} else {
+		service = NewCloudService(cvmClient, vpcClient, asClient, tkeClient)
+	}
 
 	manager := &tencentcloudManagerImpl{
 		cache:                NewTencentcloudCache(service),
@@ -296,8 +392,9 @@ func (m *tencentcloudManagerImpl) DeleteInstances(instances []TcRef) error {
 	}
 
 	m.cache.InvalidateAsgTargetSize(commonAsg.TencentcloudRef())
+	m.cache.cloudService.DeleteInstances(commonAsg, toDeleteInstances)
 
-	return m.cache.cloudService.DeleteInstances(commonAsg, toDeleteInstances)
+	return nil
 }
 
 // GetAsgNodes returns Asg nodes.
@@ -334,8 +431,15 @@ type InstanceTemplate struct {
 	Cpu          int64
 	Mem          int64
 	Gpu          int64
+	// gpu虚拟化资源
+	VCudaCore int64
+	VCudaMem  int64
+	// vpc-cni的集群eni-ip资源
+	TKERouteENIIP int64
+	TKEDirectENI  int64
 
-	Tags []*as.Tag
+	Label  map[string]string
+	Taints []*tke.Taint
 }
 
 // NetworkExtendedResources represents network extended resources
@@ -356,13 +460,46 @@ func (m *tencentcloudManagerImpl) GetAsgInstanceTemplate(asgRef TcRef) (*Instanc
 		return instanceTemplate, nil
 	}
 
+	getNetworkExtendedResources := func(instanceType string) (*NetworkExtendedResources, error) {
+		if resources, exist := networkExtendedResourcesMap[instanceType]; exist {
+			return resources, nil
+		}
+
+		pli, err := m.cloudService.DescribeVpcCniPodLimits(instanceType)
+		if err != nil {
+			return nil, err
+		}
+		resources := &NetworkExtendedResources{}
+		if pli != nil {
+			if pli.PodLimits == nil ||
+				pli.PodLimits.TKERouteENINonStaticIP == nil ||
+				pli.PodLimits.TKEDirectENI == nil {
+				return nil, fmt.Errorf("get wrong eni limits(nil)")
+			}
+			resources.TKEDirectENI = *pli.PodLimits.TKEDirectENI
+			resources.TKERouteENIIP = *pli.PodLimits.TKERouteENINonStaticIP
+		}
+
+		klog.Infof("%v", resources)
+		networkExtendedResourcesMap[instanceType] = resources
+
+		return resources, nil
+	}
 	instanceInfo, err := m.cloudService.GetInstanceInfoByType(m.cache.GetInstanceType(asgRef))
 	if err != nil {
-		klog.Warningf("Failed to query instance type `%s` for %s: %v", m.cache.GetInstanceType(asgRef), asgRef.ID, err)
-		return nil, cloudprovider.ErrNotImplemented
+		return nil, err
+	}
+	npInfo, err := m.cloudService.GetNodePoolInfo(cloudConfig.ClusterID, asgRef.ID)
+	if err != nil {
+		return nil, err
 	}
 
 	labels := make(map[string]string)
+	for _, label := range npInfo.Labels {
+		if label.Name != nil && label.Value != nil {
+			labels[*label.Name] = *label.Value
+		}
+	}
 	labels[LabelAutoScalingGroupID] = asgRef.ID
 
 	asg, err := m.cloudService.GetAutoScalingGroup(asgRef)
@@ -370,7 +507,7 @@ func (m *tencentcloudManagerImpl) GetAsgInstanceTemplate(asgRef TcRef) (*Instanc
 		return nil, err
 	}
 	if len(asg.SubnetIdSet) < 1 || asg.SubnetIdSet[0] == nil {
-		return nil, fmt.Errorf("failed to get asg zone")
+		return nil, fmt.Errorf("Failed to get asg zone")
 	}
 	zone, err := m.cloudService.GetZoneBySubnetID(*asg.SubnetIdSet[0])
 	if err != nil {
@@ -381,14 +518,31 @@ func (m *tencentcloudManagerImpl) GetAsgInstanceTemplate(asgRef TcRef) (*Instanc
 		return nil, err
 	}
 
+	// eni
+	networkExtendedResources, err := getNetworkExtendedResources(instanceInfo.InstanceType)
+	if err != nil {
+		return nil, err
+	}
+
+	gpuMult, ok := GPUMemoryMap[instanceInfo.InstanceFamily]
+	if !ok {
+		gpuMult = 24
+	}
+	vcudaMem := instanceInfo.GPU * gpuMult * 4
+
 	instanceTemplate = &InstanceTemplate{
-		InstanceType: instanceInfo.InstanceType,
-		Region:       cloudConfig.Region,
-		Zone:         *zoneInfo.ZoneId,
-		Cpu:          instanceInfo.CPU,
-		Mem:          instanceInfo.Memory,
-		Gpu:          instanceInfo.GPU,
-		Tags:         asg.Tags,
+		InstanceType:  instanceInfo.InstanceType,
+		Region:        cloudConfig.Region,
+		Zone:          *zoneInfo.ZoneId,
+		Cpu:           instanceInfo.CPU,
+		Mem:           instanceInfo.Memory,
+		Gpu:           instanceInfo.GPU,
+		VCudaCore:     instanceInfo.GPU * 100,
+		VCudaMem:      vcudaMem,
+		TKEDirectENI:  networkExtendedResources.TKEDirectENI,
+		TKERouteENIIP: networkExtendedResources.TKERouteENIIP,
+		Label:         labels,
+		Taints:        npInfo.Taints,
 	}
 
 	m.cache.SetAsgInstanceTemplate(asgRef, instanceTemplate)
@@ -418,23 +572,29 @@ func (m *tencentcloudManagerImpl) GetAsgTemplateNode(asg Asg) (*apiv1.Node, erro
 	node.Status.Capacity[apiv1.ResourcePods] = *resource.NewQuantity(110, resource.DecimalSI)
 	node.Status.Capacity[apiv1.ResourceCPU] = *resource.NewQuantity(template.Cpu, resource.DecimalSI)
 	node.Status.Capacity[apiv1.ResourceMemory] = *resource.NewQuantity(template.Mem*1024*1024*1024, resource.DecimalSI)
+	if template.TKERouteENIIP > 0 {
+		node.Status.Capacity[TKERouteENIIP] = *resource.NewQuantity(template.TKERouteENIIP, resource.DecimalSI)
+	}
+	if template.TKEDirectENI > 0 {
+		node.Status.Capacity[TKEDirectENI] = *resource.NewQuantity(template.TKEDirectENI, resource.DecimalSI)
+	}
+	if template.Gpu > 0 {
+		node.Status.Capacity[gpu.ResourceNvidiaGPU] = *resource.NewQuantity(template.Gpu, resource.DecimalSI)
+		node.Status.Capacity[VCudaCore] = *resource.NewQuantity(template.VCudaCore, resource.DecimalSI)
+		node.Status.Capacity[VCudaMemory] = *resource.NewQuantity(template.VCudaMem, resource.DecimalSI)
 
-	resourcesFromTags := extractAllocatableResourcesFromAsg(template.Tags)
-	klog.V(5).Infof("Extracted resources from ASG tags %v", resourcesFromTags)
-	for resourceName, val := range resourcesFromTags {
-		node.Status.Capacity[apiv1.ResourceName(resourceName)] = *val
+		klog.Infof("Capacity resource set gpu %s(%d)", gpu.ResourceNvidiaGPU, template.Gpu)
 	}
 
 	// TODO: use proper allocatable!!
 	node.Status.Allocatable = node.Status.Capacity
 
+	node.Labels = cloudprovider.JoinStringMaps(node.Labels, template.Label)
+
 	// GenericLabels
 	node.Labels = cloudprovider.JoinStringMaps(node.Labels, buildGenericLabels(template, nodeName))
 
-	// NodeLabels
-	node.Labels = cloudprovider.JoinStringMaps(node.Labels, extractLabelsFromAsg(template.Tags))
-
-	node.Spec.Taints = extractTaintsFromAsg(template.Tags)
+	node.Spec.Taints = extractTaintsFromAsg(template.Taints)
 
 	node.Status.Conditions = cloudprovider.BuildReadyConditions()
 
@@ -448,101 +608,23 @@ func buildGenericLabels(template *InstanceTemplate, nodeName string) map[string]
 	result[apiv1.LabelOSStable] = cloudprovider.DefaultOS
 
 	result[apiv1.LabelInstanceType] = template.InstanceType
-	result[apiv1.LabelInstanceTypeStable] = template.InstanceType
 
 	result[apiv1.LabelZoneRegion] = template.Region
-	result[apiv1.LabelZoneRegionStable] = template.Region
 	result[apiv1.LabelZoneFailureDomain] = template.Zone
-	result[apiv1.LabelZoneFailureDomainStable] = template.Zone
 	result[apiv1.LabelHostname] = nodeName
 	return result
 }
 
-func extractLabelsFromAsg(tags []*as.Tag) map[string]string {
-	result := make(map[string]string)
-
-	for _, tag := range tags {
-		k := *tag.Key
-		v := *tag.Value
-		splits := strings.Split(k, "k8s.io/cluster-autoscaler/node-template/label/")
-		// Extract TKE labels from ASG
-		if len(splits) <= 1 {
-			splits = strings.Split(k, "tencentcloud:")
-		}
-		if len(splits) > 1 {
-			label := splits[1]
-			if label != "" {
-				result[label] = v
-			}
-		}
-	}
-
-	return result
-}
-
-func extractAllocatableResourcesFromAsg(tags []*as.Tag) map[string]*resource.Quantity {
-	result := make(map[string]*resource.Quantity)
-
-	for _, tag := range tags {
-		k := *tag.Key
-		v := *tag.Value
-		splits := strings.Split(k, "k8s.io/cluster-autoscaler/node-template/resources/")
-		if len(splits) > 1 {
-			label := splits[1]
-			if label != "" {
-				quantity, err := resource.ParseQuantity(v)
-				if err != nil {
-					continue
-				}
-				result[label] = &quantity
-			}
-		}
-	}
-
-	return result
-}
-
-func extractAllocatableResourcesFromTags(tags map[string]string) map[string]*resource.Quantity {
-	result := make(map[string]*resource.Quantity)
-
-	for k, v := range tags {
-		splits := strings.Split(k, "k8s.io/cluster-autoscaler/node-template/resources/")
-		if len(splits) > 1 {
-			label := splits[1]
-			if label != "" {
-				quantity, err := resource.ParseQuantity(v)
-				if err != nil {
-					klog.Warningf("Failed to parse resource quanitity '%s' for resource '%s'", v, label)
-					continue
-				}
-				result[label] = &quantity
-			}
-		}
-	}
-
-	return result
-}
-
-func extractTaintsFromAsg(tags []*as.Tag) []apiv1.Taint {
+func extractTaintsFromAsg(npTaints []*tke.Taint) []apiv1.Taint {
 	taints := make([]apiv1.Taint, 0)
 
-	for _, tag := range tags {
-		k := *tag.Key
-		v := *tag.Value
-		// The tag value must be in the format <tag>:NoSchedule
-		r, _ := regexp.Compile("(.*):(?:NoSchedule|NoExecute|PreferNoSchedule)")
-		if r.MatchString(v) {
-			splits := strings.Split(k, "k8s.io/cluster-autoscaler/node-template/taint/")
-			if len(splits) > 1 {
-				values := strings.SplitN(v, ":", 2)
-				if len(values) > 1 {
-					taints = append(taints, apiv1.Taint{
-						Key:    splits[1],
-						Value:  values[0],
-						Effect: apiv1.TaintEffect(values[1]),
-					})
-				}
-			}
+	for _, npTaint := range npTaints {
+		if npTaint != nil && npTaint.Key != nil && npTaint.Value != nil && npTaint.Effect != nil {
+			taints = append(taints, apiv1.Taint{
+				Key:    *npTaint.Key,
+				Value:  *npTaint.Value,
+				Effect: apiv1.TaintEffect(*npTaint.Effect),
+			})
 		}
 	}
 	return taints

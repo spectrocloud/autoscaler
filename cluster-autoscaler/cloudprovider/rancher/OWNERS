@@ -8,6 +8,3 @@ reviewers:
 #- gajicdev
 #- pawelkuc
 #- thirdeyenick
-
-labels:
-- area/provider/rancher

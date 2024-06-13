@@ -17,7 +17,6 @@ limitations under the License.
 package storage
 
 import (
-	"context"
 	"fmt"
 
 	v1 "k8s.io/api/core/v1"
@@ -34,10 +33,10 @@ import (
 
 var _ = SIGDescribe("Downward API [Serial] [Disruptive] [Feature:EphemeralStorage]", func() {
 	f := framework.NewDefaultFramework("downward-api")
-	f.NamespacePodSecurityLevel = admissionapi.LevelPrivileged
+	f.NamespacePodSecurityEnforceLevel = admissionapi.LevelPrivileged
 
 	ginkgo.Context("Downward API tests for local ephemeral storage", func() {
-		ginkgo.It("should provide container's limits.ephemeral-storage and requests.ephemeral-storage as env vars", func(ctx context.Context) {
+		ginkgo.It("should provide container's limits.ephemeral-storage and requests.ephemeral-storage as env vars", func() {
 			podName := "downward-api-" + string(uuid.NewUUID())
 			env := []v1.EnvVar{
 				{
@@ -62,10 +61,10 @@ var _ = SIGDescribe("Downward API [Serial] [Disruptive] [Feature:EphemeralStorag
 				fmt.Sprintf("EPHEMERAL_STORAGE_REQUEST=%d", 32*1024*1024),
 			}
 
-			testDownwardAPIForEphemeralStorage(ctx, f, podName, env, expectations)
+			testDownwardAPIForEphemeralStorage(f, podName, env, expectations)
 		})
 
-		ginkgo.It("should provide default limits.ephemeral-storage from node allocatable", func(ctx context.Context) {
+		ginkgo.It("should provide default limits.ephemeral-storage from node allocatable", func() {
 			podName := "downward-api-" + string(uuid.NewUUID())
 			env := []v1.EnvVar{
 				{
@@ -98,13 +97,13 @@ var _ = SIGDescribe("Downward API [Serial] [Disruptive] [Feature:EphemeralStorag
 				},
 			}
 
-			testDownwardAPIUsingPod(ctx, f, pod, env, expectations)
+			testDownwardAPIUsingPod(f, pod, env, expectations)
 		})
 	})
 
 })
 
-func testDownwardAPIForEphemeralStorage(ctx context.Context, f *framework.Framework, podName string, env []v1.EnvVar, expectations []string) {
+func testDownwardAPIForEphemeralStorage(f *framework.Framework, podName string, env []v1.EnvVar, expectations []string) {
 	pod := &v1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:   podName,
@@ -131,9 +130,9 @@ func testDownwardAPIForEphemeralStorage(ctx context.Context, f *framework.Framew
 		},
 	}
 
-	testDownwardAPIUsingPod(ctx, f, pod, env, expectations)
+	testDownwardAPIUsingPod(f, pod, env, expectations)
 }
 
-func testDownwardAPIUsingPod(ctx context.Context, f *framework.Framework, pod *v1.Pod, env []v1.EnvVar, expectations []string) {
-	e2epodoutput.TestContainerOutputRegexp(ctx, f, "downward api env vars", pod, 0, expectations)
+func testDownwardAPIUsingPod(f *framework.Framework, pod *v1.Pod, env []v1.EnvVar, expectations []string) {
+	e2epodoutput.TestContainerOutputRegexp(f, "downward api env vars", pod, 0, expectations)
 }

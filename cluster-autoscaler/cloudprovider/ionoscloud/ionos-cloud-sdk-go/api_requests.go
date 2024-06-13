@@ -13,7 +13,7 @@ package ionoscloud
 import (
 	_context "context"
 	"fmt"
-	"io"
+	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
 	"strings"
@@ -164,7 +164,7 @@ func (a *RequestsApiService) RequestsFindByIdExecute(r ApiRequestsFindByIdReques
 		return localVarReturnValue, localVarAPIResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
 	localVarHTTPResponse.Body.Close()
 	localVarAPIResponse.Payload = localVarBody
 	if err != nil {
@@ -292,7 +292,7 @@ func (r ApiRequestsGetRequest) Limit(limit int32) ApiRequestsGetRequest {
 // Filters query parameters limit results to those containing a matching value for a specific property.
 func (r ApiRequestsGetRequest) Filter(key string, value string) ApiRequestsGetRequest {
 	filterKey := fmt.Sprintf(FilterQueryParam, key)
-	r.filters[filterKey] = append(r.filters[filterKey], value)
+	r.filters[filterKey] = []string{value}
 	return r
 }
 
@@ -483,7 +483,7 @@ func (a *RequestsApiService) RequestsGetExecute(r ApiRequestsGetRequest) (Reques
 		return localVarReturnValue, localVarAPIResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
 	localVarHTTPResponse.Body.Close()
 	localVarAPIResponse.Payload = localVarBody
 	if err != nil {
@@ -547,7 +547,7 @@ func (r ApiRequestsStatusGetRequest) XContractNumber(xContractNumber int32) ApiR
 // Filters query parameters limit results to those containing a matching value for a specific property.
 func (r ApiRequestsStatusGetRequest) Filter(key string, value string) ApiRequestsStatusGetRequest {
 	filterKey := fmt.Sprintf(FilterQueryParam, key)
-	r.filters[filterKey] = append(r.filters[filterKey], value)
+	r.filters[filterKey] = []string{value}
 	return r
 }
 
@@ -692,7 +692,7 @@ func (a *RequestsApiService) RequestsStatusGetExecute(r ApiRequestsStatusGetRequ
 		return localVarReturnValue, localVarAPIResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
 	localVarHTTPResponse.Body.Close()
 	localVarAPIResponse.Payload = localVarBody
 	if err != nil {

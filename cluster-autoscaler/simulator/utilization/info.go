@@ -26,7 +26,6 @@ import (
 
 	apiv1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
-	resourcehelper "k8s.io/kubernetes/pkg/api/v1/resource"
 	schedulerframework "k8s.io/kubernetes/pkg/scheduler/framework"
 
 	klog "k8s.io/klog/v2"
@@ -49,7 +48,7 @@ type Info struct {
 // returns the individual cpu, memory and gpu utilization.
 func Calculate(nodeInfo *schedulerframework.NodeInfo, skipDaemonSetPods, skipMirrorPods bool, gpuConfig *cloudprovider.GpuConfig, currentTime time.Time) (utilInfo Info, err error) {
 	if gpuConfig != nil {
-		gpuUtil, err := CalculateUtilizationOfResource(nodeInfo, gpuConfig.ResourceName, skipDaemonSetPods, skipMirrorPods, currentTime)
+		gpuUtil, err := calculateUtilizationOfResource(nodeInfo, gpuConfig.ResourceName, skipDaemonSetPods, skipMirrorPods, currentTime)
 		if err != nil {
 			klog.V(3).Infof("node %s has unready GPU resource: %s", nodeInfo.Node().Name, gpuConfig.ResourceName)
 			// Return 0 if GPU is unready. This will guarantee we can still scale down a node with unready GPU.
@@ -59,11 +58,11 @@ func Calculate(nodeInfo *schedulerframework.NodeInfo, skipDaemonSetPods, skipMir
 		return Info{GpuUtil: gpuUtil, ResourceName: gpuConfig.ResourceName, Utilization: gpuUtil}, err
 	}
 
-	cpu, err := CalculateUtilizationOfResource(nodeInfo, apiv1.ResourceCPU, skipDaemonSetPods, skipMirrorPods, currentTime)
+	cpu, err := calculateUtilizationOfResource(nodeInfo, apiv1.ResourceCPU, skipDaemonSetPods, skipMirrorPods, currentTime)
 	if err != nil {
 		return Info{}, err
 	}
-	mem, err := CalculateUtilizationOfResource(nodeInfo, apiv1.ResourceMemory, skipDaemonSetPods, skipMirrorPods, currentTime)
+	mem, err := calculateUtilizationOfResource(nodeInfo, apiv1.ResourceMemory, skipDaemonSetPods, skipMirrorPods, currentTime)
 	if err != nil {
 		return Info{}, err
 	}
@@ -81,8 +80,7 @@ func Calculate(nodeInfo *schedulerframework.NodeInfo, skipDaemonSetPods, skipMir
 	return utilization, nil
 }
 
-// CalculateUtilizationOfResource calculates utilization of a given resource for a node.
-func CalculateUtilizationOfResource(nodeInfo *schedulerframework.NodeInfo, resourceName apiv1.ResourceName, skipDaemonSetPods, skipMirrorPods bool, currentTime time.Time) (float64, error) {
+func calculateUtilizationOfResource(nodeInfo *schedulerframework.NodeInfo, resourceName apiv1.ResourceName, skipDaemonSetPods, skipMirrorPods bool, currentTime time.Time) (float64, error) {
 	nodeAllocatable, found := nodeInfo.Node().Status.Allocatable[resourceName]
 	if !found {
 		return 0, fmt.Errorf("failed to get %v from %s", resourceName, nodeInfo.Node().Name)
@@ -90,37 +88,40 @@ func CalculateUtilizationOfResource(nodeInfo *schedulerframework.NodeInfo, resou
 	if nodeAllocatable.MilliValue() == 0 {
 		return 0, fmt.Errorf("%v is 0 at %s", resourceName, nodeInfo.Node().Name)
 	}
-
-	opts := resourcehelper.PodResourcesOptions{}
+	podsRequest := resource.MustParse("0")
 
 	// if skipDaemonSetPods = True, DaemonSet pods resourses will be subtracted
 	// from the node allocatable and won't be added to pods requests
 	// the same with the Mirror pod.
-	podsRequest := resource.MustParse("0")
 	daemonSetAndMirrorPodsUtilization := resource.MustParse("0")
 	for _, podInfo := range nodeInfo.Pods {
-		requestedResourceList := resourcehelper.PodRequests(podInfo.Pod, opts)
-		resourceValue := requestedResourceList[resourceName]
-
 		// factor daemonset pods out of the utilization calculations
 		if skipDaemonSetPods && pod_util.IsDaemonSetPod(podInfo.Pod) {
-			daemonSetAndMirrorPodsUtilization.Add(resourceValue)
+			for _, container := range podInfo.Pod.Spec.Containers {
+				if resourceValue, found := container.Resources.Requests[resourceName]; found {
+					daemonSetAndMirrorPodsUtilization.Add(resourceValue)
+				}
+			}
 			continue
 		}
-
 		// factor mirror pods out of the utilization calculations
 		if skipMirrorPods && pod_util.IsMirrorPod(podInfo.Pod) {
-			daemonSetAndMirrorPodsUtilization.Add(resourceValue)
+			for _, container := range podInfo.Pod.Spec.Containers {
+				if resourceValue, found := container.Resources.Requests[resourceName]; found {
+					daemonSetAndMirrorPodsUtilization.Add(resourceValue)
+				}
+			}
 			continue
 		}
-
 		// ignore Pods that should be terminated
 		if drain.IsPodLongTerminating(podInfo.Pod, currentTime) {
 			continue
 		}
-
-		podsRequest.Add(resourceValue)
+		for _, container := range podInfo.Pod.Spec.Containers {
+			if resourceValue, found := container.Resources.Requests[resourceName]; found {
+				podsRequest.Add(resourceValue)
+			}
+		}
 	}
-
 	return float64(podsRequest.MilliValue()) / float64(nodeAllocatable.MilliValue()-daemonSetAndMirrorPodsUtilization.MilliValue()), nil
 }

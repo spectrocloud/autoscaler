@@ -26,6 +26,7 @@ import (
 	"time"
 
 	gce "google.golang.org/api/compute/v1"
+	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider"
 	"k8s.io/client-go/util/workqueue"
 	klog "k8s.io/klog/v2"
 )
@@ -33,7 +34,7 @@ import (
 // MigInfoProvider allows obtaining information about MIGs
 type MigInfoProvider interface {
 	// GetMigInstances returns instances for a given MIG ref
-	GetMigInstances(migRef GceRef) ([]GceInstance, error)
+	GetMigInstances(migRef GceRef) ([]cloudprovider.Instance, error)
 	// GetMigForInstance returns MIG ref for a given instance
 	GetMigForInstance(instanceRef GceRef) (Mig, error)
 	// RegenerateMigInstancesCache regenerates MIGs to instances mapping cache
@@ -43,17 +44,13 @@ type MigInfoProvider interface {
 	// GetMigBasename returns basename for given MIG ref
 	GetMigBasename(migRef GceRef) (string, error)
 	// GetMigInstanceTemplateName returns instance template name for given MIG ref
-	GetMigInstanceTemplateName(migRef GceRef) (InstanceTemplateName, error)
+	GetMigInstanceTemplateName(migRef GceRef) (string, error)
 	// GetMigInstanceTemplate returns instance template for given MIG ref
 	GetMigInstanceTemplate(migRef GceRef) (*gce.InstanceTemplate, error)
-	// GetMigKubeEnv returns kube-env for given MIG ref
-	GetMigKubeEnv(migRef GceRef) (KubeEnv, error)
 	// GetMigMachineType returns machine type used by a MIG.
 	// For custom machines cpu and memory information is based on parsing
 	// machine name. For standard types it's retrieved from GCE API.
 	GetMigMachineType(migRef GceRef) (MachineType, error)
-	// Returns the pagination behavior of the listManagedInstances API method for a given MIG ref
-	GetListManagedInstancesResults(migRef GceRef) (string, error)
 }
 
 type timeProvider interface {
@@ -69,6 +66,7 @@ type cachingMigInfoProvider struct {
 	concurrentGceRefreshes         int
 	migInstanceMutex               sync.Mutex
 	migInstancesMinRefreshWaitTime time.Duration
+	migInstancesLastRefreshedInfo  map[string]time.Time
 	timeProvider                   timeProvider
 }
 
@@ -87,12 +85,13 @@ func NewCachingMigInfoProvider(cache *GceCache, migLister MigLister, gceClient A
 		projectId:                      projectId,
 		concurrentGceRefreshes:         concurrentGceRefreshes,
 		migInstancesMinRefreshWaitTime: migInstancesMinRefreshWaitTime,
+		migInstancesLastRefreshedInfo:  make(map[string]time.Time),
 		timeProvider:                   &realTime{},
 	}
 }
 
 // GetMigInstances returns instances for a given MIG ref
-func (c *cachingMigInfoProvider) GetMigInstances(migRef GceRef) ([]GceInstance, error) {
+func (c *cachingMigInfoProvider) GetMigInstances(migRef GceRef) ([]cloudprovider.Instance, error) {
 	instances, found := c.cache.GetMigInstances(migRef)
 	if found {
 		return instances, nil
@@ -176,7 +175,7 @@ func (c *cachingMigInfoProvider) findMigWithMatchingBasename(instanceRef GceRef)
 }
 
 func (c *cachingMigInfoProvider) fillMigInstances(migRef GceRef) error {
-	if val, ok := c.cache.GetMigInstancesUpdateTime(migRef); ok {
+	if val, ok := c.migInstancesLastRefreshedInfo[migRef.String()]; ok {
 		// do not regenerate MIG instances cache if last refresh happened recently.
 		if c.timeProvider.Now().Sub(val) < c.migInstancesMinRefreshWaitTime {
 			klog.V(4).Infof("Not regenerating MIG instances cache for %s, as it was refreshed in last MinRefreshWaitTime (%s).", migRef.String(), c.migInstancesMinRefreshWaitTime)
@@ -190,7 +189,8 @@ func (c *cachingMigInfoProvider) fillMigInstances(migRef GceRef) error {
 		return err
 	}
 	// only save information for successful calls, given the errors above may be transient.
-	return c.cache.SetMigInstances(migRef, instances, c.timeProvider.Now())
+	c.migInstancesLastRefreshedInfo[migRef.String()] = c.timeProvider.Now()
+	return c.cache.SetMigInstances(migRef, instances)
 }
 
 func (c *cachingMigInfoProvider) GetMigTargetSize(migRef GceRef) (int64, error) {
@@ -243,72 +243,49 @@ func (c *cachingMigInfoProvider) GetMigBasename(migRef GceRef) (string, error) {
 	return basename, nil
 }
 
-func (c *cachingMigInfoProvider) GetMigInstanceTemplateName(migRef GceRef) (InstanceTemplateName, error) {
+func (c *cachingMigInfoProvider) GetMigInstanceTemplateName(migRef GceRef) (string, error) {
 	c.migInfoMutex.Lock()
 	defer c.migInfoMutex.Unlock()
 
-	instanceTemplateName, found := c.cache.GetMigInstanceTemplateName(migRef)
+	templateName, found := c.cache.GetMigInstanceTemplateName(migRef)
 	if found {
-		return instanceTemplateName, nil
+		return templateName, nil
 	}
 
 	err := c.fillMigInfoCache()
-	instanceTemplateName, found = c.cache.GetMigInstanceTemplateName(migRef)
+	templateName, found = c.cache.GetMigInstanceTemplateName(migRef)
 	if err == nil && found {
-		return instanceTemplateName, nil
+		return templateName, nil
 	}
 
 	// fallback to querying for single mig
-	instanceTemplateName, err = c.gceClient.FetchMigTemplateName(migRef)
+	templateName, err = c.gceClient.FetchMigTemplateName(migRef)
 	if err != nil {
 		c.migLister.HandleMigIssue(migRef, err)
-		return InstanceTemplateName{}, err
+		return "", err
 	}
-	c.cache.SetMigInstanceTemplateName(migRef, instanceTemplateName)
-	return instanceTemplateName, nil
+	c.cache.SetMigInstanceTemplateName(migRef, templateName)
+	return templateName, nil
 }
 
 func (c *cachingMigInfoProvider) GetMigInstanceTemplate(migRef GceRef) (*gce.InstanceTemplate, error) {
-	instanceTemplateName, err := c.GetMigInstanceTemplateName(migRef)
+	templateName, err := c.GetMigInstanceTemplateName(migRef)
 	if err != nil {
 		return nil, err
 	}
 
 	template, found := c.cache.GetMigInstanceTemplate(migRef)
-	if found && template.Name == instanceTemplateName.Name {
+	if found && template.Name == templateName {
 		return template, nil
 	}
 
-	klog.V(2).Infof("Instance template of mig %v changed to %v", migRef.Name, instanceTemplateName.Name)
-	template, err = c.gceClient.FetchMigTemplate(migRef, instanceTemplateName.Name, instanceTemplateName.Regional)
+	klog.V(2).Infof("Instance template of mig %v changed to %v", migRef.Name, templateName)
+	template, err = c.gceClient.FetchMigTemplate(migRef, templateName)
 	if err != nil {
 		return nil, err
 	}
 	c.cache.SetMigInstanceTemplate(migRef, template)
 	return template, nil
-}
-
-func (c *cachingMigInfoProvider) GetMigKubeEnv(migRef GceRef) (KubeEnv, error) {
-	instanceTemplateName, err := c.GetMigInstanceTemplateName(migRef)
-	if err != nil {
-		return KubeEnv{}, err
-	}
-
-	kubeEnv, kubeEnvFound := c.cache.GetMigKubeEnv(migRef)
-	if kubeEnvFound && kubeEnv.templateName == instanceTemplateName.Name {
-		return kubeEnv, nil
-	}
-
-	template, err := c.GetMigInstanceTemplate(migRef)
-	if err != nil {
-		return KubeEnv{}, err
-	}
-	kubeEnv, err = ExtractKubeEnv(template)
-	if err != nil {
-		return KubeEnv{}, err
-	}
-	c.cache.SetMigKubeEnv(migRef, kubeEnv)
-	return kubeEnv, nil
 }
 
 // filMigInfoCache needs to be called with migInfoMutex locked
@@ -324,29 +301,14 @@ func (c *cachingMigInfoProvider) fillMigInfoCache() error {
 		migs[piece], errors[piece] = c.gceClient.FetchAllMigs(zones[piece])
 	})
 
-	failedZones := map[string]error{}
-	failedZoneCount := 0
 	for idx, err := range errors {
 		if err != nil {
 			klog.Errorf("Error listing migs from zone %v; err=%v", zones[idx], err)
-			failedZones[zones[idx]] = err
-			failedZoneCount++
+			return fmt.Errorf("%v", errors)
 		}
-	}
-
-	if failedZoneCount > 0 && failedZoneCount == len(zones) {
-		return fmt.Errorf("%v", errors)
 	}
 
 	registeredMigRefs := c.getRegisteredMigRefs()
-
-	for migRef := range registeredMigRefs {
-		err, ok := failedZones[migRef.Zone]
-		if ok {
-			c.migLister.HandleMigIssue(migRef, err)
-		}
-	}
-
 	for idx, zone := range zones {
 		for _, zoneMig := range migs[idx] {
 			zoneMigRef := GceRef{
@@ -358,17 +320,11 @@ func (c *cachingMigInfoProvider) fillMigInfoCache() error {
 			if registeredMigRefs[zoneMigRef] {
 				c.cache.SetMigTargetSize(zoneMigRef, zoneMig.TargetSize)
 				c.cache.SetMigBasename(zoneMigRef, zoneMig.BaseInstanceName)
-				c.cache.SetListManagedInstancesResults(zoneMigRef, zoneMig.ListManagedInstancesResults)
 
 				templateUrl, err := url.Parse(zoneMig.InstanceTemplate)
 				if err == nil {
 					_, templateName := path.Split(templateUrl.EscapedPath())
-					regional, err := IsInstanceTemplateRegional(templateUrl.String())
-					if err != nil {
-						klog.Errorf("Error parsing instance template url: %v; err=%v ", templateUrl.String(), err)
-					} else {
-						c.cache.SetMigInstanceTemplateName(zoneMigRef, InstanceTemplateName{templateName, regional})
-					}
+					c.cache.SetMigInstanceTemplateName(zoneMigRef, templateName)
 				}
 			}
 		}
@@ -418,29 +374,4 @@ func (c *cachingMigInfoProvider) GetMigMachineType(migRef GceRef) (MachineType, 
 		c.cache.AddMachine(machine, zone)
 	}
 	return machine, nil
-}
-
-func (c *cachingMigInfoProvider) GetListManagedInstancesResults(migRef GceRef) (string, error) {
-	c.migInfoMutex.Lock()
-	defer c.migInfoMutex.Unlock()
-
-	listManagedInstancesResults, found := c.cache.GetListManagedInstancesResults(migRef)
-	if found {
-		return listManagedInstancesResults, nil
-	}
-
-	err := c.fillMigInfoCache()
-	listManagedInstancesResults, found = c.cache.GetListManagedInstancesResults(migRef)
-	if err == nil && found {
-		return listManagedInstancesResults, nil
-	}
-
-	// fallback to querying for a single mig
-	listManagedInstancesResults, err = c.gceClient.FetchListManagedInstancesResults(migRef)
-	if err != nil {
-		c.migLister.HandleMigIssue(migRef, err)
-		return "", err
-	}
-	c.cache.SetListManagedInstancesResults(migRef, listManagedInstancesResults)
-	return listManagedInstancesResults, nil
 }

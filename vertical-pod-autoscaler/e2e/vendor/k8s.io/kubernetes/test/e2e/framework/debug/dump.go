@@ -58,25 +58,25 @@ func dumpEventsInNamespace(eventsLister EventsLister, namespace string) {
 }
 
 // DumpAllNamespaceInfo dumps events, pods and nodes information in the given namespace.
-func DumpAllNamespaceInfo(ctx context.Context, c clientset.Interface, namespace string) {
+func DumpAllNamespaceInfo(c clientset.Interface, namespace string) {
 	dumpEventsInNamespace(func(opts metav1.ListOptions, ns string) (*v1.EventList, error) {
-		return c.CoreV1().Events(ns).List(ctx, opts)
+		return c.CoreV1().Events(ns).List(context.TODO(), opts)
 	}, namespace)
 
-	e2epod.DumpAllPodInfoForNamespace(ctx, c, namespace, framework.TestContext.ReportDir)
+	e2epod.DumpAllPodInfoForNamespace(c, namespace, framework.TestContext.ReportDir)
 
 	// If cluster is large, then the following logs are basically useless, because:
 	// 1. it takes tens of minutes or hours to grab all of them
 	// 2. there are so many of them that working with them are mostly impossible
 	// So we dump them only if the cluster is relatively small.
 	maxNodesForDump := framework.TestContext.MaxNodesToGather
-	nodes, err := c.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+	nodes, err := c.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		framework.Logf("unable to fetch node list: %v", err)
 		return
 	}
 	if len(nodes.Items) <= maxNodesForDump {
-		dumpAllNodeInfo(ctx, c, nodes)
+		dumpAllNodeInfo(c, nodes)
 	} else {
 		framework.Logf("skipping dumping cluster info - cluster too large")
 	}
@@ -95,31 +95,31 @@ func (o byFirstTimestamp) Less(i, j int) bool {
 	return o[i].FirstTimestamp.Before(&o[j].FirstTimestamp)
 }
 
-func dumpAllNodeInfo(ctx context.Context, c clientset.Interface, nodes *v1.NodeList) {
+func dumpAllNodeInfo(c clientset.Interface, nodes *v1.NodeList) {
 	names := make([]string, len(nodes.Items))
 	for ix := range nodes.Items {
 		names[ix] = nodes.Items[ix].Name
 	}
-	DumpNodeDebugInfo(ctx, c, names, framework.Logf)
+	DumpNodeDebugInfo(c, names, framework.Logf)
 }
 
 // DumpNodeDebugInfo dumps debug information of the given nodes.
-func DumpNodeDebugInfo(ctx context.Context, c clientset.Interface, nodeNames []string, logFunc func(fmt string, args ...interface{})) {
+func DumpNodeDebugInfo(c clientset.Interface, nodeNames []string, logFunc func(fmt string, args ...interface{})) {
 	for _, n := range nodeNames {
 		logFunc("\nLogging node info for node %v", n)
-		node, err := c.CoreV1().Nodes().Get(ctx, n, metav1.GetOptions{})
+		node, err := c.CoreV1().Nodes().Get(context.TODO(), n, metav1.GetOptions{})
 		if err != nil {
 			logFunc("Error getting node info %v", err)
 		}
 		logFunc("Node Info: %v", node)
 
 		logFunc("\nLogging kubelet events for node %v", n)
-		for _, e := range getNodeEvents(ctx, c, n) {
+		for _, e := range getNodeEvents(c, n) {
 			logFunc("source %v type %v message %v reason %v first ts %v last ts %v, involved obj %+v",
 				e.Source, e.Type, e.Message, e.Reason, e.FirstTimestamp, e.LastTimestamp, e.InvolvedObject)
 		}
 		logFunc("\nLogging pods the kubelet thinks is on node %v", n)
-		podList, err := getKubeletPods(ctx, c, n)
+		podList, err := getKubeletPods(c, n)
 		if err != nil {
 			logFunc("Unable to retrieve kubelet pods for node %v: %v", n, err)
 			continue
@@ -135,14 +135,13 @@ func DumpNodeDebugInfo(ctx context.Context, c clientset.Interface, nodeNames []s
 					c.Name, c.Ready, c.RestartCount)
 			}
 		}
-		_, err = e2emetrics.HighLatencyKubeletOperations(ctx, c, 10*time.Second, n, logFunc)
-		framework.ExpectNoError(err)
+		e2emetrics.HighLatencyKubeletOperations(c, 10*time.Second, n, logFunc)
 		// TODO: Log node resource info
 	}
 }
 
 // getKubeletPods retrieves the list of pods on the kubelet.
-func getKubeletPods(ctx context.Context, c clientset.Interface, node string) (*v1.PodList, error) {
+func getKubeletPods(c clientset.Interface, node string) (*v1.PodList, error) {
 	var client restclient.Result
 	finished := make(chan struct{}, 1)
 	go func() {
@@ -152,7 +151,7 @@ func getKubeletPods(ctx context.Context, c clientset.Interface, node string) (*v
 			SubResource("proxy").
 			Name(fmt.Sprintf("%v:%v", node, framework.KubeletPort)).
 			Suffix("pods").
-			Do(ctx)
+			Do(context.TODO())
 
 		finished <- struct{}{}
 	}()
@@ -171,7 +170,7 @@ func getKubeletPods(ctx context.Context, c clientset.Interface, node string) (*v
 // logNodeEvents logs kubelet events from the given node. This includes kubelet
 // restart and node unhealthy events. Note that listing events like this will mess
 // with latency metrics, beware of calling it during a test.
-func getNodeEvents(ctx context.Context, c clientset.Interface, nodeName string) []v1.Event {
+func getNodeEvents(c clientset.Interface, nodeName string) []v1.Event {
 	selector := fields.Set{
 		"involvedObject.kind":      "Node",
 		"involvedObject.name":      nodeName,
@@ -179,7 +178,7 @@ func getNodeEvents(ctx context.Context, c clientset.Interface, nodeName string) 
 		"source":                   "kubelet",
 	}.AsSelector().String()
 	options := metav1.ListOptions{FieldSelector: selector}
-	events, err := c.CoreV1().Events(metav1.NamespaceSystem).List(ctx, options)
+	events, err := c.CoreV1().Events(metav1.NamespaceSystem).List(context.TODO(), options)
 	if err != nil {
 		framework.Logf("Unexpected error retrieving node events %v", err)
 		return []v1.Event{}

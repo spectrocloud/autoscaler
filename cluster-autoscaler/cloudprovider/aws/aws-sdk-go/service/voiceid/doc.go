@@ -4,8 +4,7 @@
 // requests to Amazon Voice ID.
 //
 // Amazon Connect Voice ID provides real-time caller authentication and fraud
-// risk detection, which make voice interactions in contact centers more secure
-// and efficient.
+// screening. This guide describes the APIs used for this service.
 //
 // See https://docs.aws.amazon.com/goto/WebAPI/voice-id-2021-09-27 for more information on this service.
 //

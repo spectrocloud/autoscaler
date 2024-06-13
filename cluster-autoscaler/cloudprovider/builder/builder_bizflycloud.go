@@ -23,7 +23,6 @@ import (
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/bizflycloud"
 	"k8s.io/autoscaler/cluster-autoscaler/config"
-	"k8s.io/client-go/informers"
 )
 
 // AvailableCloudProviders supported by the Bizflycloud provider builder.
@@ -34,7 +33,7 @@ var AvailableCloudProviders = []string{
 // DefaultCloudProvider build is Bizflycloud..
 const DefaultCloudProvider = cloudprovider.BizflyCloudProviderName
 
-func buildCloudProvider(opts config.AutoscalingOptions, do cloudprovider.NodeGroupDiscoveryOptions, rl *cloudprovider.ResourceLimiter, _ informers.SharedInformerFactory) cloudprovider.CloudProvider {
+func buildCloudProvider(opts config.AutoscalingOptions, do cloudprovider.NodeGroupDiscoveryOptions, rl *cloudprovider.ResourceLimiter) cloudprovider.CloudProvider {
 	switch opts.CloudProviderName {
 	case cloudprovider.BizflyCloudProviderName:
 		return bizflycloud.BuildBizflyCloud(opts, do, rl)

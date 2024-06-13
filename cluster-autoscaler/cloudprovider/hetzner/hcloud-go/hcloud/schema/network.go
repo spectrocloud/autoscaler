@@ -1,19 +1,34 @@
+/*
+Copyright 2018 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package schema
 
 import "time"
 
 // Network defines the schema of a network.
 type Network struct {
-	ID                    int64             `json:"id"`
-	Name                  string            `json:"name"`
-	Created               time.Time         `json:"created"`
-	IPRange               string            `json:"ip_range"`
-	Subnets               []NetworkSubnet   `json:"subnets"`
-	Routes                []NetworkRoute    `json:"routes"`
-	Servers               []int64           `json:"servers"`
-	Protection            NetworkProtection `json:"protection"`
-	Labels                map[string]string `json:"labels"`
-	ExposeRoutesToVSwitch bool              `json:"expose_routes_to_vswitch"`
+	ID         int               `json:"id"`
+	Name       string            `json:"name"`
+	Created    time.Time         `json:"created"`
+	IPRange    string            `json:"ip_range"`
+	Subnets    []NetworkSubnet   `json:"subnets"`
+	Routes     []NetworkRoute    `json:"routes"`
+	Servers    []int             `json:"servers"`
+	Protection NetworkProtection `json:"protection"`
+	Labels     map[string]string `json:"labels"`
 }
 
 // NetworkSubnet represents a subnet of a network.
@@ -22,7 +37,7 @@ type NetworkSubnet struct {
 	IPRange     string `json:"ip_range"`
 	NetworkZone string `json:"network_zone"`
 	Gateway     string `json:"gateway,omitempty"`
-	VSwitchID   int64  `json:"vswitch_id,omitempty"`
+	VSwitchID   int    `json:"vswitch_id,omitempty"`
 }
 
 // NetworkRoute represents a route of a network.
@@ -38,9 +53,8 @@ type NetworkProtection struct {
 
 // NetworkUpdateRequest defines the schema of the request to update a network.
 type NetworkUpdateRequest struct {
-	Name                  string             `json:"name,omitempty"`
-	Labels                *map[string]string `json:"labels,omitempty"`
-	ExposeRoutesToVSwitch *bool              `json:"expose_routes_to_vswitch,omitempty"`
+	Name   string             `json:"name,omitempty"`
+	Labels *map[string]string `json:"labels,omitempty"`
 }
 
 // NetworkUpdateResponse defines the schema of the response when updating a network.
@@ -62,12 +76,11 @@ type NetworkGetResponse struct {
 
 // NetworkCreateRequest defines the schema of the request to create a network.
 type NetworkCreateRequest struct {
-	Name                  string             `json:"name"`
-	IPRange               string             `json:"ip_range"`
-	Subnets               []NetworkSubnet    `json:"subnets,omitempty"`
-	Routes                []NetworkRoute     `json:"routes,omitempty"`
-	Labels                *map[string]string `json:"labels,omitempty"`
-	ExposeRoutesToVSwitch bool               `json:"expose_routes_to_vswitch"`
+	Name    string             `json:"name"`
+	IPRange string             `json:"ip_range"`
+	Subnets []NetworkSubnet    `json:"subnets,omitempty"`
+	Routes  []NetworkRoute     `json:"routes,omitempty"`
+	Labels  *map[string]string `json:"labels,omitempty"`
 }
 
 // NetworkCreateResponse defines the schema of the response when
@@ -95,7 +108,7 @@ type NetworkActionAddSubnetRequest struct {
 	IPRange     string `json:"ip_range,omitempty"`
 	NetworkZone string `json:"network_zone"`
 	Gateway     string `json:"gateway"`
-	VSwitchID   int64  `json:"vswitch_id,omitempty"`
+	VSwitchID   int    `json:"vswitch_id,omitempty"`
 }
 
 // NetworkActionAddSubnetResponse defines the schema of the response when

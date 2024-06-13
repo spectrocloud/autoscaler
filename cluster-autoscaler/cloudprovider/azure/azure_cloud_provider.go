@@ -19,7 +19,6 @@ package azure
 import (
 	"io"
 	"os"
-	"strings"
 
 	apiv1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -106,12 +105,6 @@ func (azure *AzureCloudProvider) NodeGroupForNode(node *apiv1.Node) (cloudprovid
 		klog.V(6).Infof("Skipping the search for node group for the node '%s' because it has no spec.ProviderID", node.ObjectMeta.Name)
 		return nil, nil
 	}
-
-	if !strings.HasPrefix(node.Spec.ProviderID, "azure://") {
-		klog.V(6).Infof("Wrong azure ProviderID for node %v, skipped", node.Name)
-		return nil, nil
-	}
-
 	klog.V(6).Infof("Searching for node group for the node: %s\n", node.Spec.ProviderID)
 	ref := &azureRef{
 		Name: node.Spec.ProviderID,

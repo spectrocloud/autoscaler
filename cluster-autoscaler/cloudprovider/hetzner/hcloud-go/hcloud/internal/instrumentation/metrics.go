@@ -1,3 +1,19 @@
+/*
+Copyright 2018 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package instrumentation
 
 import (
@@ -13,46 +29,39 @@ import (
 
 type Instrumenter struct {
 	subsystemIdentifier     string // will be used as part of the metric name (hcloud_<identifier>_requests_total)
-	instrumentationRegistry prometheus.Registerer
+	instrumentationRegistry *prometheus.Registry
 }
 
 // New creates a new Instrumenter. The subsystemIdentifier will be used as part of the metric names (e.g. hcloud_<identifier>_requests_total).
-func New(subsystemIdentifier string, instrumentationRegistry prometheus.Registerer) *Instrumenter {
+func New(subsystemIdentifier string, instrumentationRegistry *prometheus.Registry) *Instrumenter {
 	return &Instrumenter{subsystemIdentifier: subsystemIdentifier, instrumentationRegistry: instrumentationRegistry}
 }
 
 // InstrumentedRoundTripper returns an instrumented round tripper.
 func (i *Instrumenter) InstrumentedRoundTripper() http.RoundTripper {
-	inFlightRequestsGauge := registerOrReuse(
-		i.instrumentationRegistry,
-		prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: fmt.Sprintf("hcloud_%s_in_flight_requests", i.subsystemIdentifier),
-			Help: fmt.Sprintf("A gauge of in-flight requests to the hcloud %s.", i.subsystemIdentifier),
-		}),
+	inFlightRequestsGauge := prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: fmt.Sprintf("hcloud_%s_in_flight_requests", i.subsystemIdentifier),
+		Help: fmt.Sprintf("A gauge of in-flight requests to the hcloud %s.", i.subsystemIdentifier),
+	})
+
+	requestsPerEndpointCounter := prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: fmt.Sprintf("hcloud_%s_requests_total", i.subsystemIdentifier),
+			Help: fmt.Sprintf("A counter for requests to the hcloud %s per endpoint.", i.subsystemIdentifier),
+		},
+		[]string{"code", "method", "api_endpoint"},
 	)
 
-	requestsPerEndpointCounter := registerOrReuse(
-		i.instrumentationRegistry,
-		prometheus.NewCounterVec(
-			prometheus.CounterOpts{
-				Name: fmt.Sprintf("hcloud_%s_requests_total", i.subsystemIdentifier),
-				Help: fmt.Sprintf("A counter for requests to the hcloud %s per endpoint.", i.subsystemIdentifier),
-			},
-			[]string{"code", "method", "api_endpoint"},
-		),
+	requestLatencyHistogram := prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name:    fmt.Sprintf("hcloud_%s_request_duration_seconds", i.subsystemIdentifier),
+			Help:    fmt.Sprintf("A histogram of request latencies to the hcloud %s .", i.subsystemIdentifier),
+			Buckets: prometheus.DefBuckets,
+		},
+		[]string{"method"},
 	)
 
-	requestLatencyHistogram := registerOrReuse(
-		i.instrumentationRegistry,
-		prometheus.NewHistogramVec(
-			prometheus.HistogramOpts{
-				Name:    fmt.Sprintf("hcloud_%s_request_duration_seconds", i.subsystemIdentifier),
-				Help:    fmt.Sprintf("A histogram of request latencies to the hcloud %s .", i.subsystemIdentifier),
-				Buckets: prometheus.DefBuckets,
-			},
-			[]string{"method"},
-		),
-	)
+	i.instrumentationRegistry.MustRegister(requestsPerEndpointCounter, requestLatencyHistogram, inFlightRequestsGauge)
 
 	return promhttp.InstrumentRoundTripperInFlight(inFlightRequestsGauge,
 		promhttp.InstrumentRoundTripperDuration(requestLatencyHistogram,
@@ -79,27 +88,6 @@ func (i *Instrumenter) instrumentRoundTripperEndpoint(counter *prometheus.Counte
 
 		return resp, err
 	}
-}
-
-// registerOrReuse will try to register the passed Collector, but in case a conflicting collector was already registered,
-// it will instead return that collector. Make sure to always use the collector return by this method.
-// Similar to [Registry.MustRegister] it will panic if any other error occurs.
-func registerOrReuse[C prometheus.Collector](registry prometheus.Registerer, collector C) C {
-	err := registry.Register(collector)
-	if err != nil {
-		// If we get a AlreadyRegisteredError we can return the existing collector
-		if are, ok := err.(prometheus.AlreadyRegisteredError); ok {
-			if existingCollector, ok := are.ExistingCollector.(C); ok {
-				collector = existingCollector
-			} else {
-				panic("received incompatible existing collector")
-			}
-		} else {
-			panic(err)
-		}
-	}
-
-	return collector
 }
 
 func preparePathForLabel(path string) string {

@@ -1,3 +1,19 @@
+/*
+Copyright 2018 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package hcloud
 
 import (
@@ -16,7 +32,7 @@ import (
 
 // LoadBalancer represents a Load Balancer in the Hetzner Cloud.
 type LoadBalancer struct {
-	ID               int64
+	ID               int
 	Name             string
 	PublicNet        LoadBalancerPublicNet
 	PrivateNet       []LoadBalancerPrivateNet
@@ -103,7 +119,7 @@ type LoadBalancerAlgorithmType string
 
 const (
 	// LoadBalancerAlgorithmTypeRoundRobin is an algorithm which distributes
-	// requests to targets in a round-robin fashion.
+	// requests to targets in a round robin fashion.
 	LoadBalancerAlgorithmTypeRoundRobin LoadBalancerAlgorithmType = "round_robin"
 	// LoadBalancerAlgorithmTypeLeastConnections is an algorithm which distributes
 	// requests to targets with the least number of connections.
@@ -116,7 +132,7 @@ type LoadBalancerAlgorithm struct {
 	Type LoadBalancerAlgorithmType
 }
 
-// LoadBalancerTargetType specifies the type of Load Balancer target.
+// LoadBalancerTargetType specifies the type of a Load Balancer target.
 type LoadBalancerTargetType string
 
 const (
@@ -197,7 +213,7 @@ type LoadBalancerProtection struct {
 	Delete bool
 }
 
-// changeDNSPtr changes or resets the reverse DNS pointer for an IP address.
+// changeDNSPtr changes or resets the reverse DNS pointer for a IP address.
 // Pass a nil ptr to reset the reverse DNS pointer to its default value.
 func (lb *LoadBalancer) changeDNSPtr(ctx context.Context, client *Client, ip net.IP, ptr *string) (*Action, *Response, error) {
 	reqBody := schema.LoadBalancerActionChangeDNSPtrRequest{
@@ -238,11 +254,10 @@ func (lb *LoadBalancer) GetDNSPtrForIP(ip net.IP) (string, error) {
 // LoadBalancerClient is a client for the Load Balancers API.
 type LoadBalancerClient struct {
 	client *Client
-	Action *ResourceActionClient
 }
 
 // GetByID retrieves a Load Balancer by its ID. If the Load Balancer does not exist, nil is returned.
-func (c *LoadBalancerClient) GetByID(ctx context.Context, id int64) (*LoadBalancer, *Response, error) {
+func (c *LoadBalancerClient) GetByID(ctx context.Context, id int) (*LoadBalancer, *Response, error) {
 	req, err := c.client.NewRequest(ctx, "GET", fmt.Sprintf("/load_balancers/%d", id), nil)
 	if err != nil {
 		return nil, nil, err
@@ -274,8 +289,8 @@ func (c *LoadBalancerClient) GetByName(ctx context.Context, name string) (*LoadB
 // Get retrieves a Load Balancer by its ID if the input can be parsed as an integer, otherwise it
 // retrieves a Load Balancer by its name. If the Load Balancer does not exist, nil is returned.
 func (c *LoadBalancerClient) Get(ctx context.Context, idOrName string) (*LoadBalancer, *Response, error) {
-	if id, err := strconv.ParseInt(idOrName, 10, 64); err == nil {
-		return c.GetByID(ctx, id)
+	if id, err := strconv.Atoi(idOrName); err == nil {
+		return c.GetByID(ctx, int(id))
 	}
 	return c.GetByName(ctx, idOrName)
 }
@@ -288,7 +303,7 @@ type LoadBalancerListOpts struct {
 }
 
 func (l LoadBalancerListOpts) values() url.Values {
-	vals := l.ListOpts.Values()
+	vals := l.ListOpts.values()
 	if l.Name != "" {
 		vals.Add("name", l.Name)
 	}
@@ -323,12 +338,30 @@ func (c *LoadBalancerClient) List(ctx context.Context, opts LoadBalancerListOpts
 
 // All returns all Load Balancers.
 func (c *LoadBalancerClient) All(ctx context.Context) ([]*LoadBalancer, error) {
-	return c.AllWithOpts(ctx, LoadBalancerListOpts{ListOpts: ListOpts{PerPage: 50}})
+	allLoadBalancer := []*LoadBalancer{}
+
+	opts := LoadBalancerListOpts{}
+	opts.PerPage = 50
+
+	err := c.client.all(func(page int) (*Response, error) {
+		opts.Page = page
+		LoadBalancer, resp, err := c.List(ctx, opts)
+		if err != nil {
+			return resp, err
+		}
+		allLoadBalancer = append(allLoadBalancer, LoadBalancer...)
+		return resp, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return allLoadBalancer, nil
 }
 
 // AllWithOpts returns all Load Balancers for the given options.
 func (c *LoadBalancerClient) AllWithOpts(ctx context.Context, opts LoadBalancerListOpts) ([]*LoadBalancer, error) {
-	allLoadBalancers := []*LoadBalancer{}
+	var allLoadBalancers []*LoadBalancer
 
 	err := c.client.all(func(page int) (*Response, error) {
 		opts.Page = page
@@ -648,7 +681,7 @@ type LoadBalancerAddServiceOptsHTTP struct {
 	StickySessions *bool
 }
 
-// LoadBalancerAddServiceOptsHealthCheck holds options for specifying a health check
+// LoadBalancerAddServiceOptsHealthCheck holds options for specifying an health check
 // when adding a service to a Load Balancer.
 type LoadBalancerAddServiceOptsHealthCheck struct {
 	Protocol LoadBalancerServiceProtocol

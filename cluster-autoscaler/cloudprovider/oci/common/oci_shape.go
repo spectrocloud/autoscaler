@@ -19,7 +19,7 @@ import (
 
 // ShapeGetter returns the oci shape attributes for the pool.
 type ShapeGetter interface {
-	GetNodePoolShape(*oke.NodePool, int64) (*Shape, error)
+	GetNodePoolShape(*oke.NodePool) (*Shape, error)
 	GetInstancePoolShape(pool *core.InstancePool) (*Shape, error)
 	Refresh()
 }
@@ -51,11 +51,10 @@ func (cc ShapeClientImpl) ListShapes(ctx context.Context, req core.ListShapesReq
 // Shape includes the resource attributes of a given shape which should be used
 // for constructing node templates.
 type Shape struct {
-	Name                    string
-	CPU                     float32
-	GPU                     int
-	MemoryInBytes           float32
-	EphemeralStorageInBytes float32
+	Name          string
+	CPU           float32
+	GPU           int
+	MemoryInBytes float32
 }
 
 // CreateShapeGetter creates a new oci shape getter.
@@ -79,15 +78,14 @@ func (osf *shapeGetterImpl) Refresh() {
 }
 
 // GetNodePoolShape gets the shape by querying the node pool's configuration
-func (osf *shapeGetterImpl) GetNodePoolShape(np *oke.NodePool, ephemeralStorage int64) (*Shape, error) {
+func (osf *shapeGetterImpl) GetNodePoolShape(np *oke.NodePool) (*Shape, error) {
 	shapeName := *np.NodeShape
 	if np.NodeShapeConfig != nil {
 		return &Shape{
 			CPU: *np.NodeShapeConfig.Ocpus * 2,
 			// num_bytes * kilo * mega * giga
-			MemoryInBytes:           *np.NodeShapeConfig.MemoryInGBs * 1024 * 1024 * 1024,
-			GPU:                     0,
-			EphemeralStorageInBytes: float32(ephemeralStorage),
+			MemoryInBytes: *np.NodeShapeConfig.MemoryInGBs * 1024 * 1024 * 1024,
+			GPU:           0,
 		}, nil
 	}
 
@@ -115,10 +113,9 @@ func (osf *shapeGetterImpl) GetNodePoolShape(np *oke.NodePool, ephemeralStorage 
 	// Update the cache based on latest results
 	for _, s := range resp.Items {
 		osf.cache[*s.Shape] = &Shape{
-			CPU:                     getFloat32(s.Ocpus) * 2, // convert ocpu to vcpu
-			GPU:                     getInt(s.Gpus),
-			MemoryInBytes:           getFloat32(s.MemoryInGBs) * 1024 * 1024 * 1024,
-			EphemeralStorageInBytes: float32(ephemeralStorage),
+			CPU:           getFloat32(s.Ocpus) * 2, // convert ocpu to vcpu
+			GPU:           getInt(s.Gpus),
+			MemoryInBytes: getFloat32(s.MemoryInGBs) * 1024 * 1024 * 1024,
 		}
 	}
 

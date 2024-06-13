@@ -22,7 +22,6 @@ import (
 	"time"
 
 	apiv1 "k8s.io/api/core/v1"
-	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/gce/localssdsize"
 	"k8s.io/autoscaler/cluster-autoscaler/utils/gpu"
 	"k8s.io/autoscaler/cluster-autoscaler/utils/units"
 
@@ -31,15 +30,15 @@ import (
 
 // GcePriceModel implements PriceModel interface for GCE.
 type GcePriceModel struct {
-	PriceInfo            PriceInfo
-	localSSDSizeProvider localssdsize.LocalSSDSizeProvider
+	PriceInfo               PriceInfo
+	EphemeralStorageSupport bool
 }
 
 // NewGcePriceModel gets a new instance of GcePriceModel
-func NewGcePriceModel(info PriceInfo, localSSDSizeProvider localssdsize.LocalSSDSizeProvider) *GcePriceModel {
+func NewGcePriceModel(info PriceInfo, ephemeralStorageSupport bool) *GcePriceModel {
 	return &GcePriceModel{
-		PriceInfo:            info,
-		localSSDSizeProvider: localSSDSizeProvider,
+		PriceInfo:               info,
+		EphemeralStorageSupport: ephemeralStorageSupport,
 	}
 }
 
@@ -58,56 +57,59 @@ const DefaultBootDiskSizeGB = 100
 func (model *GcePriceModel) NodePrice(node *apiv1.Node, startTime time.Time, endTime time.Time) (float64, error) {
 	price := 0.0
 	basePriceFound := false
-	machineType := ""
+
+	// Base instance price
 	if node.Labels != nil {
-		if _machineType, found := getInstanceTypeFromLabels(node.Labels); found {
-			machineType = _machineType
+		if machineType, found := getInstanceTypeFromLabels(node.Labels); found {
+			priceMapToUse := model.PriceInfo.InstancePrices()
+			if hasPreemptiblePricing(node) {
+				priceMapToUse = model.PriceInfo.PreemptibleInstancePrices()
+			}
+			if basePricePerHour, found := priceMapToUse[machineType]; found {
+				price = basePricePerHour * getHours(startTime, endTime)
+				basePriceFound = true
+			} else {
+				klog.Warningf("Pricing information not found for instance type %v; will fallback to default pricing", machineType)
+			}
 		}
 	}
-	// Base instance price
-	priceMapToUse := model.PriceInfo.InstancePrices()
-	if hasPreemptiblePricing(node) {
-		priceMapToUse = model.PriceInfo.PreemptibleInstancePrices()
-	}
-	if basePricePerHour, found := priceMapToUse[machineType]; found {
-		price = basePricePerHour * getHours(startTime, endTime)
-		basePriceFound = true
-	} else {
-		klog.Warningf("Pricing information not found for instance type %v; will fallback to default pricing", machineType)
-	}
 	if !basePriceFound {
-		price = model.getBasePrice(node.Status.Capacity, machineType, startTime, endTime)
-		price = price * model.getPreemptibleDiscount(node)
+		if machineType, found := getInstanceTypeFromLabels(node.Labels); found {
+			price = model.getBasePrice(node.Status.Capacity, machineType, startTime, endTime)
+			price = price * model.getPreemptibleDiscount(node)
+		}
 	}
 
 	// Ephemeral Storage
-	// Local SSD price
-	if node.Labels[ephemeralStorageLocalSsdLabel] == "true" || node.Annotations[EphemeralStorageLocalSsdAnnotation] == "true" {
-		localSsdCount, _ := strconv.ParseFloat(node.Annotations[LocalSsdCountAnnotation], 64)
-		localSsdPrice := model.PriceInfo.LocalSsdPricePerHour()
-		if hasPreemptiblePricing(node) {
-			localSsdPrice = model.PriceInfo.SpotLocalSsdPricePerHour()
+	if model.EphemeralStorageSupport {
+		// Local SSD price
+		if node.Labels[ephemeralStorageLocalSsdLabel] == "true" || node.Annotations[EphemeralStorageLocalSsdAnnotation] == "true" {
+			localSsdCount, _ := strconv.ParseFloat(node.Annotations[LocalSsdCountAnnotation], 64)
+			localSsdPrice := model.PriceInfo.LocalSsdPricePerHour()
+			if hasPreemptiblePricing(node) {
+				localSsdPrice = model.PriceInfo.SpotLocalSsdPricePerHour()
+			}
+			price += localSsdCount * float64(LocalSSDDiskSizeInGiB) * localSsdPrice * getHours(startTime, endTime)
 		}
-		price += localSsdCount * float64(model.localSSDSizeProvider.SSDSizeInGiB(machineType)) * localSsdPrice * getHours(startTime, endTime)
-	}
 
-	// Boot disk price
-	bootDiskSize, _ := strconv.ParseInt(node.Annotations[BootDiskSizeAnnotation], 10, 64)
-	if bootDiskSize == 0 {
-		klog.Errorf("Boot disk size is not found for node %s, using default size %v", node.Name, DefaultBootDiskSizeGB)
-		bootDiskSize = DefaultBootDiskSizeGB
-	}
-	bootDiskType := node.Annotations[BootDiskTypeAnnotation]
-	if val, ok := node.Labels[bootDiskTypeLabel]; ok {
-		bootDiskType = val
-	}
-	if bootDiskType == "" {
-		klog.Errorf("Boot disk type is not found for node %s, using default type %s", node.Name, DefaultBootDiskType)
-		bootDiskType = DefaultBootDiskType
-	}
-	bootDiskPrice := model.PriceInfo.BootDiskPricePerHour()[bootDiskType]
+		// Boot disk price
+		bootDiskSize, _ := strconv.ParseInt(node.Annotations[BootDiskSizeAnnotation], 10, 64)
+		if bootDiskSize == 0 {
+			klog.Errorf("Boot disk size is not found for node %s, using default size %v", node.Name, DefaultBootDiskSizeGB)
+			bootDiskSize = DefaultBootDiskSizeGB
+		}
+		bootDiskType := node.Annotations[BootDiskTypeAnnotation]
+		if val, ok := node.Labels[bootDiskTypeLabel]; ok {
+			bootDiskType = val
+		}
+		if bootDiskType == "" {
+			klog.Errorf("Boot disk type is not found for node %s, using default type %s", node.Name, DefaultBootDiskType)
+			bootDiskType = DefaultBootDiskType
+		}
+		bootDiskPrice := model.PriceInfo.BootDiskPricePerHour()[bootDiskType]
 
-	price += bootDiskPrice * float64(bootDiskSize) * getHours(startTime, endTime)
+		price += bootDiskPrice * float64(bootDiskSize) * getHours(startTime, endTime)
+	}
 
 	// GPUs
 	if gpuRequest, found := node.Status.Capacity[gpu.ResourceNvidiaGPU]; found {
@@ -194,10 +196,12 @@ func (model *GcePriceModel) getBasePrice(resources apiv1.ResourceList, instanceT
 	}
 	price += float64(mem.Value()) / float64(units.GiB) * memPrice * hours
 
-	ephemeralStorage := resources[apiv1.ResourceEphemeralStorage]
-	// For simplification using a fixed price for default boot disk.
-	ephemeralStoragePrice := model.PriceInfo.BootDiskPricePerHour()[DefaultBootDiskType]
-	price += float64(ephemeralStorage.Value()) / float64(units.GiB) * ephemeralStoragePrice * hours
+	if model.EphemeralStorageSupport {
+		ephemeralStorage := resources[apiv1.ResourceEphemeralStorage]
+		// For simplification using a fixed price for default boot disk.
+		ephemeralStoragePrice := model.PriceInfo.BootDiskPricePerHour()[DefaultBootDiskType]
+		price += float64(ephemeralStorage.Value()) / float64(units.GiB) * ephemeralStoragePrice * hours
+	}
 
 	return price
 }

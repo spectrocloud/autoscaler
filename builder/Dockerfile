@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.22.2
+FROM golang:1.20
 LABEL maintainer="Marcin Wielgus <mwielgus@google.com>"
 
 ENV GOPATH /gopath/
@@ -21,6 +21,6 @@ ENV GO111MODULE auto
 
 RUN apt-get update && apt-get --yes install libseccomp-dev
 RUN go version
-RUN go install github.com/tools/godep@latest
+RUN go get github.com/tools/godep
 RUN godep version
 CMD ["/bin/bash"]

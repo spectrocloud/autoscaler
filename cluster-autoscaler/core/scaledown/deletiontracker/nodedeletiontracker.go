@@ -148,8 +148,7 @@ func (n *NodeDeletionTracker) DeletionsCount(nodeGroupId string) int {
 	return n.deletionsPerNodeGroup[nodeGroupId]
 }
 
-// DeletionResults returns deletion results since the last ClearResultsNotNewerThan call
-// in a map form, along with the timestamp of last result.
+// DeletionResults returns deletion results in a map form, along with the timestamp of last result.
 func (n *NodeDeletionTracker) DeletionResults() (map[string]status.NodeDeleteResult, time.Time) {
 	n.Lock()
 	defer n.Unlock()
@@ -174,9 +173,6 @@ func (n *NodeDeletionTracker) ClearResultsNotNewerThan(t time.Time) {
 func (n *NodeDeletionTracker) Snapshot() *NodeDeletionTracker {
 	n.Lock()
 	defer n.Unlock()
-
-	n.evictions.DropNotNewerThan(n.clock.Now().Add(-n.evictionsTTL))
-
 	snapshot := NewNodeDeletionTracker(n.evictionsTTL)
 	for k, val := range n.emptyNodeDeletions {
 		snapshot.emptyNodeDeletions[k] = val

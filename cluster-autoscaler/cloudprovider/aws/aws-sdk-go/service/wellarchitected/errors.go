@@ -17,7 +17,7 @@ const (
 	// ErrCodeConflictException for service response error code
 	// "ConflictException".
 	//
-	// The resource has already been processed, was deleted, or is too large.
+	// The resource already exists.
 	ErrCodeConflictException = "ConflictException"
 
 	// ErrCodeInternalServerException for service response error code

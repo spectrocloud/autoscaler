@@ -287,7 +287,9 @@ var _ = ActuationSuiteE2eDescribe("Actuation", func() {
 
 	ginkgo.It("does not act on injected sidecars", func() {
 		const (
-			agnhostImage  = "registry.k8s.io/e2e-test-images/agnhost:2.40"
+			// TODO(krzysied): Update the image url when the agnhost:2.10 image
+			// is promoted to the k8s-e2e-test-images repository.
+			agnhostImage  = "gcr.io/k8s-staging-e2e-test-images/agnhost:2.10"
 			sidecarParam  = "--sidecar-image=registry.k8s.io/pause:3.1"
 			sidecarName   = "webhook-added-sidecar"
 			servicePort   = int32(8443)
@@ -379,7 +381,7 @@ func assertPodsPendingForDuration(c clientset.Interface, deployment *appsv1.Depl
 
 	err := wait.PollImmediate(pollInterval, pollTimeout+pendingDuration, func() (bool, error) {
 		var err error
-		currentPodList, err := framework_deployment.GetPodsForDeployment(context.TODO(), c, deployment)
+		currentPodList, err := framework_deployment.GetPodsForDeployment(c, deployment)
 		if err != nil {
 			return false, err
 		}
@@ -505,7 +507,7 @@ func setupHamsterJob(f *framework.Framework, cpu, memory string, replicas int32)
 	}
 	err := testutils.CreateJobWithRetries(f.ClientSet, f.Namespace.Name, job)
 	gomega.Expect(err).NotTo(gomega.HaveOccurred())
-	err = framework_job.WaitForJobPodsRunning(context.TODO(), f.ClientSet, f.Namespace.Name, job.Name, replicas)
+	err = framework_job.WaitForJobPodsRunning(f.ClientSet, f.Namespace.Name, job.Name, replicas)
 	gomega.Expect(err).NotTo(gomega.HaveOccurred())
 }
 
@@ -514,7 +516,7 @@ func setupHamsterRS(f *framework.Framework, cpu, memory string, replicas int32) 
 	rs.Spec.Template.Spec.Containers[0] = SetupHamsterContainer(cpu, memory)
 	err := createReplicaSetWithRetries(f.ClientSet, f.Namespace.Name, rs)
 	gomega.Expect(err).NotTo(gomega.HaveOccurred())
-	err = framework_rs.WaitForReadyReplicaSet(context.TODO(), f.ClientSet, f.Namespace.Name, rs.Name)
+	err = framework_rs.WaitForReadyReplicaSet(f.ClientSet, f.Namespace.Name, rs.Name)
 	gomega.Expect(err).NotTo(gomega.HaveOccurred())
 }
 
@@ -525,7 +527,7 @@ func setupHamsterStateful(f *framework.Framework, cpu, memory string, replicas i
 	stateful.Spec.Template.Spec.Containers[0] = SetupHamsterContainer(cpu, memory)
 	err := createStatefulSetSetWithRetries(f.ClientSet, f.Namespace.Name, stateful)
 	gomega.Expect(err).NotTo(gomega.HaveOccurred())
-	framework_ss.WaitForRunningAndReady(context.TODO(), f.ClientSet, *stateful.Spec.Replicas, stateful)
+	framework_ss.WaitForRunningAndReady(f.ClientSet, *stateful.Spec.Replicas, stateful)
 }
 
 func setupPDB(f *framework.Framework, name string, maxUnavailable int) *policyv1.PodDisruptionBudget {
@@ -547,7 +549,7 @@ func setupPDB(f *framework.Framework, name string, maxUnavailable int) *policyv1
 }
 
 func getCurrentPodSetForDeployment(c clientset.Interface, d *appsv1.Deployment) PodSet {
-	podList, err := framework_deployment.GetPodsForDeployment(context.TODO(), c, d)
+	podList, err := framework_deployment.GetPodsForDeployment(c, d)
 	gomega.Expect(err).NotTo(gomega.HaveOccurred())
 	return MakePodSet(podList)
 }

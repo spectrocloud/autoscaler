@@ -111,8 +111,6 @@ func TestSanitizePodSpec(t *testing.T) {
 				},
 				Containers: []apiv1.Container{
 					{Image: "foo/bar", Name: "foobar", VolumeMounts: []apiv1.VolumeMount{{Name: "projected1"}}},
-				},
-				InitContainers: []apiv1.Container{
 					{Image: "foo/baz", Name: "foobaz", VolumeMounts: []apiv1.VolumeMount{{Name: "projected2"}}},
 				},
 			},
@@ -120,8 +118,6 @@ func TestSanitizePodSpec(t *testing.T) {
 				NodeSelector: map[string]string{"foo": "bar"},
 				Containers: []apiv1.Container{
 					{Image: "foo/bar", Name: "foobar"},
-				},
-				InitContainers: []apiv1.Container{
 					{Image: "foo/baz", Name: "foobaz"},
 				},
 			},

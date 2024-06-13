@@ -26,7 +26,7 @@ import (
 //	// myFunc uses an SDK service client to make a request to
 //	// Amazon Personalize Events.
 //	func myFunc(svc personalizeeventsiface.PersonalizeEventsAPI) bool {
-//	    // Make svc.PutActionInteractions request
+//	    // Make svc.PutEvents request
 //	}
 //
 //	func main() {
@@ -42,7 +42,7 @@ import (
 //	type mockPersonalizeEventsClient struct {
 //	    personalizeeventsiface.PersonalizeEventsAPI
 //	}
-//	func (m *mockPersonalizeEventsClient) PutActionInteractions(input *personalizeevents.PutActionInteractionsInput) (*personalizeevents.PutActionInteractionsOutput, error) {
+//	func (m *mockPersonalizeEventsClient) PutEvents(input *personalizeevents.PutEventsInput) (*personalizeevents.PutEventsOutput, error) {
 //	    // mock response/functionality
 //	}
 //
@@ -60,14 +60,6 @@ import (
 // and waiters. Its suggested to use the pattern above for testing, or using
 // tooling to generate mocks to satisfy the interfaces.
 type PersonalizeEventsAPI interface {
-	PutActionInteractions(*personalizeevents.PutActionInteractionsInput) (*personalizeevents.PutActionInteractionsOutput, error)
-	PutActionInteractionsWithContext(aws.Context, *personalizeevents.PutActionInteractionsInput, ...request.Option) (*personalizeevents.PutActionInteractionsOutput, error)
-	PutActionInteractionsRequest(*personalizeevents.PutActionInteractionsInput) (*request.Request, *personalizeevents.PutActionInteractionsOutput)
-
-	PutActions(*personalizeevents.PutActionsInput) (*personalizeevents.PutActionsOutput, error)
-	PutActionsWithContext(aws.Context, *personalizeevents.PutActionsInput, ...request.Option) (*personalizeevents.PutActionsOutput, error)
-	PutActionsRequest(*personalizeevents.PutActionsInput) (*request.Request, *personalizeevents.PutActionsOutput)
-
 	PutEvents(*personalizeevents.PutEventsInput) (*personalizeevents.PutEventsOutput, error)
 	PutEventsWithContext(aws.Context, *personalizeevents.PutEventsInput, ...request.Option) (*personalizeevents.PutEventsOutput, error)
 	PutEventsRequest(*personalizeevents.PutEventsInput) (*request.Request, *personalizeevents.PutEventsOutput)

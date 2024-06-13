@@ -30,15 +30,11 @@ import (
 	"k8s.io/autoscaler/cluster-autoscaler/estimator"
 	"k8s.io/autoscaler/cluster-autoscaler/expander"
 	"k8s.io/autoscaler/cluster-autoscaler/expander/factory"
-	"k8s.io/autoscaler/cluster-autoscaler/observers/loopstart"
 	ca_processors "k8s.io/autoscaler/cluster-autoscaler/processors"
 	"k8s.io/autoscaler/cluster-autoscaler/simulator/clustersnapshot"
-	"k8s.io/autoscaler/cluster-autoscaler/simulator/drainability/rules"
-	"k8s.io/autoscaler/cluster-autoscaler/simulator/options"
 	"k8s.io/autoscaler/cluster-autoscaler/simulator/predicatechecker"
 	"k8s.io/autoscaler/cluster-autoscaler/utils/backoff"
 	"k8s.io/autoscaler/cluster-autoscaler/utils/errors"
-	"k8s.io/client-go/informers"
 	kube_client "k8s.io/client-go/kubernetes"
 )
 
@@ -46,7 +42,7 @@ import (
 type AutoscalerOptions struct {
 	config.AutoscalingOptions
 	KubeClient             kube_client.Interface
-	InformerFactory        informers.SharedInformerFactory
+	EventsKubeClient       kube_client.Interface
 	AutoscalingKubeClients *context.AutoscalingKubeClients
 	CloudProvider          cloudprovider.CloudProvider
 	PredicateChecker       predicatechecker.PredicateChecker
@@ -54,13 +50,10 @@ type AutoscalerOptions struct {
 	ExpanderStrategy       expander.Strategy
 	EstimatorBuilder       estimator.EstimatorBuilder
 	Processors             *ca_processors.AutoscalingProcessors
-	LoopStartNotifier      *loopstart.ObserversList
 	Backoff                backoff.Backoff
 	DebuggingSnapshotter   debuggingsnapshot.DebuggingSnapshotter
 	RemainingPdbTracker    pdb.RemainingPdbTracker
 	ScaleUpOrchestrator    scaleup.Orchestrator
-	DeleteOptions          options.NodeDeleteOptions
-	DrainabilityRules      rules.Rules
 }
 
 // Autoscaler is the main component of CA which scales up/down node groups according to its configuration
@@ -72,15 +65,11 @@ type Autoscaler interface {
 	RunOnce(currentTime time.Time) errors.AutoscalerError
 	// ExitCleanUp is a clean-up performed just before process termination.
 	ExitCleanUp()
-	// LastScaleUpTime is a time of the last scale up
-	LastScaleUpTime() time.Time
-	// LastScaleUpTime is a time of the last scale down
-	LastScaleDownDeleteTime() time.Time
 }
 
 // NewAutoscaler creates an autoscaler of an appropriate type according to the parameters
-func NewAutoscaler(opts AutoscalerOptions, informerFactory informers.SharedInformerFactory) (Autoscaler, errors.AutoscalerError) {
-	err := initializeDefaultOptions(&opts, informerFactory)
+func NewAutoscaler(opts AutoscalerOptions) (Autoscaler, errors.AutoscalerError) {
+	err := initializeDefaultOptions(&opts)
 	if err != nil {
 		return nil, errors.ToAutoscalerError(errors.InternalError, err)
 	}
@@ -90,29 +79,22 @@ func NewAutoscaler(opts AutoscalerOptions, informerFactory informers.SharedInfor
 		opts.ClusterSnapshot,
 		opts.AutoscalingKubeClients,
 		opts.Processors,
-		opts.LoopStartNotifier,
 		opts.CloudProvider,
 		opts.ExpanderStrategy,
 		opts.EstimatorBuilder,
 		opts.Backoff,
 		opts.DebuggingSnapshotter,
 		opts.RemainingPdbTracker,
-		opts.ScaleUpOrchestrator,
-		opts.DeleteOptions,
-		opts.DrainabilityRules,
-	), nil
+		opts.ScaleUpOrchestrator), nil
 }
 
 // Initialize default options if not provided.
-func initializeDefaultOptions(opts *AutoscalerOptions, informerFactory informers.SharedInformerFactory) error {
+func initializeDefaultOptions(opts *AutoscalerOptions) error {
 	if opts.Processors == nil {
-		opts.Processors = ca_processors.DefaultProcessors(opts.AutoscalingOptions)
-	}
-	if opts.LoopStartNotifier == nil {
-		opts.LoopStartNotifier = loopstart.NewObserversList(nil)
+		opts.Processors = ca_processors.DefaultProcessors()
 	}
 	if opts.AutoscalingKubeClients == nil {
-		opts.AutoscalingKubeClients = context.NewAutoscalingKubeClients(opts.AutoscalingOptions, opts.KubeClient, opts.InformerFactory)
+		opts.AutoscalingKubeClients = context.NewAutoscalingKubeClients(opts.AutoscalingOptions, opts.KubeClient, opts.EventsKubeClient)
 	}
 	if opts.ClusterSnapshot == nil {
 		opts.ClusterSnapshot = clustersnapshot.NewBasicClusterSnapshot()
@@ -121,7 +103,7 @@ func initializeDefaultOptions(opts *AutoscalerOptions, informerFactory informers
 		opts.RemainingPdbTracker = pdb.NewBasicRemainingPdbTracker()
 	}
 	if opts.CloudProvider == nil {
-		opts.CloudProvider = cloudBuilder.NewCloudProvider(opts.AutoscalingOptions, informerFactory)
+		opts.CloudProvider = cloudBuilder.NewCloudProvider(opts.AutoscalingOptions)
 	}
 	if opts.ExpanderStrategy == nil {
 		expanderFactory := factory.NewFactory()
@@ -133,17 +115,7 @@ func initializeDefaultOptions(opts *AutoscalerOptions, informerFactory informers
 		opts.ExpanderStrategy = expanderStrategy
 	}
 	if opts.EstimatorBuilder == nil {
-		thresholds := []estimator.Threshold{
-			estimator.NewStaticThreshold(opts.MaxNodesPerScaleUp, opts.MaxNodeGroupBinpackingDuration),
-			estimator.NewSngCapacityThreshold(),
-			estimator.NewClusterCapacityThreshold(),
-		}
-		estimatorBuilder, err := estimator.NewEstimatorBuilder(
-			opts.EstimatorName,
-			estimator.NewThresholdBasedEstimationLimiter(thresholds),
-			estimator.NewDecreasingPodOrderer(),
-			/* EstimationAnalyserFunc */ nil,
-		)
+		estimatorBuilder, err := estimator.NewEstimatorBuilder(opts.EstimatorName, estimator.NewThresholdBasedEstimationLimiter(opts.MaxNodesPerScaleUp, opts.MaxNodeGroupBinpackingDuration), estimator.NewDecreasingPodOrderer())
 		if err != nil {
 			return err
 		}
@@ -152,9 +124,6 @@ func initializeDefaultOptions(opts *AutoscalerOptions, informerFactory informers
 	if opts.Backoff == nil {
 		opts.Backoff =
 			backoff.NewIdBasedExponentialBackoff(opts.InitialNodeGroupBackoffDuration, opts.MaxNodeGroupBackoffDuration, opts.NodeGroupBackoffResetTimeout)
-	}
-	if opts.DrainabilityRules == nil {
-		opts.DrainabilityRules = rules.Default(opts.DeleteOptions)
 	}
 
 	return nil

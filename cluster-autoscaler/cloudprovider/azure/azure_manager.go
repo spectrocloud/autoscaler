@@ -26,18 +26,16 @@ import (
 	"time"
 
 	"github.com/Azure/go-autorest/autorest/azure"
-	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider"
 	"k8s.io/autoscaler/cluster-autoscaler/config"
 	"k8s.io/autoscaler/cluster-autoscaler/config/dynamic"
-	kretry "k8s.io/client-go/util/retry"
 	klog "k8s.io/klog/v2"
-	"sigs.k8s.io/cloud-provider-azure/pkg/retry"
 )
 
 const (
 	vmTypeVMSS     = "vmss"
 	vmTypeStandard = "standard"
+	vmTypeAKS      = "aks"
 
 	scaleToZeroSupportedStandard = false
 	scaleToZeroSupportedVMSS     = true
@@ -109,18 +107,7 @@ func createAzureManagerInternal(configReader io.Reader, discoveryOpts cloudprovi
 		return nil, err
 	}
 
-	retryBackoff := wait.Backoff{
-		Duration: 2 * time.Minute,
-		Factor:   1.0,
-		Jitter:   0.1,
-		Steps:    6,
-		Cap:      10 * time.Minute,
-	}
-
-	err = kretry.OnError(retryBackoff, retry.IsErrorRetriable, func() (err error) {
-		return manager.forceRefresh()
-	})
-	if err != nil {
+	if err := manager.forceRefresh(); err != nil {
 		return nil, err
 	}
 
@@ -166,6 +153,8 @@ func (m *AzureManager) buildNodeGroupFromSpec(spec string) (cloudprovider.NodeGr
 		return NewAgentPool(s, m)
 	case vmTypeVMSS:
 		return NewScaleSet(s, m, -1)
+	case vmTypeAKS:
+		return NewAKSAgentPool(s, m)
 	default:
 		return nil, fmt.Errorf("vmtype %s not supported", m.config.VMType)
 	}

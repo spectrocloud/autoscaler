@@ -1,3 +1,19 @@
+/*
+Copyright 2018 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package metadata
 
 import (
@@ -7,7 +23,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 
@@ -19,56 +34,45 @@ const Endpoint = "http://169.254.169.254/hetzner/v1/metadata"
 // Client is a client for the Hetzner Cloud Server Metadata Endpoints.
 type Client struct {
 	endpoint string
-	timeout  time.Duration
 
 	httpClient              *http.Client
-	instrumentationRegistry prometheus.Registerer
+	instrumentationRegistry *prometheus.Registry
 }
 
-// A ClientOption is used to configure a [Client].
+// A ClientOption is used to configure a Client.
 type ClientOption func(*Client)
 
-// WithEndpoint configures a [Client] to use the specified Metadata API endpoint.
+// WithEndpoint configures a Client to use the specified Metadata API endpoint.
 func WithEndpoint(endpoint string) ClientOption {
 	return func(client *Client) {
 		client.endpoint = strings.TrimRight(endpoint, "/")
 	}
 }
 
-// WithHTTPClient configures a [Client] to perform HTTP requests with httpClient.
+// WithHTTPClient configures a Client to perform HTTP requests with httpClient.
 func WithHTTPClient(httpClient *http.Client) ClientOption {
 	return func(client *Client) {
 		client.httpClient = httpClient
 	}
 }
 
-// WithInstrumentation configures a [Client] to collect metrics about the performed HTTP requests.
-func WithInstrumentation(registry prometheus.Registerer) ClientOption {
+// WithInstrumentation configures a Client to collect metrics about the performed HTTP requests.
+func WithInstrumentation(registry *prometheus.Registry) ClientOption {
 	return func(client *Client) {
 		client.instrumentationRegistry = registry
 	}
 }
 
-// WithTimeout specifies a time limit for requests made by this [Client]. Defaults to 5 seconds.
-func WithTimeout(timeout time.Duration) ClientOption {
-	return func(client *Client) {
-		client.timeout = timeout
-	}
-}
-
-// NewClient creates a new [Client] with the options applied.
+// NewClient creates a new client.
 func NewClient(options ...ClientOption) *Client {
 	client := &Client{
 		endpoint:   Endpoint,
 		httpClient: &http.Client{},
-		timeout:    5 * time.Second,
 	}
 
 	for _, option := range options {
 		option(client)
 	}
-
-	client.httpClient.Timeout = client.timeout
 
 	if client.instrumentationRegistry != nil {
 		i := instrumentation.New("metadata", client.instrumentationRegistry)
@@ -77,7 +81,8 @@ func NewClient(options ...ClientOption) *Client {
 	return client
 }
 
-// get executes an HTTP request against the API.
+// NewRequest creates an HTTP request against the API. The returned request
+// is assigned with ctx and has all necessary headers set (auth, user agent, etc.).
 func (c *Client) get(path string) (string, error) {
 	url := c.endpoint + path
 	resp, err := c.httpClient.Get(url)
@@ -115,12 +120,12 @@ func (c *Client) Hostname() (string, error) {
 }
 
 // InstanceID returns the ID of the server that did the request to the Metadata server.
-func (c *Client) InstanceID() (int64, error) {
+func (c *Client) InstanceID() (int, error) {
 	resp, err := c.get("/instance-id")
 	if err != nil {
 		return 0, err
 	}
-	return strconv.ParseInt(resp, 10, 64)
+	return strconv.Atoi(resp)
 }
 
 // PublicIPv4 returns the Public IPv4 of the server that did the request to the Metadata server.

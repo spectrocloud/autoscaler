@@ -32,8 +32,7 @@ import (
 )
 
 const (
-	maxAddTaintRetries    = 5
-	maxGetNodepoolRetries = 3
+	maxAddTaintRetries = 5
 )
 
 var (
@@ -136,7 +135,6 @@ func CreateNodePoolManager(cloudConfigPath string, discoveryOpts cloudprovider.N
 
 	//ociShapeGetter := ocicommon.CreateShapeGetter(computeClient)
 	ociShapeGetter := ocicommon.CreateShapeGetter(ocicommon.ShapeClientImpl{ComputeMgmtClient: computeMgmtClient, ComputeClient: computeClient})
-	ociTagsGetter := ocicommon.CreateTagsGetter()
 
 	registeredTaintsGetter := CreateRegisteredTaintsGetter()
 
@@ -146,7 +144,6 @@ func CreateNodePoolManager(cloudConfigPath string, discoveryOpts cloudprovider.N
 		computeClient:          &computeClient,
 		staticNodePools:        map[string]NodePool{},
 		ociShapeGetter:         ociShapeGetter,
-		ociTagsGetter:          ociTagsGetter,
 		registeredTaintsGetter: registeredTaintsGetter,
 		nodePoolCache:          newNodePoolCache(&okeClient),
 	}
@@ -212,7 +209,6 @@ type ociManagerImpl struct {
 	okeClient              okeClient
 	computeClient          *core.ComputeClient
 	ociShapeGetter         ocicommon.ShapeGetter
-	ociTagsGetter          ocicommon.TagsGetter
 	registeredTaintsGetter RegisteredTaintsGetter
 	staticNodePools        map[string]NodePool
 
@@ -253,15 +249,11 @@ func (m *ociManagerImpl) TaintToPreventFurtherSchedulingOnRestart(nodes []*apiv1
 }
 
 func (m *ociManagerImpl) forceRefresh() error {
-	httpStatusCode, err := m.nodePoolCache.rebuild(m.staticNodePools, maxGetNodepoolRetries)
+	err := m.nodePoolCache.rebuild(m.staticNodePools)
 	if err != nil {
-		if httpStatusCode == 404 {
-			m.lastRefresh = time.Now()
-			klog.Errorf("Failed to fetch the nodepools. Retrying after %v", m.lastRefresh.Add(m.cfg.Global.RefreshInterval))
-			return err
-		}
 		return err
 	}
+
 	m.lastRefresh = time.Now()
 	klog.Infof("Refreshed NodePool list, next refresh after %v", m.lastRefresh.Add(m.cfg.Global.RefreshInterval))
 	return nil
@@ -449,7 +441,7 @@ func (m *ociManagerImpl) GetNodePoolForInstance(instance ocicommon.OciRef) (Node
 
 	np, found := m.staticNodePools[instance.NodePoolID]
 	if !found {
-		klog.V(4).Infof("did not find node pool for reference: %+v", instance)
+		klog.Infof("did not find node pool for reference: %+v", instance)
 		return nil, errInstanceNodePoolNotFound
 	}
 
@@ -524,15 +516,7 @@ func (m *ociManagerImpl) buildNodeFromTemplate(nodePool *oke.NodePool) (*apiv1.N
 		Capacity: apiv1.ResourceList{},
 	}
 
-	freeformTags, err := m.ociTagsGetter.GetNodePoolFreeformTags(nodePool)
-	if err != nil {
-		return nil, err
-	}
-	ephemeralStorage, err := getEphemeralResourceRequestsInBytes(freeformTags)
-	if err != nil {
-		klog.Error(err)
-	}
-	shape, err := m.ociShapeGetter.GetNodePoolShape(nodePool, ephemeralStorage)
+	shape, err := m.ociShapeGetter.GetNodePoolShape(nodePool)
 	if err != nil {
 		return nil, err
 	}
@@ -553,16 +537,11 @@ func (m *ociManagerImpl) buildNodeFromTemplate(nodePool *oke.NodePool) (*apiv1.N
 		})
 	}
 
-	if err != nil {
-		return nil, err
-	}
 	node.Status.Capacity[apiv1.ResourcePods] = *resource.NewQuantity(110, resource.DecimalSI)
+
 	node.Status.Capacity[apiv1.ResourceCPU] = *resource.NewQuantity(int64(shape.CPU), resource.DecimalSI)
 	node.Status.Capacity[apiv1.ResourceMemory] = *resource.NewQuantity(int64(shape.MemoryInBytes), resource.DecimalSI)
 	node.Status.Capacity[ipconsts.ResourceGPU] = *resource.NewQuantity(int64(shape.GPU), resource.DecimalSI)
-	if ephemeralStorage != -1 {
-		node.Status.Capacity[apiv1.ResourceEphemeralStorage] = *resource.NewQuantity(ephemeralStorage, resource.DecimalSI)
-	}
 
 	node.Status.Allocatable = node.Status.Capacity
 
@@ -648,23 +627,6 @@ func addTaintToSpec(node *apiv1.Node, taintKey string, effect apiv1.TaintEffect)
 		Effect: effect,
 	})
 	return true
-}
-
-func getEphemeralResourceRequestsInBytes(tags map[string]string) (int64, error) {
-	for key, value := range tags {
-		if key == npconsts.EphemeralStorageSize {
-			klog.V(4).Infof("ephemeral-storage size set with value : %v", value)
-			value = strings.ReplaceAll(value, " ", "")
-			resourceSize, err := resource.ParseQuantity(value)
-			if err != nil {
-				return -1, err
-			}
-			klog.V(4).Infof("ephemeral-storage size = %v (%v)", resourceSize.Value(), resourceSize.Format)
-			return resourceSize.Value(), nil
-		}
-	}
-	klog.V(4).Infof("ephemeral-storage size not set as part of the nodepool's freeform tags")
-	return -1, nil
 }
 
 // IsConflict checks if the error is a conflict

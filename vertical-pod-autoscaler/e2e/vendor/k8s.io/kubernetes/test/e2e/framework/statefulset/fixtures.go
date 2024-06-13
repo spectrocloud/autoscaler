@@ -17,7 +17,6 @@ limitations under the License.
 package statefulset
 
 import (
-	"context"
 	"fmt"
 	"reflect"
 	"regexp"
@@ -33,7 +32,6 @@ import (
 	"k8s.io/kubernetes/test/e2e/framework"
 	e2epodoutput "k8s.io/kubernetes/test/e2e/framework/pod/output"
 	imageutils "k8s.io/kubernetes/test/utils/image"
-	"k8s.io/utils/pointer"
 )
 
 // NewStatefulSet creates a new Webserver StatefulSet for testing. The StatefulSet is named name, is in namespace ns,
@@ -71,7 +69,7 @@ func NewStatefulSet(name, ns, governingSvcName string, replicas int32, statefulP
 			Selector: &metav1.LabelSelector{
 				MatchLabels: labels,
 			},
-			Replicas: pointer.Int32(replicas),
+			Replicas: func(i int32) *int32 { return &i }(replicas),
 			Template: v1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels:      labels,
@@ -155,8 +153,8 @@ func PauseNewPods(ss *appsv1.StatefulSet) {
 // It fails the test if it finds any pods that are not in phase Running,
 // or if it finds more than one paused Pod existing at the same time.
 // This is a no-op if there are no paused pods.
-func ResumeNextPod(ctx context.Context, c clientset.Interface, ss *appsv1.StatefulSet) {
-	podList := GetPodList(ctx, c, ss)
+func ResumeNextPod(c clientset.Interface, ss *appsv1.StatefulSet) {
+	podList := GetPodList(c, ss)
 	resumedPod := ""
 	for _, pod := range podList.Items {
 		if pod.Status.Phase != v1.PodRunning {

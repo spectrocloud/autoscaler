@@ -32,8 +32,6 @@ import (
 	"k8s.io/autoscaler/cluster-autoscaler/metrics"
 	"k8s.io/autoscaler/cluster-autoscaler/processors"
 	"k8s.io/autoscaler/cluster-autoscaler/simulator"
-	"k8s.io/autoscaler/cluster-autoscaler/simulator/drainability/rules"
-	"k8s.io/autoscaler/cluster-autoscaler/simulator/options"
 	"k8s.io/autoscaler/cluster-autoscaler/simulator/utilization"
 	"k8s.io/autoscaler/cluster-autoscaler/utils/errors"
 
@@ -57,9 +55,9 @@ type ScaleDown struct {
 }
 
 // NewScaleDown builds new ScaleDown object.
-func NewScaleDown(context *context.AutoscalingContext, processors *processors.AutoscalingProcessors, ndt *deletiontracker.NodeDeletionTracker, deleteOptions options.NodeDeleteOptions, drainabilityRules rules.Rules) *ScaleDown {
+func NewScaleDown(context *context.AutoscalingContext, processors *processors.AutoscalingProcessors, ndt *deletiontracker.NodeDeletionTracker, deleteOptions simulator.NodeDeleteOptions) *ScaleDown {
 	usageTracker := simulator.NewUsageTracker()
-	removalSimulator := simulator.NewRemovalSimulator(context.ListerRegistry, context.ClusterSnapshot, context.PredicateChecker, usageTracker, deleteOptions, drainabilityRules, false)
+	removalSimulator := simulator.NewRemovalSimulator(context.ListerRegistry, context.ClusterSnapshot, context.PredicateChecker, usageTracker, deleteOptions, false)
 	unremovableNodes := unremovable.NewNodes()
 	resourceLimitsFinder := resource.NewLimitsFinder(processors.CustomResourcesProcessor)
 	return &ScaleDown{
@@ -149,7 +147,7 @@ func (sd *ScaleDown) UpdateUnneededNodes(
 		currentCandidates,
 		destinations,
 		timestamp,
-		sd.context.RemainingPdbTracker)
+		sd.context.RemainingPdbTracker.GetPdbs())
 
 	additionalCandidatesCount := sd.context.ScaleDownNonEmptyCandidatesCount - len(nodesToRemove)
 	if additionalCandidatesCount > len(currentNonCandidates) {
@@ -171,7 +169,7 @@ func (sd *ScaleDown) UpdateUnneededNodes(
 				currentNonCandidates[:additionalCandidatesPoolSize],
 				destinations,
 				timestamp,
-				sd.context.RemainingPdbTracker)
+				sd.context.RemainingPdbTracker.GetPdbs())
 		if len(additionalNodesToRemove) > additionalCandidatesCount {
 			additionalNodesToRemove = additionalNodesToRemove[:additionalCandidatesCount]
 		}
@@ -319,7 +317,7 @@ func (sd *ScaleDown) NodesToDelete(currentTime time.Time) (_, drain []*apiv1.Nod
 		candidateNames,
 		allNodeNames,
 		time.Now(),
-		sd.context.RemainingPdbTracker)
+		sd.context.RemainingPdbTracker.GetPdbs())
 	findNodesToRemoveDuration = time.Now().Sub(findNodesToRemoveStart)
 
 	for _, unremovableNode := range unremovable {

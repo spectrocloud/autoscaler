@@ -109,52 +109,21 @@ Return true if the priority expander is enabled
 {{- end -}}
 
 {{/*
-autoDiscovery.clusterName for clusterapi.
+Return the autodiscoveryparameters for clusterapi.
 */}}
-{{- define "cluster-autoscaler.capiAutodiscovery.clusterName" -}}
-{{- print "clusterName=" -}}{{ tpl (.Values.autoDiscovery.clusterName) . }}
+{{- define "cluster-autoscaler.capiAutodiscoveryConfig" -}}
+{{- if .Values.autoDiscovery.clusterName -}}
+{{- print "clusterName=" -}}{{ .Values.autoDiscovery.clusterName }}
 {{- end -}}
-
-{{/*
-autoDiscovery.namespace for clusterapi.
-*/}}
-{{- define "cluster-autoscaler.capiAutodiscovery.namespace" -}}
-{{- print "namespace=" }}{{ .Values.autoDiscovery.namespace -}}
+{{- if and .Values.autoDiscovery.clusterName .Values.autoDiscovery.labels -}}
+{{- print "," -}}
 {{- end -}}
-
-{{/*
-autoDiscovery.labels for clusterapi.
-*/}}
-{{- define "cluster-autoscaler.capiAutodiscovery.labels" -}}
+{{- if .Values.autoDiscovery.labels -}}
 {{- range $i, $el := .Values.autoDiscovery.labels -}}
 {{- if $i -}}{{- print "," -}}{{- end -}}
 {{- range $key, $val := $el -}}
 {{- $key -}}{{- print "=" -}}{{- $val -}}
 {{- end -}}
 {{- end -}}
-{{- end -}}
-
-{{/*
-Return the autodiscoveryparameters for clusterapi.
-*/}}
-{{- define "cluster-autoscaler.capiAutodiscoveryConfig" -}}
-{{- if .Values.autoDiscovery.clusterName -}}
-{{ include "cluster-autoscaler.capiAutodiscovery.clusterName" . }}
-    {{- if .Values.autoDiscovery.namespace }}
-    {{- print "," -}}
-    {{ include "cluster-autoscaler.capiAutodiscovery.namespace" . }}
-    {{- end -}}
-    {{- if .Values.autoDiscovery.labels }}
-    {{- print "," -}}
-    {{ include "cluster-autoscaler.capiAutodiscovery.labels" . }}
-    {{- end -}}
-{{- else if .Values.autoDiscovery.namespace -}}
-{{ include "cluster-autoscaler.capiAutodiscovery.namespace" . }}
-    {{- if .Values.autoDiscovery.labels }}
-    {{- print "," -}}
-    {{ include "cluster-autoscaler.capiAutodiscovery.labels" . }}
-    {{- end -}}
-{{- else if .Values.autoDiscovery.labels -}}
-    {{ include "cluster-autoscaler.capiAutodiscovery.labels" . }}
 {{- end -}}
 {{- end -}}

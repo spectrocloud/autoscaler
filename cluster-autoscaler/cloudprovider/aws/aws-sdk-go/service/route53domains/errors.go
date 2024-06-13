@@ -8,14 +8,6 @@ import (
 
 const (
 
-	// ErrCodeDnssecLimitExceeded for service response error code
-	// "DnssecLimitExceeded".
-	//
-	// This error is returned if you call AssociateDelegationSignerToDomain when
-	// the specified domain has reached the maximum number of DS records. You can't
-	// add any additional DS records unless you delete an existing one first.
-	ErrCodeDnssecLimitExceeded = "DnssecLimitExceeded"
-
 	// ErrCodeDomainLimitExceeded for service response error code
 	// "DomainLimitExceeded".
 	//
@@ -58,7 +50,6 @@ const (
 )
 
 var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"DnssecLimitExceeded":    newErrorDnssecLimitExceeded,
 	"DomainLimitExceeded":    newErrorDomainLimitExceeded,
 	"DuplicateRequest":       newErrorDuplicateRequest,
 	"InvalidInput":           newErrorInvalidInput,

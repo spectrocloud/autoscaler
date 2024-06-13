@@ -31,7 +31,7 @@ const (
 	// ErrCodeInvalidEndpointException for service response error code
 	// "InvalidEndpointException".
 	//
-	// The requested endpoint was not valid.
+	// The requested endpoint was invalid.
 	ErrCodeInvalidEndpointException = "InvalidEndpointException"
 
 	// ErrCodeRejectedRecordsException for service response error code
@@ -49,13 +49,13 @@ const (
 	//    greater than the ExistingVersion.
 	//
 	//    * Records with timestamps that lie outside the retention duration of the
-	//    memory store.
+	//    memory store
 	//
 	//    * Records with dimensions or measures that exceed the Timestream defined
 	//    limits.
 	//
 	// For more information, see Quotas (https://docs.aws.amazon.com/timestream/latest/developerguide/ts-limits.html)
-	// in the Amazon Timestream Developer Guide.
+	// in the Timestream Developer Guide.
 	ErrCodeRejectedRecordsException = "RejectedRecordsException"
 
 	// ErrCodeResourceNotFoundException for service response error code
@@ -68,20 +68,20 @@ const (
 	// ErrCodeServiceQuotaExceededException for service response error code
 	// "ServiceQuotaExceededException".
 	//
-	// The instance quota of resource exceeded for this account.
+	// Instance quota of resource exceeded for this account.
 	ErrCodeServiceQuotaExceededException = "ServiceQuotaExceededException"
 
 	// ErrCodeThrottlingException for service response error code
 	// "ThrottlingException".
 	//
-	// Too many requests were made by a user and they exceeded the service quotas.
-	// The request was throttled.
+	// Too many requests were made by a user exceeding service quotas. The request
+	// was throttled.
 	ErrCodeThrottlingException = "ThrottlingException"
 
 	// ErrCodeValidationException for service response error code
 	// "ValidationException".
 	//
-	// An invalid or malformed request.
+	// Invalid or malformed request.
 	ErrCodeValidationException = "ValidationException"
 )
 

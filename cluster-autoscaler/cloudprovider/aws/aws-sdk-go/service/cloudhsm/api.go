@@ -36,12 +36,7 @@ const opAddTagsToResource = "AddTagsToResource"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/AddTagsToResource
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) AddTagsToResourceRequest(input *AddTagsToResourceInput) (req *request.Request, output *AddTagsToResourceOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, AddTagsToResource, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opAddTagsToResource,
 		HTTPMethod: "POST",
@@ -91,8 +86,6 @@ func (c *CloudHSM) AddTagsToResourceRequest(input *AddTagsToResourceInput) (req 
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/AddTagsToResource
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) AddTagsToResource(input *AddTagsToResourceInput) (*AddTagsToResourceOutput, error) {
 	req, out := c.AddTagsToResourceRequest(input)
 	return out, req.Send()
@@ -107,8 +100,6 @@ func (c *CloudHSM) AddTagsToResource(input *AddTagsToResourceInput) (*AddTagsToR
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) AddTagsToResourceWithContext(ctx aws.Context, input *AddTagsToResourceInput, opts ...request.Option) (*AddTagsToResourceOutput, error) {
 	req, out := c.AddTagsToResourceRequest(input)
 	req.SetContext(ctx)
@@ -141,12 +132,7 @@ const opCreateHapg = "CreateHapg"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/CreateHapg
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) CreateHapgRequest(input *CreateHapgInput) (req *request.Request, output *CreateHapgOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, CreateHapg, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opCreateHapg,
 		HTTPMethod: "POST",
@@ -195,8 +181,6 @@ func (c *CloudHSM) CreateHapgRequest(input *CreateHapgInput) (req *request.Reque
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/CreateHapg
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) CreateHapg(input *CreateHapgInput) (*CreateHapgOutput, error) {
 	req, out := c.CreateHapgRequest(input)
 	return out, req.Send()
@@ -211,8 +195,6 @@ func (c *CloudHSM) CreateHapg(input *CreateHapgInput) (*CreateHapgOutput, error)
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) CreateHapgWithContext(ctx aws.Context, input *CreateHapgInput, opts ...request.Option) (*CreateHapgOutput, error) {
 	req, out := c.CreateHapgRequest(input)
 	req.SetContext(ctx)
@@ -245,12 +227,7 @@ const opCreateHsm = "CreateHsm"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/CreateHsm
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) CreateHsmRequest(input *CreateHsmInput) (req *request.Request, output *CreateHsmOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, CreateHsm, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opCreateHsm,
 		HTTPMethod: "POST",
@@ -308,8 +285,6 @@ func (c *CloudHSM) CreateHsmRequest(input *CreateHsmInput) (req *request.Request
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/CreateHsm
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) CreateHsm(input *CreateHsmInput) (*CreateHsmOutput, error) {
 	req, out := c.CreateHsmRequest(input)
 	return out, req.Send()
@@ -324,8 +299,6 @@ func (c *CloudHSM) CreateHsm(input *CreateHsmInput) (*CreateHsmOutput, error) {
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) CreateHsmWithContext(ctx aws.Context, input *CreateHsmInput, opts ...request.Option) (*CreateHsmOutput, error) {
 	req, out := c.CreateHsmRequest(input)
 	req.SetContext(ctx)
@@ -358,12 +331,7 @@ const opCreateLunaClient = "CreateLunaClient"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/CreateLunaClient
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) CreateLunaClientRequest(input *CreateLunaClientInput) (req *request.Request, output *CreateLunaClientOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, CreateLunaClient, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opCreateLunaClient,
 		HTTPMethod: "POST",
@@ -411,8 +379,6 @@ func (c *CloudHSM) CreateLunaClientRequest(input *CreateLunaClientInput) (req *r
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/CreateLunaClient
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) CreateLunaClient(input *CreateLunaClientInput) (*CreateLunaClientOutput, error) {
 	req, out := c.CreateLunaClientRequest(input)
 	return out, req.Send()
@@ -427,8 +393,6 @@ func (c *CloudHSM) CreateLunaClient(input *CreateLunaClientInput) (*CreateLunaCl
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) CreateLunaClientWithContext(ctx aws.Context, input *CreateLunaClientInput, opts ...request.Option) (*CreateLunaClientOutput, error) {
 	req, out := c.CreateLunaClientRequest(input)
 	req.SetContext(ctx)
@@ -461,12 +425,7 @@ const opDeleteHapg = "DeleteHapg"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/DeleteHapg
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DeleteHapgRequest(input *DeleteHapgInput) (req *request.Request, output *DeleteHapgOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteHapg, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteHapg,
 		HTTPMethod: "POST",
@@ -514,8 +473,6 @@ func (c *CloudHSM) DeleteHapgRequest(input *DeleteHapgInput) (req *request.Reque
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/DeleteHapg
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DeleteHapg(input *DeleteHapgInput) (*DeleteHapgOutput, error) {
 	req, out := c.DeleteHapgRequest(input)
 	return out, req.Send()
@@ -530,8 +487,6 @@ func (c *CloudHSM) DeleteHapg(input *DeleteHapgInput) (*DeleteHapgOutput, error)
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DeleteHapgWithContext(ctx aws.Context, input *DeleteHapgInput, opts ...request.Option) (*DeleteHapgOutput, error) {
 	req, out := c.DeleteHapgRequest(input)
 	req.SetContext(ctx)
@@ -564,12 +519,7 @@ const opDeleteHsm = "DeleteHsm"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/DeleteHsm
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DeleteHsmRequest(input *DeleteHsmInput) (req *request.Request, output *DeleteHsmOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteHsm, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteHsm,
 		HTTPMethod: "POST",
@@ -618,8 +568,6 @@ func (c *CloudHSM) DeleteHsmRequest(input *DeleteHsmInput) (req *request.Request
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/DeleteHsm
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DeleteHsm(input *DeleteHsmInput) (*DeleteHsmOutput, error) {
 	req, out := c.DeleteHsmRequest(input)
 	return out, req.Send()
@@ -634,8 +582,6 @@ func (c *CloudHSM) DeleteHsm(input *DeleteHsmInput) (*DeleteHsmOutput, error) {
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DeleteHsmWithContext(ctx aws.Context, input *DeleteHsmInput, opts ...request.Option) (*DeleteHsmOutput, error) {
 	req, out := c.DeleteHsmRequest(input)
 	req.SetContext(ctx)
@@ -668,12 +614,7 @@ const opDeleteLunaClient = "DeleteLunaClient"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/DeleteLunaClient
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DeleteLunaClientRequest(input *DeleteLunaClientInput) (req *request.Request, output *DeleteLunaClientOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteLunaClient, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteLunaClient,
 		HTTPMethod: "POST",
@@ -721,8 +662,6 @@ func (c *CloudHSM) DeleteLunaClientRequest(input *DeleteLunaClientInput) (req *r
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/DeleteLunaClient
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DeleteLunaClient(input *DeleteLunaClientInput) (*DeleteLunaClientOutput, error) {
 	req, out := c.DeleteLunaClientRequest(input)
 	return out, req.Send()
@@ -737,8 +676,6 @@ func (c *CloudHSM) DeleteLunaClient(input *DeleteLunaClientInput) (*DeleteLunaCl
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DeleteLunaClientWithContext(ctx aws.Context, input *DeleteLunaClientInput, opts ...request.Option) (*DeleteLunaClientOutput, error) {
 	req, out := c.DeleteLunaClientRequest(input)
 	req.SetContext(ctx)
@@ -771,12 +708,7 @@ const opDescribeHapg = "DescribeHapg"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/DescribeHapg
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DescribeHapgRequest(input *DescribeHapgInput) (req *request.Request, output *DescribeHapgOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DescribeHapg, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDescribeHapg,
 		HTTPMethod: "POST",
@@ -824,8 +756,6 @@ func (c *CloudHSM) DescribeHapgRequest(input *DescribeHapgInput) (req *request.R
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/DescribeHapg
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DescribeHapg(input *DescribeHapgInput) (*DescribeHapgOutput, error) {
 	req, out := c.DescribeHapgRequest(input)
 	return out, req.Send()
@@ -840,8 +770,6 @@ func (c *CloudHSM) DescribeHapg(input *DescribeHapgInput) (*DescribeHapgOutput, 
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DescribeHapgWithContext(ctx aws.Context, input *DescribeHapgInput, opts ...request.Option) (*DescribeHapgOutput, error) {
 	req, out := c.DescribeHapgRequest(input)
 	req.SetContext(ctx)
@@ -874,12 +802,7 @@ const opDescribeHsm = "DescribeHsm"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/DescribeHsm
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DescribeHsmRequest(input *DescribeHsmInput) (req *request.Request, output *DescribeHsmOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DescribeHsm, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDescribeHsm,
 		HTTPMethod: "POST",
@@ -928,8 +851,6 @@ func (c *CloudHSM) DescribeHsmRequest(input *DescribeHsmInput) (req *request.Req
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/DescribeHsm
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DescribeHsm(input *DescribeHsmInput) (*DescribeHsmOutput, error) {
 	req, out := c.DescribeHsmRequest(input)
 	return out, req.Send()
@@ -944,8 +865,6 @@ func (c *CloudHSM) DescribeHsm(input *DescribeHsmInput) (*DescribeHsmOutput, err
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DescribeHsmWithContext(ctx aws.Context, input *DescribeHsmInput, opts ...request.Option) (*DescribeHsmOutput, error) {
 	req, out := c.DescribeHsmRequest(input)
 	req.SetContext(ctx)
@@ -978,12 +897,7 @@ const opDescribeLunaClient = "DescribeLunaClient"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/DescribeLunaClient
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DescribeLunaClientRequest(input *DescribeLunaClientInput) (req *request.Request, output *DescribeLunaClientOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DescribeLunaClient, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDescribeLunaClient,
 		HTTPMethod: "POST",
@@ -1031,8 +945,6 @@ func (c *CloudHSM) DescribeLunaClientRequest(input *DescribeLunaClientInput) (re
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/DescribeLunaClient
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DescribeLunaClient(input *DescribeLunaClientInput) (*DescribeLunaClientOutput, error) {
 	req, out := c.DescribeLunaClientRequest(input)
 	return out, req.Send()
@@ -1047,8 +959,6 @@ func (c *CloudHSM) DescribeLunaClient(input *DescribeLunaClientInput) (*Describe
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) DescribeLunaClientWithContext(ctx aws.Context, input *DescribeLunaClientInput, opts ...request.Option) (*DescribeLunaClientOutput, error) {
 	req, out := c.DescribeLunaClientRequest(input)
 	req.SetContext(ctx)
@@ -1081,12 +991,7 @@ const opGetConfig = "GetConfig"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/GetConfig
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) GetConfigRequest(input *GetConfigInput) (req *request.Request, output *GetConfigOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, GetConfig, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opGetConfig,
 		HTTPMethod: "POST",
@@ -1135,8 +1040,6 @@ func (c *CloudHSM) GetConfigRequest(input *GetConfigInput) (req *request.Request
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/GetConfig
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) GetConfig(input *GetConfigInput) (*GetConfigOutput, error) {
 	req, out := c.GetConfigRequest(input)
 	return out, req.Send()
@@ -1151,8 +1054,6 @@ func (c *CloudHSM) GetConfig(input *GetConfigInput) (*GetConfigOutput, error) {
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) GetConfigWithContext(ctx aws.Context, input *GetConfigInput, opts ...request.Option) (*GetConfigOutput, error) {
 	req, out := c.GetConfigRequest(input)
 	req.SetContext(ctx)
@@ -1185,12 +1086,7 @@ const opListAvailableZones = "ListAvailableZones"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ListAvailableZones
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListAvailableZonesRequest(input *ListAvailableZonesInput) (req *request.Request, output *ListAvailableZonesOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListAvailableZones, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListAvailableZones,
 		HTTPMethod: "POST",
@@ -1238,8 +1134,6 @@ func (c *CloudHSM) ListAvailableZonesRequest(input *ListAvailableZonesInput) (re
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ListAvailableZones
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListAvailableZones(input *ListAvailableZonesInput) (*ListAvailableZonesOutput, error) {
 	req, out := c.ListAvailableZonesRequest(input)
 	return out, req.Send()
@@ -1254,8 +1148,6 @@ func (c *CloudHSM) ListAvailableZones(input *ListAvailableZonesInput) (*ListAvai
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListAvailableZonesWithContext(ctx aws.Context, input *ListAvailableZonesInput, opts ...request.Option) (*ListAvailableZonesOutput, error) {
 	req, out := c.ListAvailableZonesRequest(input)
 	req.SetContext(ctx)
@@ -1288,12 +1180,7 @@ const opListHapgs = "ListHapgs"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ListHapgs
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListHapgsRequest(input *ListHapgsInput) (req *request.Request, output *ListHapgsOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListHapgs, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListHapgs,
 		HTTPMethod: "POST",
@@ -1346,8 +1233,6 @@ func (c *CloudHSM) ListHapgsRequest(input *ListHapgsInput) (req *request.Request
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ListHapgs
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListHapgs(input *ListHapgsInput) (*ListHapgsOutput, error) {
 	req, out := c.ListHapgsRequest(input)
 	return out, req.Send()
@@ -1362,8 +1247,6 @@ func (c *CloudHSM) ListHapgs(input *ListHapgsInput) (*ListHapgsOutput, error) {
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListHapgsWithContext(ctx aws.Context, input *ListHapgsInput, opts ...request.Option) (*ListHapgsOutput, error) {
 	req, out := c.ListHapgsRequest(input)
 	req.SetContext(ctx)
@@ -1396,12 +1279,7 @@ const opListHsms = "ListHsms"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ListHsms
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListHsmsRequest(input *ListHsmsInput) (req *request.Request, output *ListHsmsOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListHsms, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListHsms,
 		HTTPMethod: "POST",
@@ -1455,8 +1333,6 @@ func (c *CloudHSM) ListHsmsRequest(input *ListHsmsInput) (req *request.Request, 
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ListHsms
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListHsms(input *ListHsmsInput) (*ListHsmsOutput, error) {
 	req, out := c.ListHsmsRequest(input)
 	return out, req.Send()
@@ -1471,8 +1347,6 @@ func (c *CloudHSM) ListHsms(input *ListHsmsInput) (*ListHsmsOutput, error) {
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListHsmsWithContext(ctx aws.Context, input *ListHsmsInput, opts ...request.Option) (*ListHsmsOutput, error) {
 	req, out := c.ListHsmsRequest(input)
 	req.SetContext(ctx)
@@ -1505,12 +1379,7 @@ const opListLunaClients = "ListLunaClients"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ListLunaClients
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListLunaClientsRequest(input *ListLunaClientsInput) (req *request.Request, output *ListLunaClientsOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListLunaClients, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListLunaClients,
 		HTTPMethod: "POST",
@@ -1563,8 +1432,6 @@ func (c *CloudHSM) ListLunaClientsRequest(input *ListLunaClientsInput) (req *req
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ListLunaClients
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListLunaClients(input *ListLunaClientsInput) (*ListLunaClientsOutput, error) {
 	req, out := c.ListLunaClientsRequest(input)
 	return out, req.Send()
@@ -1579,8 +1446,6 @@ func (c *CloudHSM) ListLunaClients(input *ListLunaClientsInput) (*ListLunaClient
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListLunaClientsWithContext(ctx aws.Context, input *ListLunaClientsInput, opts ...request.Option) (*ListLunaClientsOutput, error) {
 	req, out := c.ListLunaClientsRequest(input)
 	req.SetContext(ctx)
@@ -1613,12 +1478,7 @@ const opListTagsForResource = "ListTagsForResource"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ListTagsForResource
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListTagsForResourceRequest(input *ListTagsForResourceInput) (req *request.Request, output *ListTagsForResourceOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListTagsForResource, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListTagsForResource,
 		HTTPMethod: "POST",
@@ -1666,8 +1526,6 @@ func (c *CloudHSM) ListTagsForResourceRequest(input *ListTagsForResourceInput) (
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ListTagsForResource
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListTagsForResource(input *ListTagsForResourceInput) (*ListTagsForResourceOutput, error) {
 	req, out := c.ListTagsForResourceRequest(input)
 	return out, req.Send()
@@ -1682,8 +1540,6 @@ func (c *CloudHSM) ListTagsForResource(input *ListTagsForResourceInput) (*ListTa
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ListTagsForResourceWithContext(ctx aws.Context, input *ListTagsForResourceInput, opts ...request.Option) (*ListTagsForResourceOutput, error) {
 	req, out := c.ListTagsForResourceRequest(input)
 	req.SetContext(ctx)
@@ -1716,12 +1572,7 @@ const opModifyHapg = "ModifyHapg"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ModifyHapg
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ModifyHapgRequest(input *ModifyHapgInput) (req *request.Request, output *ModifyHapgOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ModifyHapg, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opModifyHapg,
 		HTTPMethod: "POST",
@@ -1769,8 +1620,6 @@ func (c *CloudHSM) ModifyHapgRequest(input *ModifyHapgInput) (req *request.Reque
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ModifyHapg
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ModifyHapg(input *ModifyHapgInput) (*ModifyHapgOutput, error) {
 	req, out := c.ModifyHapgRequest(input)
 	return out, req.Send()
@@ -1785,8 +1634,6 @@ func (c *CloudHSM) ModifyHapg(input *ModifyHapgInput) (*ModifyHapgOutput, error)
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ModifyHapgWithContext(ctx aws.Context, input *ModifyHapgInput, opts ...request.Option) (*ModifyHapgOutput, error) {
 	req, out := c.ModifyHapgRequest(input)
 	req.SetContext(ctx)
@@ -1819,12 +1666,7 @@ const opModifyHsm = "ModifyHsm"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ModifyHsm
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ModifyHsmRequest(input *ModifyHsmInput) (req *request.Request, output *ModifyHsmOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ModifyHsm, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opModifyHsm,
 		HTTPMethod: "POST",
@@ -1878,8 +1720,6 @@ func (c *CloudHSM) ModifyHsmRequest(input *ModifyHsmInput) (req *request.Request
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ModifyHsm
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ModifyHsm(input *ModifyHsmInput) (*ModifyHsmOutput, error) {
 	req, out := c.ModifyHsmRequest(input)
 	return out, req.Send()
@@ -1894,8 +1734,6 @@ func (c *CloudHSM) ModifyHsm(input *ModifyHsmInput) (*ModifyHsmOutput, error) {
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ModifyHsmWithContext(ctx aws.Context, input *ModifyHsmInput, opts ...request.Option) (*ModifyHsmOutput, error) {
 	req, out := c.ModifyHsmRequest(input)
 	req.SetContext(ctx)
@@ -1928,12 +1766,7 @@ const opModifyLunaClient = "ModifyLunaClient"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ModifyLunaClient
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ModifyLunaClientRequest(input *ModifyLunaClientInput) (req *request.Request, output *ModifyLunaClientOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ModifyLunaClient, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opModifyLunaClient,
 		HTTPMethod: "POST",
@@ -1977,8 +1810,6 @@ func (c *CloudHSM) ModifyLunaClientRequest(input *ModifyLunaClientInput) (req *r
 //     Indicates that an exception occurred in the AWS CloudHSM service.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/ModifyLunaClient
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ModifyLunaClient(input *ModifyLunaClientInput) (*ModifyLunaClientOutput, error) {
 	req, out := c.ModifyLunaClientRequest(input)
 	return out, req.Send()
@@ -1993,8 +1824,6 @@ func (c *CloudHSM) ModifyLunaClient(input *ModifyLunaClientInput) (*ModifyLunaCl
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) ModifyLunaClientWithContext(ctx aws.Context, input *ModifyLunaClientInput, opts ...request.Option) (*ModifyLunaClientOutput, error) {
 	req, out := c.ModifyLunaClientRequest(input)
 	req.SetContext(ctx)
@@ -2027,12 +1856,7 @@ const opRemoveTagsFromResource = "RemoveTagsFromResource"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/RemoveTagsFromResource
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) RemoveTagsFromResourceRequest(input *RemoveTagsFromResourceInput) (req *request.Request, output *RemoveTagsFromResourceOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, RemoveTagsFromResource, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opRemoveTagsFromResource,
 		HTTPMethod: "POST",
@@ -2083,8 +1907,6 @@ func (c *CloudHSM) RemoveTagsFromResourceRequest(input *RemoveTagsFromResourceIn
 //     Indicates that one or more of the request parameters are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/cloudhsm-2014-05-30/RemoveTagsFromResource
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) RemoveTagsFromResource(input *RemoveTagsFromResourceInput) (*RemoveTagsFromResourceOutput, error) {
 	req, out := c.RemoveTagsFromResourceRequest(input)
 	return out, req.Send()
@@ -2099,8 +1921,6 @@ func (c *CloudHSM) RemoveTagsFromResource(input *RemoveTagsFromResourceInput) (*
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: This API is deprecated.
 func (c *CloudHSM) RemoveTagsFromResourceWithContext(ctx aws.Context, input *RemoveTagsFromResourceInput, opts ...request.Option) (*RemoveTagsFromResourceOutput, error) {
 	req, out := c.RemoveTagsFromResourceRequest(input)
 	req.SetContext(ctx)

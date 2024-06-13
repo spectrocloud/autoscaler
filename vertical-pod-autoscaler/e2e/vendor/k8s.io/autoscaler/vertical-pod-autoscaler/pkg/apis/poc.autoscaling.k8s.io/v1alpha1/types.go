@@ -84,7 +84,7 @@ type PodUpdatePolicy struct {
 	UpdateMode *UpdateMode `json:"updateMode,omitempty" protobuf:"bytes,1,opt,name=updateMode"`
 }
 
-// UpdateMode controls when autoscaler applies changes to the pod resources.
+// UpdateMode controls when autoscaler applies changes to the pod resoures.
 type UpdateMode string
 
 const (

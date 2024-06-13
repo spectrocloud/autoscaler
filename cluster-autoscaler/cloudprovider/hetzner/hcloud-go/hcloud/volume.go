@@ -1,3 +1,19 @@
+/*
+Copyright 2018 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package hcloud
 
 import (
@@ -15,23 +31,17 @@ import (
 
 // Volume represents a volume in the Hetzner Cloud.
 type Volume struct {
-	ID          int64
+	ID          int
 	Name        string
 	Status      VolumeStatus
 	Server      *Server
 	Location    *Location
 	Size        int
-	Format      *string
 	Protection  VolumeProtection
 	Labels      map[string]string
 	LinuxDevice string
 	Created     time.Time
 }
-
-const (
-	VolumeFormatExt4 = "ext4"
-	VolumeFormatXFS  = "xfs"
-)
 
 // VolumeProtection represents the protection level of a volume.
 type VolumeProtection struct {
@@ -41,7 +51,6 @@ type VolumeProtection struct {
 // VolumeClient is a client for the volume API.
 type VolumeClient struct {
 	client *Client
-	Action *ResourceActionClient
 }
 
 // VolumeStatus specifies a volume's status.
@@ -56,7 +65,7 @@ const (
 )
 
 // GetByID retrieves a volume by its ID. If the volume does not exist, nil is returned.
-func (c *VolumeClient) GetByID(ctx context.Context, id int64) (*Volume, *Response, error) {
+func (c *VolumeClient) GetByID(ctx context.Context, id int) (*Volume, *Response, error) {
 	req, err := c.client.NewRequest(ctx, "GET", fmt.Sprintf("/volumes/%d", id), nil)
 	if err != nil {
 		return nil, nil, err
@@ -88,8 +97,8 @@ func (c *VolumeClient) GetByName(ctx context.Context, name string) (*Volume, *Re
 // Get retrieves a volume by its ID if the input can be parsed as an integer, otherwise it
 // retrieves a volume by its name. If the volume does not exist, nil is returned.
 func (c *VolumeClient) Get(ctx context.Context, idOrName string) (*Volume, *Response, error) {
-	if id, err := strconv.ParseInt(idOrName, 10, 64); err == nil {
-		return c.GetByID(ctx, id)
+	if id, err := strconv.Atoi(idOrName); err == nil {
+		return c.GetByID(ctx, int(id))
 	}
 	return c.GetByName(ctx, idOrName)
 }
@@ -103,7 +112,7 @@ type VolumeListOpts struct {
 }
 
 func (l VolumeListOpts) values() url.Values {
-	vals := l.ListOpts.Values()
+	vals := l.ListOpts.values()
 	if l.Name != "" {
 		vals.Add("name", l.Name)
 	}

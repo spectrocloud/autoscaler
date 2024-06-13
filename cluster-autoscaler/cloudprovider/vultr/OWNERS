@@ -4,6 +4,3 @@ approvers:
 reviewers:
 #- happytreees
 #- optik-aper
-
-labels:
-- area/provider/vultr

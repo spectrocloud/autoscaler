@@ -17,7 +17,6 @@ limitations under the License.
 package node
 
 import (
-	"context"
 	"strings"
 	"time"
 
@@ -47,7 +46,7 @@ type KubeletManagedHostConfig struct {
 
 var _ = SIGDescribe("KubeletManagedEtcHosts", func() {
 	f := framework.NewDefaultFramework("e2e-kubelet-etc-hosts")
-	f.NamespacePodSecurityLevel = admissionapi.LevelPrivileged
+	f.NamespacePodSecurityEnforceLevel = admissionapi.LevelPrivileged
 	config := &KubeletManagedHostConfig{
 		f: f,
 	}
@@ -61,9 +60,9 @@ var _ = SIGDescribe("KubeletManagedEtcHosts", func() {
 			3. The Pod with hostNetwork=true , /etc/hosts file MUST not be managed by the Kubelet.
 		This test is marked LinuxOnly since Windows cannot mount individual files in Containers.
 	*/
-	framework.ConformanceIt("should test kubelet managed /etc/hosts file [LinuxOnly] [NodeConformance]", func(ctx context.Context) {
+	framework.ConformanceIt("should test kubelet managed /etc/hosts file [LinuxOnly] [NodeConformance]", func() {
 		ginkgo.By("Setting up the test")
-		config.setup(ctx)
+		config.setup()
 
 		ginkgo.By("Running the test")
 		config.verifyEtcHosts()
@@ -83,22 +82,22 @@ func (config *KubeletManagedHostConfig) verifyEtcHosts() {
 	assertManagedStatus(config, etcHostsHostNetworkPodName, false, "busybox-2")
 }
 
-func (config *KubeletManagedHostConfig) setup(ctx context.Context) {
+func (config *KubeletManagedHostConfig) setup() {
 	ginkgo.By("Creating hostNetwork=false pod")
-	config.createPodWithoutHostNetwork(ctx)
+	config.createPodWithoutHostNetwork()
 
 	ginkgo.By("Creating hostNetwork=true pod")
-	config.createPodWithHostNetwork(ctx)
+	config.createPodWithHostNetwork()
 }
 
-func (config *KubeletManagedHostConfig) createPodWithoutHostNetwork(ctx context.Context) {
+func (config *KubeletManagedHostConfig) createPodWithoutHostNetwork() {
 	podSpec := config.createPodSpec(etcHostsPodName)
-	config.pod = e2epod.NewPodClient(config.f).CreateSync(ctx, podSpec)
+	config.pod = e2epod.NewPodClient(config.f).CreateSync(podSpec)
 }
 
-func (config *KubeletManagedHostConfig) createPodWithHostNetwork(ctx context.Context) {
+func (config *KubeletManagedHostConfig) createPodWithHostNetwork() {
 	podSpec := config.createPodSpecWithHostNetwork(etcHostsHostNetworkPodName)
-	config.hostNetworkPod = e2epod.NewPodClient(config.f).CreateSync(ctx, podSpec)
+	config.hostNetworkPod = e2epod.NewPodClient(config.f).CreateSync(podSpec)
 }
 
 func assertManagedStatus(

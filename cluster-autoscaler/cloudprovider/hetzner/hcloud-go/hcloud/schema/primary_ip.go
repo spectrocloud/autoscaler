@@ -4,14 +4,14 @@ import "time"
 
 // PrimaryIP defines a Primary IP.
 type PrimaryIP struct {
-	ID           int64               `json:"id"`
+	ID           int                 `json:"id"`
 	IP           string              `json:"ip"`
 	Labels       map[string]string   `json:"labels"`
 	Name         string              `json:"name"`
 	Type         string              `json:"type"`
 	Protection   PrimaryIPProtection `json:"protection"`
 	DNSPtr       []PrimaryIPDNSPTR   `json:"dns_ptr"`
-	AssigneeID   *int64              `json:"assignee_id"`
+	AssigneeID   int                 `json:"assignee_id"`
 	AssigneeType string              `json:"assignee_type"`
 	AutoDelete   bool                `json:"auto_delete"`
 	Blocked      bool                `json:"blocked"`
@@ -52,11 +52,4 @@ type PrimaryIPListResult struct {
 // when updating a Primary IP.
 type PrimaryIPUpdateResult struct {
 	PrimaryIP PrimaryIP `json:"primary_ip"`
-}
-
-// PrimaryIPActionChangeDNSPtrRequest defines the schema for the request to
-// change a Primary IP's reverse DNS pointer.
-type PrimaryIPActionChangeDNSPtrRequest struct {
-	IP     string  `json:"ip"`
-	DNSPtr *string `json:"dns_ptr"`
 }

@@ -57,7 +57,7 @@ type awsWrapper struct {
 	eksI
 }
 
-func (m *awsWrapper) getManagedNodegroupInfo(nodegroupName string, clusterName string) ([]apiv1.Taint, map[string]string, map[string]string, error) {
+func (m *awsWrapper) getManagedNodegroupInfo(nodegroupName string, clusterName string) ([]apiv1.Taint, map[string]string, error) {
 	params := &eks.DescribeNodegroupInput{
 		ClusterName:   &clusterName,
 		NodegroupName: &nodegroupName,
@@ -66,14 +66,13 @@ func (m *awsWrapper) getManagedNodegroupInfo(nodegroupName string, clusterName s
 	r, err := m.DescribeNodegroup(params)
 	observeAWSRequest("DescribeNodegroup", err, start)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
 
 	klog.V(6).Infof("DescribeNodegroup output : %+v\n", r)
 
 	taints := make([]apiv1.Taint, 0)
 	labels := make(map[string]string)
-	tags := make(map[string]string)
 
 	// Labels will include diskSize, amiType, capacityType, version
 	if r.Nodegroup.DiskSize != nil {
@@ -85,7 +84,7 @@ func (m *awsWrapper) getManagedNodegroupInfo(nodegroupName string, clusterName s
 	}
 
 	if r.Nodegroup.CapacityType != nil && len(*r.Nodegroup.CapacityType) > 0 {
-		labels["eks.amazonaws.com/capacityType"] = *r.Nodegroup.CapacityType
+		labels["capacityType"] = *r.Nodegroup.CapacityType
 	}
 
 	if r.Nodegroup.Version != nil && len(*r.Nodegroup.Version) > 0 {
@@ -105,15 +104,6 @@ func (m *awsWrapper) getManagedNodegroupInfo(nodegroupName string, clusterName s
 		}
 	}
 
-	if r.Nodegroup.Tags != nil && len(r.Nodegroup.Tags) > 0 {
-		tagsMap := r.Nodegroup.Tags
-		for k, v := range tagsMap {
-			if v != nil {
-				tags[k] = *v
-			}
-		}
-	}
-
 	if r.Nodegroup.Taints != nil && len(r.Nodegroup.Taints) > 0 {
 		taintList := r.Nodegroup.Taints
 		for _, taint := range taintList {
@@ -127,7 +117,7 @@ func (m *awsWrapper) getManagedNodegroupInfo(nodegroupName string, clusterName s
 		}
 	}
 
-	return taints, labels, tags, nil
+	return taints, labels, nil
 }
 
 func (m *awsWrapper) getInstanceTypeByLaunchConfigNames(launchConfigToQuery []*string) (map[string]string, error) {
@@ -326,7 +316,7 @@ func (m *awsWrapper) getInstanceTypeFromInstanceRequirements(imageId string, req
 	}
 
 	start = time.Now()
-	var instanceTypes []string
+	instanceTypes := []string{}
 	err = m.GetInstanceTypesFromInstanceRequirementsPages(requirementsInput, func(page *ec2.GetInstanceTypesFromInstanceRequirementsOutput, isLastPage bool) bool {
 		for _, instanceType := range page.InstanceTypes {
 			instanceTypes = append(instanceTypes, *instanceType.InstanceType)
@@ -335,12 +325,9 @@ func (m *awsWrapper) getInstanceTypeFromInstanceRequirements(imageId string, req
 	})
 	observeAWSRequest("GetInstanceTypesFromInstanceRequirements", err, start)
 	if err != nil {
-		return "", fmt.Errorf("unable to get instance types from requirements: %w", err)
+		return "", fmt.Errorf("unable to get instance types from requirements")
 	}
 
-	if len(instanceTypes) == 0 {
-		return "", fmt.Errorf("no instance types found for requirements")
-	}
 	return instanceTypes[0], nil
 }
 

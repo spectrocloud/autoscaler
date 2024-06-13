@@ -12,19 +12,13 @@
 //
 // Amazon Rekognition Image
 //
-//   - AssociateFaces (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_AssociateFaces.html)
-//
 //   - CompareFaces (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_CompareFaces.html)
 //
 //   - CreateCollection (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_CreateCollection.html)
 //
-//   - CreateUser (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_CreateUser.html)
-//
 //   - DeleteCollection (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_DeleteCollection.html)
 //
 //   - DeleteFaces (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_DeleteFaces.html)
-//
-//   - DeleteUser (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_DeleteUser.html)
 //
 //   - DescribeCollection (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_DescribeCollection.html)
 //
@@ -38,8 +32,6 @@
 //
 //   - DetectText (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_DetectText.html)
 //
-//   - DisassociateFaces (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_DisassociateFaces.html)
-//
 //   - GetCelebrityInfo (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_GetCelebrityInfo.html)
 //
 //   - IndexFaces (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_IndexFaces.html)
@@ -48,21 +40,13 @@
 //
 //   - ListFaces (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_ListFaces.html)
 //
-//   - ListUsers (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_ListFaces.html)
-//
 //   - RecognizeCelebrities (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_RecognizeCelebrities.html)
 //
 //   - SearchFaces (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_SearchFaces.html)
 //
 //   - SearchFacesByImage (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_SearchFacesByImage.html)
 //
-//   - SearchUsers (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_SearchUsers.html)
-//
-//   - SearchUsersByImage (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_SearchUsersByImage.html)
-//
 // Amazon Rekognition Custom Labels
-//
-//   - CopyProjectVersion (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_CopyProjectVersion.html)
 //
 //   - CreateDataset (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_CreateDataset.html)
 //
@@ -73,8 +57,6 @@
 //   - DeleteDataset (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_DeleteDataset.html)
 //
 //   - DeleteProject (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_DeleteProject.html)
-//
-//   - DeleteProjectPolicy (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_DeleteProjectPolicy.html)
 //
 //   - DeleteProjectVersion (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_DeleteProjectVersion.html)
 //
@@ -91,10 +73,6 @@
 //   - ListDatasetEntries (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_ListDatasetEntries.html)
 //
 //   - ListDatasetLabels (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_ListDatasetLabels.html)
-//
-//   - ListProjectPolicies (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_ListProjectPolicies.html)
-//
-//   - PutProjectPolicy (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_PutProjectPolicy.html)
 //
 //   - StartProjectVersion (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_StartProjectVersion.html)
 //
@@ -149,8 +127,6 @@
 //   - StartStreamProcessor (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_StartStreamProcessor.html)
 //
 //   - StopStreamProcessor (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_StopStreamProcessor.html)
-//
-//   - UpdateStreamProcessor (https://docs.aws.amazon.com/rekognition/latest/APIReference/API_UpdateStreamProcessor.html)
 //
 // See rekognition package documentation for more information.
 // https://docs.aws.amazon.com/sdk-for-go/api/service/rekognition/

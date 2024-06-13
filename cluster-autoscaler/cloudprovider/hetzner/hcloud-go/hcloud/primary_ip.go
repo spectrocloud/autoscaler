@@ -15,7 +15,7 @@ import (
 
 // PrimaryIP defines a Primary IP.
 type PrimaryIP struct {
-	ID           int64
+	ID           int
 	IP           net.IP
 	Network      *net.IPNet
 	Labels       map[string]string
@@ -23,7 +23,7 @@ type PrimaryIP struct {
 	Type         PrimaryIPType
 	Protection   PrimaryIPProtection
 	DNSPtr       map[string]string
-	AssigneeID   int64
+	AssigneeID   int
 	AssigneeType string
 	AutoDelete   bool
 	Blocked      bool
@@ -41,32 +41,6 @@ type PrimaryIPProtection struct {
 type PrimaryIPDNSPTR struct {
 	DNSPtr string
 	IP     string
-}
-
-// changeDNSPtr changes or resets the reverse DNS pointer for a IP address.
-// Pass a nil ptr to reset the reverse DNS pointer to its default value.
-func (p *PrimaryIP) changeDNSPtr(ctx context.Context, client *Client, ip net.IP, ptr *string) (*Action, *Response, error) {
-	reqBody := schema.PrimaryIPActionChangeDNSPtrRequest{
-		IP:     ip.String(),
-		DNSPtr: ptr,
-	}
-	reqBodyData, err := json.Marshal(reqBody)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	path := fmt.Sprintf("/primary_ips/%d/actions/change_dns_ptr", p.ID)
-	req, err := client.NewRequest(ctx, "POST", path, bytes.NewReader(reqBodyData))
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var respBody PrimaryIPChangeDNSPtrResult
-	resp, err := client.Do(req, &respBody)
-	if err != nil {
-		return nil, resp, err
-	}
-	return ActionFromSchema(respBody.Action), resp, nil
 }
 
 // GetDNSPtrForIP searches for the dns assigned to the given IP address.
@@ -92,7 +66,7 @@ const (
 // PrimaryIPCreateOpts defines the request to
 // create a Primary IP.
 type PrimaryIPCreateOpts struct {
-	AssigneeID   *int64            `json:"assignee_id,omitempty"`
+	AssigneeID   *int              `json:"assignee_id,omitempty"`
 	AssigneeType string            `json:"assignee_type"`
 	AutoDelete   *bool             `json:"auto_delete,omitempty"`
 	Datacenter   string            `json:"datacenter,omitempty"`
@@ -119,8 +93,8 @@ type PrimaryIPUpdateOpts struct {
 // PrimaryIPAssignOpts defines the request to
 // assign a Primary IP to an assignee (usually a server).
 type PrimaryIPAssignOpts struct {
-	ID           int64
-	AssigneeID   int64  `json:"assignee_id"`
+	ID           int
+	AssigneeID   int    `json:"assignee_id"`
 	AssigneeType string `json:"assignee_type"`
 }
 
@@ -133,7 +107,7 @@ type PrimaryIPAssignResult struct {
 // PrimaryIPChangeDNSPtrOpts defines the request to
 // change a DNS PTR entry from a Primary IP.
 type PrimaryIPChangeDNSPtrOpts struct {
-	ID     int64
+	ID     int
 	DNSPtr string `json:"dns_ptr"`
 	IP     string `json:"ip"`
 }
@@ -147,7 +121,7 @@ type PrimaryIPChangeDNSPtrResult struct {
 // PrimaryIPChangeProtectionOpts defines the request to
 // change protection configuration of a Primary IP.
 type PrimaryIPChangeProtectionOpts struct {
-	ID     int64
+	ID     int
 	Delete bool `json:"delete"`
 }
 
@@ -160,11 +134,10 @@ type PrimaryIPChangeProtectionResult struct {
 // PrimaryIPClient is a client for the Primary IP API.
 type PrimaryIPClient struct {
 	client *Client
-	Action *ResourceActionClient
 }
 
 // GetByID retrieves a Primary IP by its ID. If the Primary IP does not exist, nil is returned.
-func (c *PrimaryIPClient) GetByID(ctx context.Context, id int64) (*PrimaryIP, *Response, error) {
+func (c *PrimaryIPClient) GetByID(ctx context.Context, id int) (*PrimaryIP, *Response, error) {
 	req, err := c.client.NewRequest(ctx, "GET", fmt.Sprintf("/primary_ips/%d", id), nil)
 	if err != nil {
 		return nil, nil, err
@@ -208,8 +181,8 @@ func (c *PrimaryIPClient) GetByName(ctx context.Context, name string) (*PrimaryI
 // Get retrieves a Primary IP by its ID if the input can be parsed as an integer, otherwise it
 // retrieves a Primary IP by its name. If the Primary IP does not exist, nil is returned.
 func (c *PrimaryIPClient) Get(ctx context.Context, idOrName string) (*PrimaryIP, *Response, error) {
-	if id, err := strconv.ParseInt(idOrName, 10, 64); err == nil {
-		return c.GetByID(ctx, id)
+	if id, err := strconv.Atoi(idOrName); err == nil {
+		return c.GetByID(ctx, int(id))
 	}
 	return c.GetByName(ctx, idOrName)
 }
@@ -223,7 +196,7 @@ type PrimaryIPListOpts struct {
 }
 
 func (l PrimaryIPListOpts) values() url.Values {
-	vals := l.ListOpts.Values()
+	vals := l.ListOpts.values()
 	if l.Name != "" {
 		vals.Add("name", l.Name)
 	}
@@ -266,7 +239,7 @@ func (c *PrimaryIPClient) All(ctx context.Context) ([]*PrimaryIP, error) {
 
 // AllWithOpts returns all Primary IPs for the given options.
 func (c *PrimaryIPClient) AllWithOpts(ctx context.Context, opts PrimaryIPListOpts) ([]*PrimaryIP, error) {
-	allPrimaryIPs := []*PrimaryIP{}
+	var allPrimaryIPs []*PrimaryIP
 
 	err := c.client.all(func(page int) (*Response, error) {
 		opts.Page = page
@@ -364,7 +337,7 @@ func (c *PrimaryIPClient) Assign(ctx context.Context, opts PrimaryIPAssignOpts) 
 }
 
 // Unassign a Primary IP from a resource.
-func (c *PrimaryIPClient) Unassign(ctx context.Context, id int64) (*Action, *Response, error) {
+func (c *PrimaryIPClient) Unassign(ctx context.Context, id int) (*Action, *Response, error) {
 	path := fmt.Sprintf("/primary_ips/%d/actions/unassign", id)
 	req, err := c.client.NewRequest(ctx, "POST", path, bytes.NewReader([]byte{}))
 	if err != nil {

@@ -38,12 +38,7 @@ const opApproveSkill = "ApproveSkill"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ApproveSkill
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ApproveSkillRequest(input *ApproveSkillInput) (req *request.Request, output *ApproveSkillOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ApproveSkill, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opApproveSkill,
 		HTTPMethod: "POST",
@@ -85,8 +80,6 @@ func (c *AlexaForBusiness) ApproveSkillRequest(input *ApproveSkillInput) (req *r
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ApproveSkill
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ApproveSkill(input *ApproveSkillInput) (*ApproveSkillOutput, error) {
 	req, out := c.ApproveSkillRequest(input)
 	return out, req.Send()
@@ -101,8 +94,6 @@ func (c *AlexaForBusiness) ApproveSkill(input *ApproveSkillInput) (*ApproveSkill
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ApproveSkillWithContext(ctx aws.Context, input *ApproveSkillInput, opts ...request.Option) (*ApproveSkillOutput, error) {
 	req, out := c.ApproveSkillRequest(input)
 	req.SetContext(ctx)
@@ -135,12 +126,7 @@ const opAssociateContactWithAddressBook = "AssociateContactWithAddressBook"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/AssociateContactWithAddressBook
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateContactWithAddressBookRequest(input *AssociateContactWithAddressBookInput) (req *request.Request, output *AssociateContactWithAddressBookOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, AssociateContactWithAddressBook, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opAssociateContactWithAddressBook,
 		HTTPMethod: "POST",
@@ -173,8 +159,6 @@ func (c *AlexaForBusiness) AssociateContactWithAddressBookRequest(input *Associa
 //     You are performing an action that would put you beyond your account's limits.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/AssociateContactWithAddressBook
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateContactWithAddressBook(input *AssociateContactWithAddressBookInput) (*AssociateContactWithAddressBookOutput, error) {
 	req, out := c.AssociateContactWithAddressBookRequest(input)
 	return out, req.Send()
@@ -189,8 +173,6 @@ func (c *AlexaForBusiness) AssociateContactWithAddressBook(input *AssociateConta
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateContactWithAddressBookWithContext(ctx aws.Context, input *AssociateContactWithAddressBookInput, opts ...request.Option) (*AssociateContactWithAddressBookOutput, error) {
 	req, out := c.AssociateContactWithAddressBookRequest(input)
 	req.SetContext(ctx)
@@ -223,12 +205,7 @@ const opAssociateDeviceWithNetworkProfile = "AssociateDeviceWithNetworkProfile"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/AssociateDeviceWithNetworkProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateDeviceWithNetworkProfileRequest(input *AssociateDeviceWithNetworkProfileInput) (req *request.Request, output *AssociateDeviceWithNetworkProfileOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, AssociateDeviceWithNetworkProfile, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opAssociateDeviceWithNetworkProfile,
 		HTTPMethod: "POST",
@@ -269,8 +246,6 @@ func (c *AlexaForBusiness) AssociateDeviceWithNetworkProfileRequest(input *Assoc
 //     no longer managed by this account.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/AssociateDeviceWithNetworkProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateDeviceWithNetworkProfile(input *AssociateDeviceWithNetworkProfileInput) (*AssociateDeviceWithNetworkProfileOutput, error) {
 	req, out := c.AssociateDeviceWithNetworkProfileRequest(input)
 	return out, req.Send()
@@ -285,8 +260,6 @@ func (c *AlexaForBusiness) AssociateDeviceWithNetworkProfile(input *AssociateDev
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateDeviceWithNetworkProfileWithContext(ctx aws.Context, input *AssociateDeviceWithNetworkProfileInput, opts ...request.Option) (*AssociateDeviceWithNetworkProfileOutput, error) {
 	req, out := c.AssociateDeviceWithNetworkProfileRequest(input)
 	req.SetContext(ctx)
@@ -319,12 +292,7 @@ const opAssociateDeviceWithRoom = "AssociateDeviceWithRoom"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/AssociateDeviceWithRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateDeviceWithRoomRequest(input *AssociateDeviceWithRoomInput) (req *request.Request, output *AssociateDeviceWithRoomOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, AssociateDeviceWithRoom, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opAssociateDeviceWithRoom,
 		HTTPMethod: "POST",
@@ -368,8 +336,6 @@ func (c *AlexaForBusiness) AssociateDeviceWithRoomRequest(input *AssociateDevice
 //     no longer managed by this account.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/AssociateDeviceWithRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateDeviceWithRoom(input *AssociateDeviceWithRoomInput) (*AssociateDeviceWithRoomOutput, error) {
 	req, out := c.AssociateDeviceWithRoomRequest(input)
 	return out, req.Send()
@@ -384,8 +350,6 @@ func (c *AlexaForBusiness) AssociateDeviceWithRoom(input *AssociateDeviceWithRoo
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateDeviceWithRoomWithContext(ctx aws.Context, input *AssociateDeviceWithRoomInput, opts ...request.Option) (*AssociateDeviceWithRoomOutput, error) {
 	req, out := c.AssociateDeviceWithRoomRequest(input)
 	req.SetContext(ctx)
@@ -418,12 +382,7 @@ const opAssociateSkillGroupWithRoom = "AssociateSkillGroupWithRoom"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/AssociateSkillGroupWithRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateSkillGroupWithRoomRequest(input *AssociateSkillGroupWithRoomInput) (req *request.Request, output *AssociateSkillGroupWithRoomOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, AssociateSkillGroupWithRoom, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opAssociateSkillGroupWithRoom,
 		HTTPMethod: "POST",
@@ -457,8 +416,6 @@ func (c *AlexaForBusiness) AssociateSkillGroupWithRoomRequest(input *AssociateSk
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/AssociateSkillGroupWithRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateSkillGroupWithRoom(input *AssociateSkillGroupWithRoomInput) (*AssociateSkillGroupWithRoomOutput, error) {
 	req, out := c.AssociateSkillGroupWithRoomRequest(input)
 	return out, req.Send()
@@ -473,8 +430,6 @@ func (c *AlexaForBusiness) AssociateSkillGroupWithRoom(input *AssociateSkillGrou
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateSkillGroupWithRoomWithContext(ctx aws.Context, input *AssociateSkillGroupWithRoomInput, opts ...request.Option) (*AssociateSkillGroupWithRoomOutput, error) {
 	req, out := c.AssociateSkillGroupWithRoomRequest(input)
 	req.SetContext(ctx)
@@ -507,12 +462,7 @@ const opAssociateSkillWithSkillGroup = "AssociateSkillWithSkillGroup"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/AssociateSkillWithSkillGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateSkillWithSkillGroupRequest(input *AssociateSkillWithSkillGroupInput) (req *request.Request, output *AssociateSkillWithSkillGroupOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, AssociateSkillWithSkillGroup, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opAssociateSkillWithSkillGroup,
 		HTTPMethod: "POST",
@@ -552,8 +502,6 @@ func (c *AlexaForBusiness) AssociateSkillWithSkillGroupRequest(input *AssociateS
 //     The skill must be linked to a third-party account.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/AssociateSkillWithSkillGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateSkillWithSkillGroup(input *AssociateSkillWithSkillGroupInput) (*AssociateSkillWithSkillGroupOutput, error) {
 	req, out := c.AssociateSkillWithSkillGroupRequest(input)
 	return out, req.Send()
@@ -568,8 +516,6 @@ func (c *AlexaForBusiness) AssociateSkillWithSkillGroup(input *AssociateSkillWit
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateSkillWithSkillGroupWithContext(ctx aws.Context, input *AssociateSkillWithSkillGroupInput, opts ...request.Option) (*AssociateSkillWithSkillGroupOutput, error) {
 	req, out := c.AssociateSkillWithSkillGroupRequest(input)
 	req.SetContext(ctx)
@@ -602,12 +548,7 @@ const opAssociateSkillWithUsers = "AssociateSkillWithUsers"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/AssociateSkillWithUsers
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateSkillWithUsersRequest(input *AssociateSkillWithUsersInput) (req *request.Request, output *AssociateSkillWithUsersOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, AssociateSkillWithUsers, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opAssociateSkillWithUsers,
 		HTTPMethod: "POST",
@@ -644,8 +585,6 @@ func (c *AlexaForBusiness) AssociateSkillWithUsersRequest(input *AssociateSkillW
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/AssociateSkillWithUsers
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateSkillWithUsers(input *AssociateSkillWithUsersInput) (*AssociateSkillWithUsersOutput, error) {
 	req, out := c.AssociateSkillWithUsersRequest(input)
 	return out, req.Send()
@@ -660,8 +599,6 @@ func (c *AlexaForBusiness) AssociateSkillWithUsers(input *AssociateSkillWithUser
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) AssociateSkillWithUsersWithContext(ctx aws.Context, input *AssociateSkillWithUsersInput, opts ...request.Option) (*AssociateSkillWithUsersOutput, error) {
 	req, out := c.AssociateSkillWithUsersRequest(input)
 	req.SetContext(ctx)
@@ -694,12 +631,7 @@ const opCreateAddressBook = "CreateAddressBook"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateAddressBook
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateAddressBookRequest(input *CreateAddressBookInput) (req *request.Request, output *CreateAddressBookOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, CreateAddressBook, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opCreateAddressBook,
 		HTTPMethod: "POST",
@@ -735,8 +667,6 @@ func (c *AlexaForBusiness) CreateAddressBookRequest(input *CreateAddressBookInpu
 //     You are performing an action that would put you beyond your account's limits.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateAddressBook
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateAddressBook(input *CreateAddressBookInput) (*CreateAddressBookOutput, error) {
 	req, out := c.CreateAddressBookRequest(input)
 	return out, req.Send()
@@ -751,8 +681,6 @@ func (c *AlexaForBusiness) CreateAddressBook(input *CreateAddressBookInput) (*Cr
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateAddressBookWithContext(ctx aws.Context, input *CreateAddressBookInput, opts ...request.Option) (*CreateAddressBookOutput, error) {
 	req, out := c.CreateAddressBookRequest(input)
 	req.SetContext(ctx)
@@ -785,12 +713,7 @@ const opCreateBusinessReportSchedule = "CreateBusinessReportSchedule"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateBusinessReportSchedule
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateBusinessReportScheduleRequest(input *CreateBusinessReportScheduleInput) (req *request.Request, output *CreateBusinessReportScheduleOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, CreateBusinessReportSchedule, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opCreateBusinessReportSchedule,
 		HTTPMethod: "POST",
@@ -823,8 +746,6 @@ func (c *AlexaForBusiness) CreateBusinessReportScheduleRequest(input *CreateBusi
 //     The resource being created already exists.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateBusinessReportSchedule
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateBusinessReportSchedule(input *CreateBusinessReportScheduleInput) (*CreateBusinessReportScheduleOutput, error) {
 	req, out := c.CreateBusinessReportScheduleRequest(input)
 	return out, req.Send()
@@ -839,8 +760,6 @@ func (c *AlexaForBusiness) CreateBusinessReportSchedule(input *CreateBusinessRep
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateBusinessReportScheduleWithContext(ctx aws.Context, input *CreateBusinessReportScheduleInput, opts ...request.Option) (*CreateBusinessReportScheduleOutput, error) {
 	req, out := c.CreateBusinessReportScheduleRequest(input)
 	req.SetContext(ctx)
@@ -873,12 +792,7 @@ const opCreateConferenceProvider = "CreateConferenceProvider"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateConferenceProvider
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateConferenceProviderRequest(input *CreateConferenceProviderInput) (req *request.Request, output *CreateConferenceProviderOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, CreateConferenceProvider, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opCreateConferenceProvider,
 		HTTPMethod: "POST",
@@ -910,8 +824,6 @@ func (c *AlexaForBusiness) CreateConferenceProviderRequest(input *CreateConferen
 //     The resource being created already exists.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateConferenceProvider
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateConferenceProvider(input *CreateConferenceProviderInput) (*CreateConferenceProviderOutput, error) {
 	req, out := c.CreateConferenceProviderRequest(input)
 	return out, req.Send()
@@ -926,8 +838,6 @@ func (c *AlexaForBusiness) CreateConferenceProvider(input *CreateConferenceProvi
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateConferenceProviderWithContext(ctx aws.Context, input *CreateConferenceProviderInput, opts ...request.Option) (*CreateConferenceProviderOutput, error) {
 	req, out := c.CreateConferenceProviderRequest(input)
 	req.SetContext(ctx)
@@ -960,12 +870,7 @@ const opCreateContact = "CreateContact"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateContact
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateContactRequest(input *CreateContactInput) (req *request.Request, output *CreateContactOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, CreateContact, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opCreateContact,
 		HTTPMethod: "POST",
@@ -1001,8 +906,6 @@ func (c *AlexaForBusiness) CreateContactRequest(input *CreateContactInput) (req 
 //     You are performing an action that would put you beyond your account's limits.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateContact
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateContact(input *CreateContactInput) (*CreateContactOutput, error) {
 	req, out := c.CreateContactRequest(input)
 	return out, req.Send()
@@ -1017,8 +920,6 @@ func (c *AlexaForBusiness) CreateContact(input *CreateContactInput) (*CreateCont
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateContactWithContext(ctx aws.Context, input *CreateContactInput, opts ...request.Option) (*CreateContactOutput, error) {
 	req, out := c.CreateContactRequest(input)
 	req.SetContext(ctx)
@@ -1051,12 +952,7 @@ const opCreateGatewayGroup = "CreateGatewayGroup"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateGatewayGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateGatewayGroupRequest(input *CreateGatewayGroupInput) (req *request.Request, output *CreateGatewayGroupOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, CreateGatewayGroup, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opCreateGatewayGroup,
 		HTTPMethod: "POST",
@@ -1092,8 +988,6 @@ func (c *AlexaForBusiness) CreateGatewayGroupRequest(input *CreateGatewayGroupIn
 //     You are performing an action that would put you beyond your account's limits.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateGatewayGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateGatewayGroup(input *CreateGatewayGroupInput) (*CreateGatewayGroupOutput, error) {
 	req, out := c.CreateGatewayGroupRequest(input)
 	return out, req.Send()
@@ -1108,8 +1002,6 @@ func (c *AlexaForBusiness) CreateGatewayGroup(input *CreateGatewayGroupInput) (*
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateGatewayGroupWithContext(ctx aws.Context, input *CreateGatewayGroupInput, opts ...request.Option) (*CreateGatewayGroupOutput, error) {
 	req, out := c.CreateGatewayGroupRequest(input)
 	req.SetContext(ctx)
@@ -1142,12 +1034,7 @@ const opCreateNetworkProfile = "CreateNetworkProfile"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateNetworkProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateNetworkProfileRequest(input *CreateNetworkProfileInput) (req *request.Request, output *CreateNetworkProfileOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, CreateNetworkProfile, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opCreateNetworkProfile,
 		HTTPMethod: "POST",
@@ -1192,8 +1079,6 @@ func (c *AlexaForBusiness) CreateNetworkProfileRequest(input *CreateNetworkProfi
 //     The service linked role is locked for deletion.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateNetworkProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateNetworkProfile(input *CreateNetworkProfileInput) (*CreateNetworkProfileOutput, error) {
 	req, out := c.CreateNetworkProfileRequest(input)
 	return out, req.Send()
@@ -1208,8 +1093,6 @@ func (c *AlexaForBusiness) CreateNetworkProfile(input *CreateNetworkProfileInput
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateNetworkProfileWithContext(ctx aws.Context, input *CreateNetworkProfileInput, opts ...request.Option) (*CreateNetworkProfileOutput, error) {
 	req, out := c.CreateNetworkProfileRequest(input)
 	req.SetContext(ctx)
@@ -1242,12 +1125,7 @@ const opCreateProfile = "CreateProfile"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateProfileRequest(input *CreateProfileInput) (req *request.Request, output *CreateProfileOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, CreateProfile, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opCreateProfile,
 		HTTPMethod: "POST",
@@ -1286,8 +1164,6 @@ func (c *AlexaForBusiness) CreateProfileRequest(input *CreateProfileInput) (req 
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateProfile(input *CreateProfileInput) (*CreateProfileOutput, error) {
 	req, out := c.CreateProfileRequest(input)
 	return out, req.Send()
@@ -1302,8 +1178,6 @@ func (c *AlexaForBusiness) CreateProfile(input *CreateProfileInput) (*CreateProf
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateProfileWithContext(ctx aws.Context, input *CreateProfileInput, opts ...request.Option) (*CreateProfileOutput, error) {
 	req, out := c.CreateProfileRequest(input)
 	req.SetContext(ctx)
@@ -1336,12 +1210,7 @@ const opCreateRoom = "CreateRoom"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateRoomRequest(input *CreateRoomInput) (req *request.Request, output *CreateRoomOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, CreateRoom, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opCreateRoom,
 		HTTPMethod: "POST",
@@ -1377,8 +1246,6 @@ func (c *AlexaForBusiness) CreateRoomRequest(input *CreateRoomInput) (req *reque
 //     You are performing an action that would put you beyond your account's limits.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateRoom(input *CreateRoomInput) (*CreateRoomOutput, error) {
 	req, out := c.CreateRoomRequest(input)
 	return out, req.Send()
@@ -1393,8 +1260,6 @@ func (c *AlexaForBusiness) CreateRoom(input *CreateRoomInput) (*CreateRoomOutput
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateRoomWithContext(ctx aws.Context, input *CreateRoomInput, opts ...request.Option) (*CreateRoomOutput, error) {
 	req, out := c.CreateRoomRequest(input)
 	req.SetContext(ctx)
@@ -1427,12 +1292,7 @@ const opCreateSkillGroup = "CreateSkillGroup"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateSkillGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateSkillGroupRequest(input *CreateSkillGroupInput) (req *request.Request, output *CreateSkillGroupOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, CreateSkillGroup, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opCreateSkillGroup,
 		HTTPMethod: "POST",
@@ -1471,8 +1331,6 @@ func (c *AlexaForBusiness) CreateSkillGroupRequest(input *CreateSkillGroupInput)
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateSkillGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateSkillGroup(input *CreateSkillGroupInput) (*CreateSkillGroupOutput, error) {
 	req, out := c.CreateSkillGroupRequest(input)
 	return out, req.Send()
@@ -1487,8 +1345,6 @@ func (c *AlexaForBusiness) CreateSkillGroup(input *CreateSkillGroupInput) (*Crea
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateSkillGroupWithContext(ctx aws.Context, input *CreateSkillGroupInput, opts ...request.Option) (*CreateSkillGroupOutput, error) {
 	req, out := c.CreateSkillGroupRequest(input)
 	req.SetContext(ctx)
@@ -1521,12 +1377,7 @@ const opCreateUser = "CreateUser"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateUser
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateUserRequest(input *CreateUserInput) (req *request.Request, output *CreateUserOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, CreateUser, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opCreateUser,
 		HTTPMethod: "POST",
@@ -1565,8 +1416,6 @@ func (c *AlexaForBusiness) CreateUserRequest(input *CreateUserInput) (req *reque
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/CreateUser
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateUser(input *CreateUserInput) (*CreateUserOutput, error) {
 	req, out := c.CreateUserRequest(input)
 	return out, req.Send()
@@ -1581,8 +1430,6 @@ func (c *AlexaForBusiness) CreateUser(input *CreateUserInput) (*CreateUserOutput
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) CreateUserWithContext(ctx aws.Context, input *CreateUserInput, opts ...request.Option) (*CreateUserOutput, error) {
 	req, out := c.CreateUserRequest(input)
 	req.SetContext(ctx)
@@ -1615,12 +1462,7 @@ const opDeleteAddressBook = "DeleteAddressBook"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteAddressBook
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteAddressBookRequest(input *DeleteAddressBookInput) (req *request.Request, output *DeleteAddressBookOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteAddressBook, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteAddressBook,
 		HTTPMethod: "POST",
@@ -1657,8 +1499,6 @@ func (c *AlexaForBusiness) DeleteAddressBookRequest(input *DeleteAddressBookInpu
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteAddressBook
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteAddressBook(input *DeleteAddressBookInput) (*DeleteAddressBookOutput, error) {
 	req, out := c.DeleteAddressBookRequest(input)
 	return out, req.Send()
@@ -1673,8 +1513,6 @@ func (c *AlexaForBusiness) DeleteAddressBook(input *DeleteAddressBookInput) (*De
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteAddressBookWithContext(ctx aws.Context, input *DeleteAddressBookInput, opts ...request.Option) (*DeleteAddressBookOutput, error) {
 	req, out := c.DeleteAddressBookRequest(input)
 	req.SetContext(ctx)
@@ -1707,12 +1545,7 @@ const opDeleteBusinessReportSchedule = "DeleteBusinessReportSchedule"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteBusinessReportSchedule
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteBusinessReportScheduleRequest(input *DeleteBusinessReportScheduleInput) (req *request.Request, output *DeleteBusinessReportScheduleOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteBusinessReportSchedule, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteBusinessReportSchedule,
 		HTTPMethod: "POST",
@@ -1750,8 +1583,6 @@ func (c *AlexaForBusiness) DeleteBusinessReportScheduleRequest(input *DeleteBusi
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteBusinessReportSchedule
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteBusinessReportSchedule(input *DeleteBusinessReportScheduleInput) (*DeleteBusinessReportScheduleOutput, error) {
 	req, out := c.DeleteBusinessReportScheduleRequest(input)
 	return out, req.Send()
@@ -1766,8 +1597,6 @@ func (c *AlexaForBusiness) DeleteBusinessReportSchedule(input *DeleteBusinessRep
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteBusinessReportScheduleWithContext(ctx aws.Context, input *DeleteBusinessReportScheduleInput, opts ...request.Option) (*DeleteBusinessReportScheduleOutput, error) {
 	req, out := c.DeleteBusinessReportScheduleRequest(input)
 	req.SetContext(ctx)
@@ -1800,12 +1629,7 @@ const opDeleteConferenceProvider = "DeleteConferenceProvider"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteConferenceProvider
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteConferenceProviderRequest(input *DeleteConferenceProviderInput) (req *request.Request, output *DeleteConferenceProviderOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteConferenceProvider, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteConferenceProvider,
 		HTTPMethod: "POST",
@@ -1838,8 +1662,6 @@ func (c *AlexaForBusiness) DeleteConferenceProviderRequest(input *DeleteConferen
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteConferenceProvider
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteConferenceProvider(input *DeleteConferenceProviderInput) (*DeleteConferenceProviderOutput, error) {
 	req, out := c.DeleteConferenceProviderRequest(input)
 	return out, req.Send()
@@ -1854,8 +1676,6 @@ func (c *AlexaForBusiness) DeleteConferenceProvider(input *DeleteConferenceProvi
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteConferenceProviderWithContext(ctx aws.Context, input *DeleteConferenceProviderInput, opts ...request.Option) (*DeleteConferenceProviderOutput, error) {
 	req, out := c.DeleteConferenceProviderRequest(input)
 	req.SetContext(ctx)
@@ -1888,12 +1708,7 @@ const opDeleteContact = "DeleteContact"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteContact
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteContactRequest(input *DeleteContactInput) (req *request.Request, output *DeleteContactOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteContact, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteContact,
 		HTTPMethod: "POST",
@@ -1930,8 +1745,6 @@ func (c *AlexaForBusiness) DeleteContactRequest(input *DeleteContactInput) (req 
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteContact
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteContact(input *DeleteContactInput) (*DeleteContactOutput, error) {
 	req, out := c.DeleteContactRequest(input)
 	return out, req.Send()
@@ -1946,8 +1759,6 @@ func (c *AlexaForBusiness) DeleteContact(input *DeleteContactInput) (*DeleteCont
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteContactWithContext(ctx aws.Context, input *DeleteContactInput, opts ...request.Option) (*DeleteContactOutput, error) {
 	req, out := c.DeleteContactRequest(input)
 	req.SetContext(ctx)
@@ -1980,12 +1791,7 @@ const opDeleteDevice = "DeleteDevice"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteDevice
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteDeviceRequest(input *DeleteDeviceInput) (req *request.Request, output *DeleteDeviceOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteDevice, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteDevice,
 		HTTPMethod: "POST",
@@ -2025,8 +1831,6 @@ func (c *AlexaForBusiness) DeleteDeviceRequest(input *DeleteDeviceInput) (req *r
 //     The Certificate Authority can't issue or revoke a certificate.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteDevice
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteDevice(input *DeleteDeviceInput) (*DeleteDeviceOutput, error) {
 	req, out := c.DeleteDeviceRequest(input)
 	return out, req.Send()
@@ -2041,8 +1845,6 @@ func (c *AlexaForBusiness) DeleteDevice(input *DeleteDeviceInput) (*DeleteDevice
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteDeviceWithContext(ctx aws.Context, input *DeleteDeviceInput, opts ...request.Option) (*DeleteDeviceOutput, error) {
 	req, out := c.DeleteDeviceRequest(input)
 	req.SetContext(ctx)
@@ -2075,12 +1877,7 @@ const opDeleteDeviceUsageData = "DeleteDeviceUsageData"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteDeviceUsageData
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteDeviceUsageDataRequest(input *DeleteDeviceUsageDataInput) (req *request.Request, output *DeleteDeviceUsageDataOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteDeviceUsageData, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteDeviceUsageData,
 		HTTPMethod: "POST",
@@ -2124,8 +1921,6 @@ func (c *AlexaForBusiness) DeleteDeviceUsageDataRequest(input *DeleteDeviceUsage
 //     You are performing an action that would put you beyond your account's limits.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteDeviceUsageData
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteDeviceUsageData(input *DeleteDeviceUsageDataInput) (*DeleteDeviceUsageDataOutput, error) {
 	req, out := c.DeleteDeviceUsageDataRequest(input)
 	return out, req.Send()
@@ -2140,8 +1935,6 @@ func (c *AlexaForBusiness) DeleteDeviceUsageData(input *DeleteDeviceUsageDataInp
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteDeviceUsageDataWithContext(ctx aws.Context, input *DeleteDeviceUsageDataInput, opts ...request.Option) (*DeleteDeviceUsageDataOutput, error) {
 	req, out := c.DeleteDeviceUsageDataRequest(input)
 	req.SetContext(ctx)
@@ -2174,12 +1967,7 @@ const opDeleteGatewayGroup = "DeleteGatewayGroup"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteGatewayGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteGatewayGroupRequest(input *DeleteGatewayGroupInput) (req *request.Request, output *DeleteGatewayGroupOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteGatewayGroup, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteGatewayGroup,
 		HTTPMethod: "POST",
@@ -2212,8 +2000,6 @@ func (c *AlexaForBusiness) DeleteGatewayGroupRequest(input *DeleteGatewayGroupIn
 //     Another resource is associated with the resource in the request.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteGatewayGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteGatewayGroup(input *DeleteGatewayGroupInput) (*DeleteGatewayGroupOutput, error) {
 	req, out := c.DeleteGatewayGroupRequest(input)
 	return out, req.Send()
@@ -2228,8 +2014,6 @@ func (c *AlexaForBusiness) DeleteGatewayGroup(input *DeleteGatewayGroupInput) (*
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteGatewayGroupWithContext(ctx aws.Context, input *DeleteGatewayGroupInput, opts ...request.Option) (*DeleteGatewayGroupOutput, error) {
 	req, out := c.DeleteGatewayGroupRequest(input)
 	req.SetContext(ctx)
@@ -2262,12 +2046,7 @@ const opDeleteNetworkProfile = "DeleteNetworkProfile"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteNetworkProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteNetworkProfileRequest(input *DeleteNetworkProfileInput) (req *request.Request, output *DeleteNetworkProfileOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteNetworkProfile, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteNetworkProfile,
 		HTTPMethod: "POST",
@@ -2307,8 +2086,6 @@ func (c *AlexaForBusiness) DeleteNetworkProfileRequest(input *DeleteNetworkProfi
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteNetworkProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteNetworkProfile(input *DeleteNetworkProfileInput) (*DeleteNetworkProfileOutput, error) {
 	req, out := c.DeleteNetworkProfileRequest(input)
 	return out, req.Send()
@@ -2323,8 +2100,6 @@ func (c *AlexaForBusiness) DeleteNetworkProfile(input *DeleteNetworkProfileInput
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteNetworkProfileWithContext(ctx aws.Context, input *DeleteNetworkProfileInput, opts ...request.Option) (*DeleteNetworkProfileOutput, error) {
 	req, out := c.DeleteNetworkProfileRequest(input)
 	req.SetContext(ctx)
@@ -2357,12 +2132,7 @@ const opDeleteProfile = "DeleteProfile"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteProfileRequest(input *DeleteProfileInput) (req *request.Request, output *DeleteProfileOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteProfile, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteProfile,
 		HTTPMethod: "POST",
@@ -2399,8 +2169,6 @@ func (c *AlexaForBusiness) DeleteProfileRequest(input *DeleteProfileInput) (req 
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteProfile(input *DeleteProfileInput) (*DeleteProfileOutput, error) {
 	req, out := c.DeleteProfileRequest(input)
 	return out, req.Send()
@@ -2415,8 +2183,6 @@ func (c *AlexaForBusiness) DeleteProfile(input *DeleteProfileInput) (*DeleteProf
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteProfileWithContext(ctx aws.Context, input *DeleteProfileInput, opts ...request.Option) (*DeleteProfileOutput, error) {
 	req, out := c.DeleteProfileRequest(input)
 	req.SetContext(ctx)
@@ -2449,12 +2215,7 @@ const opDeleteRoom = "DeleteRoom"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteRoomRequest(input *DeleteRoomInput) (req *request.Request, output *DeleteRoomOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteRoom, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteRoom,
 		HTTPMethod: "POST",
@@ -2491,8 +2252,6 @@ func (c *AlexaForBusiness) DeleteRoomRequest(input *DeleteRoomInput) (req *reque
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteRoom(input *DeleteRoomInput) (*DeleteRoomOutput, error) {
 	req, out := c.DeleteRoomRequest(input)
 	return out, req.Send()
@@ -2507,8 +2266,6 @@ func (c *AlexaForBusiness) DeleteRoom(input *DeleteRoomInput) (*DeleteRoomOutput
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteRoomWithContext(ctx aws.Context, input *DeleteRoomInput, opts ...request.Option) (*DeleteRoomOutput, error) {
 	req, out := c.DeleteRoomRequest(input)
 	req.SetContext(ctx)
@@ -2541,12 +2298,7 @@ const opDeleteRoomSkillParameter = "DeleteRoomSkillParameter"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteRoomSkillParameter
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteRoomSkillParameterRequest(input *DeleteRoomSkillParameterInput) (req *request.Request, output *DeleteRoomSkillParameterOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteRoomSkillParameter, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteRoomSkillParameter,
 		HTTPMethod: "POST",
@@ -2579,8 +2331,6 @@ func (c *AlexaForBusiness) DeleteRoomSkillParameterRequest(input *DeleteRoomSkil
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteRoomSkillParameter
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteRoomSkillParameter(input *DeleteRoomSkillParameterInput) (*DeleteRoomSkillParameterOutput, error) {
 	req, out := c.DeleteRoomSkillParameterRequest(input)
 	return out, req.Send()
@@ -2595,8 +2345,6 @@ func (c *AlexaForBusiness) DeleteRoomSkillParameter(input *DeleteRoomSkillParame
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteRoomSkillParameterWithContext(ctx aws.Context, input *DeleteRoomSkillParameterInput, opts ...request.Option) (*DeleteRoomSkillParameterOutput, error) {
 	req, out := c.DeleteRoomSkillParameterRequest(input)
 	req.SetContext(ctx)
@@ -2629,12 +2377,7 @@ const opDeleteSkillAuthorization = "DeleteSkillAuthorization"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteSkillAuthorization
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteSkillAuthorizationRequest(input *DeleteSkillAuthorizationInput) (req *request.Request, output *DeleteSkillAuthorizationOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteSkillAuthorization, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteSkillAuthorization,
 		HTTPMethod: "POST",
@@ -2671,8 +2414,6 @@ func (c *AlexaForBusiness) DeleteSkillAuthorizationRequest(input *DeleteSkillAut
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteSkillAuthorization
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteSkillAuthorization(input *DeleteSkillAuthorizationInput) (*DeleteSkillAuthorizationOutput, error) {
 	req, out := c.DeleteSkillAuthorizationRequest(input)
 	return out, req.Send()
@@ -2687,8 +2428,6 @@ func (c *AlexaForBusiness) DeleteSkillAuthorization(input *DeleteSkillAuthorizat
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteSkillAuthorizationWithContext(ctx aws.Context, input *DeleteSkillAuthorizationInput, opts ...request.Option) (*DeleteSkillAuthorizationOutput, error) {
 	req, out := c.DeleteSkillAuthorizationRequest(input)
 	req.SetContext(ctx)
@@ -2721,12 +2460,7 @@ const opDeleteSkillGroup = "DeleteSkillGroup"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteSkillGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteSkillGroupRequest(input *DeleteSkillGroupInput) (req *request.Request, output *DeleteSkillGroupOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteSkillGroup, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteSkillGroup,
 		HTTPMethod: "POST",
@@ -2763,8 +2497,6 @@ func (c *AlexaForBusiness) DeleteSkillGroupRequest(input *DeleteSkillGroupInput)
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteSkillGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteSkillGroup(input *DeleteSkillGroupInput) (*DeleteSkillGroupOutput, error) {
 	req, out := c.DeleteSkillGroupRequest(input)
 	return out, req.Send()
@@ -2779,8 +2511,6 @@ func (c *AlexaForBusiness) DeleteSkillGroup(input *DeleteSkillGroupInput) (*Dele
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteSkillGroupWithContext(ctx aws.Context, input *DeleteSkillGroupInput, opts ...request.Option) (*DeleteSkillGroupOutput, error) {
 	req, out := c.DeleteSkillGroupRequest(input)
 	req.SetContext(ctx)
@@ -2813,12 +2543,7 @@ const opDeleteUser = "DeleteUser"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteUser
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteUserRequest(input *DeleteUserInput) (req *request.Request, output *DeleteUserOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DeleteUser, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDeleteUser,
 		HTTPMethod: "POST",
@@ -2855,8 +2580,6 @@ func (c *AlexaForBusiness) DeleteUserRequest(input *DeleteUserInput) (req *reque
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DeleteUser
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteUser(input *DeleteUserInput) (*DeleteUserOutput, error) {
 	req, out := c.DeleteUserRequest(input)
 	return out, req.Send()
@@ -2871,8 +2594,6 @@ func (c *AlexaForBusiness) DeleteUser(input *DeleteUserInput) (*DeleteUserOutput
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DeleteUserWithContext(ctx aws.Context, input *DeleteUserInput, opts ...request.Option) (*DeleteUserOutput, error) {
 	req, out := c.DeleteUserRequest(input)
 	req.SetContext(ctx)
@@ -2905,12 +2626,7 @@ const opDisassociateContactFromAddressBook = "DisassociateContactFromAddressBook
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DisassociateContactFromAddressBook
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateContactFromAddressBookRequest(input *DisassociateContactFromAddressBookInput) (req *request.Request, output *DisassociateContactFromAddressBookOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DisassociateContactFromAddressBook, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDisassociateContactFromAddressBook,
 		HTTPMethod: "POST",
@@ -2938,8 +2654,6 @@ func (c *AlexaForBusiness) DisassociateContactFromAddressBookRequest(input *Disa
 // See the AWS API reference guide for Alexa For Business's
 // API operation DisassociateContactFromAddressBook for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DisassociateContactFromAddressBook
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateContactFromAddressBook(input *DisassociateContactFromAddressBookInput) (*DisassociateContactFromAddressBookOutput, error) {
 	req, out := c.DisassociateContactFromAddressBookRequest(input)
 	return out, req.Send()
@@ -2954,8 +2668,6 @@ func (c *AlexaForBusiness) DisassociateContactFromAddressBook(input *Disassociat
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateContactFromAddressBookWithContext(ctx aws.Context, input *DisassociateContactFromAddressBookInput, opts ...request.Option) (*DisassociateContactFromAddressBookOutput, error) {
 	req, out := c.DisassociateContactFromAddressBookRequest(input)
 	req.SetContext(ctx)
@@ -2988,12 +2700,7 @@ const opDisassociateDeviceFromRoom = "DisassociateDeviceFromRoom"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DisassociateDeviceFromRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateDeviceFromRoomRequest(input *DisassociateDeviceFromRoomInput) (req *request.Request, output *DisassociateDeviceFromRoomOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DisassociateDeviceFromRoom, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDisassociateDeviceFromRoom,
 		HTTPMethod: "POST",
@@ -3033,8 +2740,6 @@ func (c *AlexaForBusiness) DisassociateDeviceFromRoomRequest(input *Disassociate
 //     no longer managed by this account.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DisassociateDeviceFromRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateDeviceFromRoom(input *DisassociateDeviceFromRoomInput) (*DisassociateDeviceFromRoomOutput, error) {
 	req, out := c.DisassociateDeviceFromRoomRequest(input)
 	return out, req.Send()
@@ -3049,8 +2754,6 @@ func (c *AlexaForBusiness) DisassociateDeviceFromRoom(input *DisassociateDeviceF
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateDeviceFromRoomWithContext(ctx aws.Context, input *DisassociateDeviceFromRoomInput, opts ...request.Option) (*DisassociateDeviceFromRoomOutput, error) {
 	req, out := c.DisassociateDeviceFromRoomRequest(input)
 	req.SetContext(ctx)
@@ -3083,12 +2786,7 @@ const opDisassociateSkillFromSkillGroup = "DisassociateSkillFromSkillGroup"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DisassociateSkillFromSkillGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateSkillFromSkillGroupRequest(input *DisassociateSkillFromSkillGroupInput) (req *request.Request, output *DisassociateSkillFromSkillGroupOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DisassociateSkillFromSkillGroup, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDisassociateSkillFromSkillGroup,
 		HTTPMethod: "POST",
@@ -3125,8 +2823,6 @@ func (c *AlexaForBusiness) DisassociateSkillFromSkillGroupRequest(input *Disasso
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DisassociateSkillFromSkillGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateSkillFromSkillGroup(input *DisassociateSkillFromSkillGroupInput) (*DisassociateSkillFromSkillGroupOutput, error) {
 	req, out := c.DisassociateSkillFromSkillGroupRequest(input)
 	return out, req.Send()
@@ -3141,8 +2837,6 @@ func (c *AlexaForBusiness) DisassociateSkillFromSkillGroup(input *DisassociateSk
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateSkillFromSkillGroupWithContext(ctx aws.Context, input *DisassociateSkillFromSkillGroupInput, opts ...request.Option) (*DisassociateSkillFromSkillGroupOutput, error) {
 	req, out := c.DisassociateSkillFromSkillGroupRequest(input)
 	req.SetContext(ctx)
@@ -3175,12 +2869,7 @@ const opDisassociateSkillFromUsers = "DisassociateSkillFromUsers"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DisassociateSkillFromUsers
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateSkillFromUsersRequest(input *DisassociateSkillFromUsersInput) (req *request.Request, output *DisassociateSkillFromUsersOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DisassociateSkillFromUsers, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDisassociateSkillFromUsers,
 		HTTPMethod: "POST",
@@ -3218,8 +2907,6 @@ func (c *AlexaForBusiness) DisassociateSkillFromUsersRequest(input *Disassociate
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DisassociateSkillFromUsers
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateSkillFromUsers(input *DisassociateSkillFromUsersInput) (*DisassociateSkillFromUsersOutput, error) {
 	req, out := c.DisassociateSkillFromUsersRequest(input)
 	return out, req.Send()
@@ -3234,8 +2921,6 @@ func (c *AlexaForBusiness) DisassociateSkillFromUsers(input *DisassociateSkillFr
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateSkillFromUsersWithContext(ctx aws.Context, input *DisassociateSkillFromUsersInput, opts ...request.Option) (*DisassociateSkillFromUsersOutput, error) {
 	req, out := c.DisassociateSkillFromUsersRequest(input)
 	req.SetContext(ctx)
@@ -3268,12 +2953,7 @@ const opDisassociateSkillGroupFromRoom = "DisassociateSkillGroupFromRoom"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DisassociateSkillGroupFromRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateSkillGroupFromRoomRequest(input *DisassociateSkillGroupFromRoomInput) (req *request.Request, output *DisassociateSkillGroupFromRoomOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, DisassociateSkillGroupFromRoom, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opDisassociateSkillGroupFromRoom,
 		HTTPMethod: "POST",
@@ -3307,8 +2987,6 @@ func (c *AlexaForBusiness) DisassociateSkillGroupFromRoomRequest(input *Disassoc
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/DisassociateSkillGroupFromRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateSkillGroupFromRoom(input *DisassociateSkillGroupFromRoomInput) (*DisassociateSkillGroupFromRoomOutput, error) {
 	req, out := c.DisassociateSkillGroupFromRoomRequest(input)
 	return out, req.Send()
@@ -3323,8 +3001,6 @@ func (c *AlexaForBusiness) DisassociateSkillGroupFromRoom(input *DisassociateSki
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) DisassociateSkillGroupFromRoomWithContext(ctx aws.Context, input *DisassociateSkillGroupFromRoomInput, opts ...request.Option) (*DisassociateSkillGroupFromRoomOutput, error) {
 	req, out := c.DisassociateSkillGroupFromRoomRequest(input)
 	req.SetContext(ctx)
@@ -3357,12 +3033,7 @@ const opForgetSmartHomeAppliances = "ForgetSmartHomeAppliances"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ForgetSmartHomeAppliances
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ForgetSmartHomeAppliancesRequest(input *ForgetSmartHomeAppliancesInput) (req *request.Request, output *ForgetSmartHomeAppliancesOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ForgetSmartHomeAppliances, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opForgetSmartHomeAppliances,
 		HTTPMethod: "POST",
@@ -3395,8 +3066,6 @@ func (c *AlexaForBusiness) ForgetSmartHomeAppliancesRequest(input *ForgetSmartHo
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ForgetSmartHomeAppliances
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ForgetSmartHomeAppliances(input *ForgetSmartHomeAppliancesInput) (*ForgetSmartHomeAppliancesOutput, error) {
 	req, out := c.ForgetSmartHomeAppliancesRequest(input)
 	return out, req.Send()
@@ -3411,8 +3080,6 @@ func (c *AlexaForBusiness) ForgetSmartHomeAppliances(input *ForgetSmartHomeAppli
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ForgetSmartHomeAppliancesWithContext(ctx aws.Context, input *ForgetSmartHomeAppliancesInput, opts ...request.Option) (*ForgetSmartHomeAppliancesOutput, error) {
 	req, out := c.ForgetSmartHomeAppliancesRequest(input)
 	req.SetContext(ctx)
@@ -3445,12 +3112,7 @@ const opGetAddressBook = "GetAddressBook"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetAddressBook
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetAddressBookRequest(input *GetAddressBookInput) (req *request.Request, output *GetAddressBookOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, GetAddressBook, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opGetAddressBook,
 		HTTPMethod: "POST",
@@ -3482,8 +3144,6 @@ func (c *AlexaForBusiness) GetAddressBookRequest(input *GetAddressBookInput) (re
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetAddressBook
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetAddressBook(input *GetAddressBookInput) (*GetAddressBookOutput, error) {
 	req, out := c.GetAddressBookRequest(input)
 	return out, req.Send()
@@ -3498,8 +3158,6 @@ func (c *AlexaForBusiness) GetAddressBook(input *GetAddressBookInput) (*GetAddre
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetAddressBookWithContext(ctx aws.Context, input *GetAddressBookInput, opts ...request.Option) (*GetAddressBookOutput, error) {
 	req, out := c.GetAddressBookRequest(input)
 	req.SetContext(ctx)
@@ -3532,12 +3190,7 @@ const opGetConferencePreference = "GetConferencePreference"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetConferencePreference
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetConferencePreferenceRequest(input *GetConferencePreferenceInput) (req *request.Request, output *GetConferencePreferenceOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, GetConferencePreference, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opGetConferencePreference,
 		HTTPMethod: "POST",
@@ -3569,8 +3222,6 @@ func (c *AlexaForBusiness) GetConferencePreferenceRequest(input *GetConferencePr
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetConferencePreference
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetConferencePreference(input *GetConferencePreferenceInput) (*GetConferencePreferenceOutput, error) {
 	req, out := c.GetConferencePreferenceRequest(input)
 	return out, req.Send()
@@ -3585,8 +3236,6 @@ func (c *AlexaForBusiness) GetConferencePreference(input *GetConferencePreferenc
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetConferencePreferenceWithContext(ctx aws.Context, input *GetConferencePreferenceInput, opts ...request.Option) (*GetConferencePreferenceOutput, error) {
 	req, out := c.GetConferencePreferenceRequest(input)
 	req.SetContext(ctx)
@@ -3619,12 +3268,7 @@ const opGetConferenceProvider = "GetConferenceProvider"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetConferenceProvider
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetConferenceProviderRequest(input *GetConferenceProviderInput) (req *request.Request, output *GetConferenceProviderOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, GetConferenceProvider, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opGetConferenceProvider,
 		HTTPMethod: "POST",
@@ -3656,8 +3300,6 @@ func (c *AlexaForBusiness) GetConferenceProviderRequest(input *GetConferenceProv
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetConferenceProvider
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetConferenceProvider(input *GetConferenceProviderInput) (*GetConferenceProviderOutput, error) {
 	req, out := c.GetConferenceProviderRequest(input)
 	return out, req.Send()
@@ -3672,8 +3314,6 @@ func (c *AlexaForBusiness) GetConferenceProvider(input *GetConferenceProviderInp
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetConferenceProviderWithContext(ctx aws.Context, input *GetConferenceProviderInput, opts ...request.Option) (*GetConferenceProviderOutput, error) {
 	req, out := c.GetConferenceProviderRequest(input)
 	req.SetContext(ctx)
@@ -3706,12 +3346,7 @@ const opGetContact = "GetContact"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetContact
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetContactRequest(input *GetContactInput) (req *request.Request, output *GetContactOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, GetContact, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opGetContact,
 		HTTPMethod: "POST",
@@ -3743,8 +3378,6 @@ func (c *AlexaForBusiness) GetContactRequest(input *GetContactInput) (req *reque
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetContact
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetContact(input *GetContactInput) (*GetContactOutput, error) {
 	req, out := c.GetContactRequest(input)
 	return out, req.Send()
@@ -3759,8 +3392,6 @@ func (c *AlexaForBusiness) GetContact(input *GetContactInput) (*GetContactOutput
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetContactWithContext(ctx aws.Context, input *GetContactInput, opts ...request.Option) (*GetContactOutput, error) {
 	req, out := c.GetContactRequest(input)
 	req.SetContext(ctx)
@@ -3793,12 +3424,7 @@ const opGetDevice = "GetDevice"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetDevice
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetDeviceRequest(input *GetDeviceInput) (req *request.Request, output *GetDeviceOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, GetDevice, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opGetDevice,
 		HTTPMethod: "POST",
@@ -3830,8 +3456,6 @@ func (c *AlexaForBusiness) GetDeviceRequest(input *GetDeviceInput) (req *request
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetDevice
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetDevice(input *GetDeviceInput) (*GetDeviceOutput, error) {
 	req, out := c.GetDeviceRequest(input)
 	return out, req.Send()
@@ -3846,8 +3470,6 @@ func (c *AlexaForBusiness) GetDevice(input *GetDeviceInput) (*GetDeviceOutput, e
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetDeviceWithContext(ctx aws.Context, input *GetDeviceInput, opts ...request.Option) (*GetDeviceOutput, error) {
 	req, out := c.GetDeviceRequest(input)
 	req.SetContext(ctx)
@@ -3880,12 +3502,7 @@ const opGetGateway = "GetGateway"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetGateway
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetGatewayRequest(input *GetGatewayInput) (req *request.Request, output *GetGatewayOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, GetGateway, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opGetGateway,
 		HTTPMethod: "POST",
@@ -3917,8 +3534,6 @@ func (c *AlexaForBusiness) GetGatewayRequest(input *GetGatewayInput) (req *reque
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetGateway
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetGateway(input *GetGatewayInput) (*GetGatewayOutput, error) {
 	req, out := c.GetGatewayRequest(input)
 	return out, req.Send()
@@ -3933,8 +3548,6 @@ func (c *AlexaForBusiness) GetGateway(input *GetGatewayInput) (*GetGatewayOutput
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetGatewayWithContext(ctx aws.Context, input *GetGatewayInput, opts ...request.Option) (*GetGatewayOutput, error) {
 	req, out := c.GetGatewayRequest(input)
 	req.SetContext(ctx)
@@ -3967,12 +3580,7 @@ const opGetGatewayGroup = "GetGatewayGroup"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetGatewayGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetGatewayGroupRequest(input *GetGatewayGroupInput) (req *request.Request, output *GetGatewayGroupOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, GetGatewayGroup, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opGetGatewayGroup,
 		HTTPMethod: "POST",
@@ -4004,8 +3612,6 @@ func (c *AlexaForBusiness) GetGatewayGroupRequest(input *GetGatewayGroupInput) (
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetGatewayGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetGatewayGroup(input *GetGatewayGroupInput) (*GetGatewayGroupOutput, error) {
 	req, out := c.GetGatewayGroupRequest(input)
 	return out, req.Send()
@@ -4020,8 +3626,6 @@ func (c *AlexaForBusiness) GetGatewayGroup(input *GetGatewayGroupInput) (*GetGat
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetGatewayGroupWithContext(ctx aws.Context, input *GetGatewayGroupInput, opts ...request.Option) (*GetGatewayGroupOutput, error) {
 	req, out := c.GetGatewayGroupRequest(input)
 	req.SetContext(ctx)
@@ -4054,12 +3658,7 @@ const opGetInvitationConfiguration = "GetInvitationConfiguration"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetInvitationConfiguration
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetInvitationConfigurationRequest(input *GetInvitationConfigurationInput) (req *request.Request, output *GetInvitationConfigurationOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, GetInvitationConfiguration, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opGetInvitationConfiguration,
 		HTTPMethod: "POST",
@@ -4092,8 +3691,6 @@ func (c *AlexaForBusiness) GetInvitationConfigurationRequest(input *GetInvitatio
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetInvitationConfiguration
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetInvitationConfiguration(input *GetInvitationConfigurationInput) (*GetInvitationConfigurationOutput, error) {
 	req, out := c.GetInvitationConfigurationRequest(input)
 	return out, req.Send()
@@ -4108,8 +3705,6 @@ func (c *AlexaForBusiness) GetInvitationConfiguration(input *GetInvitationConfig
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetInvitationConfigurationWithContext(ctx aws.Context, input *GetInvitationConfigurationInput, opts ...request.Option) (*GetInvitationConfigurationOutput, error) {
 	req, out := c.GetInvitationConfigurationRequest(input)
 	req.SetContext(ctx)
@@ -4142,12 +3737,7 @@ const opGetNetworkProfile = "GetNetworkProfile"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetNetworkProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetNetworkProfileRequest(input *GetNetworkProfileInput) (req *request.Request, output *GetNetworkProfileOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, GetNetworkProfile, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opGetNetworkProfile,
 		HTTPMethod: "POST",
@@ -4183,8 +3773,6 @@ func (c *AlexaForBusiness) GetNetworkProfileRequest(input *GetNetworkProfileInpu
 //     A password in SecretsManager is in an invalid state.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetNetworkProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetNetworkProfile(input *GetNetworkProfileInput) (*GetNetworkProfileOutput, error) {
 	req, out := c.GetNetworkProfileRequest(input)
 	return out, req.Send()
@@ -4199,8 +3787,6 @@ func (c *AlexaForBusiness) GetNetworkProfile(input *GetNetworkProfileInput) (*Ge
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetNetworkProfileWithContext(ctx aws.Context, input *GetNetworkProfileInput, opts ...request.Option) (*GetNetworkProfileOutput, error) {
 	req, out := c.GetNetworkProfileRequest(input)
 	req.SetContext(ctx)
@@ -4233,12 +3819,7 @@ const opGetProfile = "GetProfile"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetProfileRequest(input *GetProfileInput) (req *request.Request, output *GetProfileOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, GetProfile, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opGetProfile,
 		HTTPMethod: "POST",
@@ -4270,8 +3851,6 @@ func (c *AlexaForBusiness) GetProfileRequest(input *GetProfileInput) (req *reque
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetProfile(input *GetProfileInput) (*GetProfileOutput, error) {
 	req, out := c.GetProfileRequest(input)
 	return out, req.Send()
@@ -4286,8 +3865,6 @@ func (c *AlexaForBusiness) GetProfile(input *GetProfileInput) (*GetProfileOutput
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetProfileWithContext(ctx aws.Context, input *GetProfileInput, opts ...request.Option) (*GetProfileOutput, error) {
 	req, out := c.GetProfileRequest(input)
 	req.SetContext(ctx)
@@ -4320,12 +3897,7 @@ const opGetRoom = "GetRoom"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetRoomRequest(input *GetRoomInput) (req *request.Request, output *GetRoomOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, GetRoom, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opGetRoom,
 		HTTPMethod: "POST",
@@ -4357,8 +3929,6 @@ func (c *AlexaForBusiness) GetRoomRequest(input *GetRoomInput) (req *request.Req
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetRoom(input *GetRoomInput) (*GetRoomOutput, error) {
 	req, out := c.GetRoomRequest(input)
 	return out, req.Send()
@@ -4373,8 +3943,6 @@ func (c *AlexaForBusiness) GetRoom(input *GetRoomInput) (*GetRoomOutput, error) 
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetRoomWithContext(ctx aws.Context, input *GetRoomInput, opts ...request.Option) (*GetRoomOutput, error) {
 	req, out := c.GetRoomRequest(input)
 	req.SetContext(ctx)
@@ -4407,12 +3975,7 @@ const opGetRoomSkillParameter = "GetRoomSkillParameter"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetRoomSkillParameter
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetRoomSkillParameterRequest(input *GetRoomSkillParameterInput) (req *request.Request, output *GetRoomSkillParameterOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, GetRoomSkillParameter, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opGetRoomSkillParameter,
 		HTTPMethod: "POST",
@@ -4444,8 +4007,6 @@ func (c *AlexaForBusiness) GetRoomSkillParameterRequest(input *GetRoomSkillParam
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetRoomSkillParameter
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetRoomSkillParameter(input *GetRoomSkillParameterInput) (*GetRoomSkillParameterOutput, error) {
 	req, out := c.GetRoomSkillParameterRequest(input)
 	return out, req.Send()
@@ -4460,8 +4021,6 @@ func (c *AlexaForBusiness) GetRoomSkillParameter(input *GetRoomSkillParameterInp
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetRoomSkillParameterWithContext(ctx aws.Context, input *GetRoomSkillParameterInput, opts ...request.Option) (*GetRoomSkillParameterOutput, error) {
 	req, out := c.GetRoomSkillParameterRequest(input)
 	req.SetContext(ctx)
@@ -4494,12 +4053,7 @@ const opGetSkillGroup = "GetSkillGroup"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetSkillGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetSkillGroupRequest(input *GetSkillGroupInput) (req *request.Request, output *GetSkillGroupOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, GetSkillGroup, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opGetSkillGroup,
 		HTTPMethod: "POST",
@@ -4531,8 +4085,6 @@ func (c *AlexaForBusiness) GetSkillGroupRequest(input *GetSkillGroupInput) (req 
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/GetSkillGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetSkillGroup(input *GetSkillGroupInput) (*GetSkillGroupOutput, error) {
 	req, out := c.GetSkillGroupRequest(input)
 	return out, req.Send()
@@ -4547,8 +4099,6 @@ func (c *AlexaForBusiness) GetSkillGroup(input *GetSkillGroupInput) (*GetSkillGr
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) GetSkillGroupWithContext(ctx aws.Context, input *GetSkillGroupInput, opts ...request.Option) (*GetSkillGroupOutput, error) {
 	req, out := c.GetSkillGroupRequest(input)
 	req.SetContext(ctx)
@@ -4581,12 +4131,7 @@ const opListBusinessReportSchedules = "ListBusinessReportSchedules"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListBusinessReportSchedules
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListBusinessReportSchedulesRequest(input *ListBusinessReportSchedulesInput) (req *request.Request, output *ListBusinessReportSchedulesOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListBusinessReportSchedules, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListBusinessReportSchedules,
 		HTTPMethod: "POST",
@@ -4622,8 +4167,6 @@ func (c *AlexaForBusiness) ListBusinessReportSchedulesRequest(input *ListBusines
 // See the AWS API reference guide for Alexa For Business's
 // API operation ListBusinessReportSchedules for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListBusinessReportSchedules
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListBusinessReportSchedules(input *ListBusinessReportSchedulesInput) (*ListBusinessReportSchedulesOutput, error) {
 	req, out := c.ListBusinessReportSchedulesRequest(input)
 	return out, req.Send()
@@ -4638,8 +4181,6 @@ func (c *AlexaForBusiness) ListBusinessReportSchedules(input *ListBusinessReport
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListBusinessReportSchedulesWithContext(ctx aws.Context, input *ListBusinessReportSchedulesInput, opts ...request.Option) (*ListBusinessReportSchedulesOutput, error) {
 	req, out := c.ListBusinessReportSchedulesRequest(input)
 	req.SetContext(ctx)
@@ -4663,8 +4204,6 @@ func (c *AlexaForBusiness) ListBusinessReportSchedulesWithContext(ctx aws.Contex
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListBusinessReportSchedulesPages(input *ListBusinessReportSchedulesInput, fn func(*ListBusinessReportSchedulesOutput, bool) bool) error {
 	return c.ListBusinessReportSchedulesPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -4676,8 +4215,6 @@ func (c *AlexaForBusiness) ListBusinessReportSchedulesPages(input *ListBusinessR
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListBusinessReportSchedulesPagesWithContext(ctx aws.Context, input *ListBusinessReportSchedulesInput, fn func(*ListBusinessReportSchedulesOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -4727,12 +4264,7 @@ const opListConferenceProviders = "ListConferenceProviders"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListConferenceProviders
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListConferenceProvidersRequest(input *ListConferenceProvidersInput) (req *request.Request, output *ListConferenceProvidersOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListConferenceProviders, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListConferenceProviders,
 		HTTPMethod: "POST",
@@ -4765,8 +4297,6 @@ func (c *AlexaForBusiness) ListConferenceProvidersRequest(input *ListConferenceP
 // See the AWS API reference guide for Alexa For Business's
 // API operation ListConferenceProviders for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListConferenceProviders
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListConferenceProviders(input *ListConferenceProvidersInput) (*ListConferenceProvidersOutput, error) {
 	req, out := c.ListConferenceProvidersRequest(input)
 	return out, req.Send()
@@ -4781,8 +4311,6 @@ func (c *AlexaForBusiness) ListConferenceProviders(input *ListConferenceProvider
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListConferenceProvidersWithContext(ctx aws.Context, input *ListConferenceProvidersInput, opts ...request.Option) (*ListConferenceProvidersOutput, error) {
 	req, out := c.ListConferenceProvidersRequest(input)
 	req.SetContext(ctx)
@@ -4806,8 +4334,6 @@ func (c *AlexaForBusiness) ListConferenceProvidersWithContext(ctx aws.Context, i
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListConferenceProvidersPages(input *ListConferenceProvidersInput, fn func(*ListConferenceProvidersOutput, bool) bool) error {
 	return c.ListConferenceProvidersPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -4819,8 +4345,6 @@ func (c *AlexaForBusiness) ListConferenceProvidersPages(input *ListConferencePro
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListConferenceProvidersPagesWithContext(ctx aws.Context, input *ListConferenceProvidersInput, fn func(*ListConferenceProvidersOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -4870,12 +4394,7 @@ const opListDeviceEvents = "ListDeviceEvents"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListDeviceEvents
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListDeviceEventsRequest(input *ListDeviceEventsInput) (req *request.Request, output *ListDeviceEventsOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListDeviceEvents, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListDeviceEvents,
 		HTTPMethod: "POST",
@@ -4914,8 +4433,6 @@ func (c *AlexaForBusiness) ListDeviceEventsRequest(input *ListDeviceEventsInput)
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListDeviceEvents
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListDeviceEvents(input *ListDeviceEventsInput) (*ListDeviceEventsOutput, error) {
 	req, out := c.ListDeviceEventsRequest(input)
 	return out, req.Send()
@@ -4930,8 +4447,6 @@ func (c *AlexaForBusiness) ListDeviceEvents(input *ListDeviceEventsInput) (*List
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListDeviceEventsWithContext(ctx aws.Context, input *ListDeviceEventsInput, opts ...request.Option) (*ListDeviceEventsOutput, error) {
 	req, out := c.ListDeviceEventsRequest(input)
 	req.SetContext(ctx)
@@ -4955,8 +4470,6 @@ func (c *AlexaForBusiness) ListDeviceEventsWithContext(ctx aws.Context, input *L
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListDeviceEventsPages(input *ListDeviceEventsInput, fn func(*ListDeviceEventsOutput, bool) bool) error {
 	return c.ListDeviceEventsPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -4968,8 +4481,6 @@ func (c *AlexaForBusiness) ListDeviceEventsPages(input *ListDeviceEventsInput, f
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListDeviceEventsPagesWithContext(ctx aws.Context, input *ListDeviceEventsInput, fn func(*ListDeviceEventsOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -5019,12 +4530,7 @@ const opListGatewayGroups = "ListGatewayGroups"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListGatewayGroups
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListGatewayGroupsRequest(input *ListGatewayGroupsInput) (req *request.Request, output *ListGatewayGroupsOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListGatewayGroups, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListGatewayGroups,
 		HTTPMethod: "POST",
@@ -5058,8 +4564,6 @@ func (c *AlexaForBusiness) ListGatewayGroupsRequest(input *ListGatewayGroupsInpu
 // See the AWS API reference guide for Alexa For Business's
 // API operation ListGatewayGroups for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListGatewayGroups
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListGatewayGroups(input *ListGatewayGroupsInput) (*ListGatewayGroupsOutput, error) {
 	req, out := c.ListGatewayGroupsRequest(input)
 	return out, req.Send()
@@ -5074,8 +4578,6 @@ func (c *AlexaForBusiness) ListGatewayGroups(input *ListGatewayGroupsInput) (*Li
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListGatewayGroupsWithContext(ctx aws.Context, input *ListGatewayGroupsInput, opts ...request.Option) (*ListGatewayGroupsOutput, error) {
 	req, out := c.ListGatewayGroupsRequest(input)
 	req.SetContext(ctx)
@@ -5099,8 +4601,6 @@ func (c *AlexaForBusiness) ListGatewayGroupsWithContext(ctx aws.Context, input *
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListGatewayGroupsPages(input *ListGatewayGroupsInput, fn func(*ListGatewayGroupsOutput, bool) bool) error {
 	return c.ListGatewayGroupsPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -5112,8 +4612,6 @@ func (c *AlexaForBusiness) ListGatewayGroupsPages(input *ListGatewayGroupsInput,
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListGatewayGroupsPagesWithContext(ctx aws.Context, input *ListGatewayGroupsInput, fn func(*ListGatewayGroupsOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -5163,12 +4661,7 @@ const opListGateways = "ListGateways"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListGateways
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListGatewaysRequest(input *ListGatewaysInput) (req *request.Request, output *ListGatewaysOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListGateways, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListGateways,
 		HTTPMethod: "POST",
@@ -5204,8 +4697,6 @@ func (c *AlexaForBusiness) ListGatewaysRequest(input *ListGatewaysInput) (req *r
 // See the AWS API reference guide for Alexa For Business's
 // API operation ListGateways for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListGateways
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListGateways(input *ListGatewaysInput) (*ListGatewaysOutput, error) {
 	req, out := c.ListGatewaysRequest(input)
 	return out, req.Send()
@@ -5220,8 +4711,6 @@ func (c *AlexaForBusiness) ListGateways(input *ListGatewaysInput) (*ListGateways
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListGatewaysWithContext(ctx aws.Context, input *ListGatewaysInput, opts ...request.Option) (*ListGatewaysOutput, error) {
 	req, out := c.ListGatewaysRequest(input)
 	req.SetContext(ctx)
@@ -5245,8 +4734,6 @@ func (c *AlexaForBusiness) ListGatewaysWithContext(ctx aws.Context, input *ListG
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListGatewaysPages(input *ListGatewaysInput, fn func(*ListGatewaysOutput, bool) bool) error {
 	return c.ListGatewaysPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -5258,8 +4745,6 @@ func (c *AlexaForBusiness) ListGatewaysPages(input *ListGatewaysInput, fn func(*
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListGatewaysPagesWithContext(ctx aws.Context, input *ListGatewaysInput, fn func(*ListGatewaysOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -5309,12 +4794,7 @@ const opListSkills = "ListSkills"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListSkills
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkillsRequest(input *ListSkillsInput) (req *request.Request, output *ListSkillsOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListSkills, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListSkills,
 		HTTPMethod: "POST",
@@ -5347,8 +4827,6 @@ func (c *AlexaForBusiness) ListSkillsRequest(input *ListSkillsInput) (req *reque
 // See the AWS API reference guide for Alexa For Business's
 // API operation ListSkills for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListSkills
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkills(input *ListSkillsInput) (*ListSkillsOutput, error) {
 	req, out := c.ListSkillsRequest(input)
 	return out, req.Send()
@@ -5363,8 +4841,6 @@ func (c *AlexaForBusiness) ListSkills(input *ListSkillsInput) (*ListSkillsOutput
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkillsWithContext(ctx aws.Context, input *ListSkillsInput, opts ...request.Option) (*ListSkillsOutput, error) {
 	req, out := c.ListSkillsRequest(input)
 	req.SetContext(ctx)
@@ -5388,8 +4864,6 @@ func (c *AlexaForBusiness) ListSkillsWithContext(ctx aws.Context, input *ListSki
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkillsPages(input *ListSkillsInput, fn func(*ListSkillsOutput, bool) bool) error {
 	return c.ListSkillsPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -5401,8 +4875,6 @@ func (c *AlexaForBusiness) ListSkillsPages(input *ListSkillsInput, fn func(*List
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkillsPagesWithContext(ctx aws.Context, input *ListSkillsInput, fn func(*ListSkillsOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -5452,12 +4924,7 @@ const opListSkillsStoreCategories = "ListSkillsStoreCategories"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListSkillsStoreCategories
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkillsStoreCategoriesRequest(input *ListSkillsStoreCategoriesInput) (req *request.Request, output *ListSkillsStoreCategoriesOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListSkillsStoreCategories, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListSkillsStoreCategories,
 		HTTPMethod: "POST",
@@ -5490,8 +4957,6 @@ func (c *AlexaForBusiness) ListSkillsStoreCategoriesRequest(input *ListSkillsSto
 // See the AWS API reference guide for Alexa For Business's
 // API operation ListSkillsStoreCategories for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListSkillsStoreCategories
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkillsStoreCategories(input *ListSkillsStoreCategoriesInput) (*ListSkillsStoreCategoriesOutput, error) {
 	req, out := c.ListSkillsStoreCategoriesRequest(input)
 	return out, req.Send()
@@ -5506,8 +4971,6 @@ func (c *AlexaForBusiness) ListSkillsStoreCategories(input *ListSkillsStoreCateg
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkillsStoreCategoriesWithContext(ctx aws.Context, input *ListSkillsStoreCategoriesInput, opts ...request.Option) (*ListSkillsStoreCategoriesOutput, error) {
 	req, out := c.ListSkillsStoreCategoriesRequest(input)
 	req.SetContext(ctx)
@@ -5531,8 +4994,6 @@ func (c *AlexaForBusiness) ListSkillsStoreCategoriesWithContext(ctx aws.Context,
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkillsStoreCategoriesPages(input *ListSkillsStoreCategoriesInput, fn func(*ListSkillsStoreCategoriesOutput, bool) bool) error {
 	return c.ListSkillsStoreCategoriesPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -5544,8 +5005,6 @@ func (c *AlexaForBusiness) ListSkillsStoreCategoriesPages(input *ListSkillsStore
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkillsStoreCategoriesPagesWithContext(ctx aws.Context, input *ListSkillsStoreCategoriesInput, fn func(*ListSkillsStoreCategoriesOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -5595,12 +5054,7 @@ const opListSkillsStoreSkillsByCategory = "ListSkillsStoreSkillsByCategory"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListSkillsStoreSkillsByCategory
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkillsStoreSkillsByCategoryRequest(input *ListSkillsStoreSkillsByCategoryInput) (req *request.Request, output *ListSkillsStoreSkillsByCategoryOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListSkillsStoreSkillsByCategory, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListSkillsStoreSkillsByCategory,
 		HTTPMethod: "POST",
@@ -5633,8 +5087,6 @@ func (c *AlexaForBusiness) ListSkillsStoreSkillsByCategoryRequest(input *ListSki
 // See the AWS API reference guide for Alexa For Business's
 // API operation ListSkillsStoreSkillsByCategory for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListSkillsStoreSkillsByCategory
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkillsStoreSkillsByCategory(input *ListSkillsStoreSkillsByCategoryInput) (*ListSkillsStoreSkillsByCategoryOutput, error) {
 	req, out := c.ListSkillsStoreSkillsByCategoryRequest(input)
 	return out, req.Send()
@@ -5649,8 +5101,6 @@ func (c *AlexaForBusiness) ListSkillsStoreSkillsByCategory(input *ListSkillsStor
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkillsStoreSkillsByCategoryWithContext(ctx aws.Context, input *ListSkillsStoreSkillsByCategoryInput, opts ...request.Option) (*ListSkillsStoreSkillsByCategoryOutput, error) {
 	req, out := c.ListSkillsStoreSkillsByCategoryRequest(input)
 	req.SetContext(ctx)
@@ -5674,8 +5124,6 @@ func (c *AlexaForBusiness) ListSkillsStoreSkillsByCategoryWithContext(ctx aws.Co
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkillsStoreSkillsByCategoryPages(input *ListSkillsStoreSkillsByCategoryInput, fn func(*ListSkillsStoreSkillsByCategoryOutput, bool) bool) error {
 	return c.ListSkillsStoreSkillsByCategoryPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -5687,8 +5135,6 @@ func (c *AlexaForBusiness) ListSkillsStoreSkillsByCategoryPages(input *ListSkill
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSkillsStoreSkillsByCategoryPagesWithContext(ctx aws.Context, input *ListSkillsStoreSkillsByCategoryInput, fn func(*ListSkillsStoreSkillsByCategoryOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -5738,12 +5184,7 @@ const opListSmartHomeAppliances = "ListSmartHomeAppliances"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListSmartHomeAppliances
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSmartHomeAppliancesRequest(input *ListSmartHomeAppliancesInput) (req *request.Request, output *ListSmartHomeAppliancesOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListSmartHomeAppliances, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListSmartHomeAppliances,
 		HTTPMethod: "POST",
@@ -5781,8 +5222,6 @@ func (c *AlexaForBusiness) ListSmartHomeAppliancesRequest(input *ListSmartHomeAp
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListSmartHomeAppliances
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSmartHomeAppliances(input *ListSmartHomeAppliancesInput) (*ListSmartHomeAppliancesOutput, error) {
 	req, out := c.ListSmartHomeAppliancesRequest(input)
 	return out, req.Send()
@@ -5797,8 +5236,6 @@ func (c *AlexaForBusiness) ListSmartHomeAppliances(input *ListSmartHomeAppliance
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSmartHomeAppliancesWithContext(ctx aws.Context, input *ListSmartHomeAppliancesInput, opts ...request.Option) (*ListSmartHomeAppliancesOutput, error) {
 	req, out := c.ListSmartHomeAppliancesRequest(input)
 	req.SetContext(ctx)
@@ -5822,8 +5259,6 @@ func (c *AlexaForBusiness) ListSmartHomeAppliancesWithContext(ctx aws.Context, i
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSmartHomeAppliancesPages(input *ListSmartHomeAppliancesInput, fn func(*ListSmartHomeAppliancesOutput, bool) bool) error {
 	return c.ListSmartHomeAppliancesPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -5835,8 +5270,6 @@ func (c *AlexaForBusiness) ListSmartHomeAppliancesPages(input *ListSmartHomeAppl
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListSmartHomeAppliancesPagesWithContext(ctx aws.Context, input *ListSmartHomeAppliancesInput, fn func(*ListSmartHomeAppliancesOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -5886,12 +5319,7 @@ const opListTags = "ListTags"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListTags
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListTagsRequest(input *ListTagsInput) (req *request.Request, output *ListTagsOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ListTags, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opListTags,
 		HTTPMethod: "POST",
@@ -5929,8 +5357,6 @@ func (c *AlexaForBusiness) ListTagsRequest(input *ListTagsInput) (req *request.R
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ListTags
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListTags(input *ListTagsInput) (*ListTagsOutput, error) {
 	req, out := c.ListTagsRequest(input)
 	return out, req.Send()
@@ -5945,8 +5371,6 @@ func (c *AlexaForBusiness) ListTags(input *ListTagsInput) (*ListTagsOutput, erro
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListTagsWithContext(ctx aws.Context, input *ListTagsInput, opts ...request.Option) (*ListTagsOutput, error) {
 	req, out := c.ListTagsRequest(input)
 	req.SetContext(ctx)
@@ -5970,8 +5394,6 @@ func (c *AlexaForBusiness) ListTagsWithContext(ctx aws.Context, input *ListTagsI
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListTagsPages(input *ListTagsInput, fn func(*ListTagsOutput, bool) bool) error {
 	return c.ListTagsPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -5983,8 +5405,6 @@ func (c *AlexaForBusiness) ListTagsPages(input *ListTagsInput, fn func(*ListTags
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ListTagsPagesWithContext(ctx aws.Context, input *ListTagsInput, fn func(*ListTagsOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -6034,12 +5454,7 @@ const opPutConferencePreference = "PutConferencePreference"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/PutConferencePreference
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) PutConferencePreferenceRequest(input *PutConferencePreferenceInput) (req *request.Request, output *PutConferencePreferenceOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, PutConferencePreference, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opPutConferencePreference,
 		HTTPMethod: "POST",
@@ -6073,8 +5488,6 @@ func (c *AlexaForBusiness) PutConferencePreferenceRequest(input *PutConferencePr
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/PutConferencePreference
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) PutConferencePreference(input *PutConferencePreferenceInput) (*PutConferencePreferenceOutput, error) {
 	req, out := c.PutConferencePreferenceRequest(input)
 	return out, req.Send()
@@ -6089,8 +5502,6 @@ func (c *AlexaForBusiness) PutConferencePreference(input *PutConferencePreferenc
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) PutConferencePreferenceWithContext(ctx aws.Context, input *PutConferencePreferenceInput, opts ...request.Option) (*PutConferencePreferenceOutput, error) {
 	req, out := c.PutConferencePreferenceRequest(input)
 	req.SetContext(ctx)
@@ -6123,12 +5534,7 @@ const opPutInvitationConfiguration = "PutInvitationConfiguration"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/PutInvitationConfiguration
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) PutInvitationConfigurationRequest(input *PutInvitationConfigurationInput) (req *request.Request, output *PutInvitationConfigurationOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, PutInvitationConfiguration, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opPutInvitationConfiguration,
 		HTTPMethod: "POST",
@@ -6166,8 +5572,6 @@ func (c *AlexaForBusiness) PutInvitationConfigurationRequest(input *PutInvitatio
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/PutInvitationConfiguration
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) PutInvitationConfiguration(input *PutInvitationConfigurationInput) (*PutInvitationConfigurationOutput, error) {
 	req, out := c.PutInvitationConfigurationRequest(input)
 	return out, req.Send()
@@ -6182,8 +5586,6 @@ func (c *AlexaForBusiness) PutInvitationConfiguration(input *PutInvitationConfig
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) PutInvitationConfigurationWithContext(ctx aws.Context, input *PutInvitationConfigurationInput, opts ...request.Option) (*PutInvitationConfigurationOutput, error) {
 	req, out := c.PutInvitationConfigurationRequest(input)
 	req.SetContext(ctx)
@@ -6216,12 +5618,7 @@ const opPutRoomSkillParameter = "PutRoomSkillParameter"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/PutRoomSkillParameter
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) PutRoomSkillParameterRequest(input *PutRoomSkillParameterInput) (req *request.Request, output *PutRoomSkillParameterOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, PutRoomSkillParameter, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opPutRoomSkillParameter,
 		HTTPMethod: "POST",
@@ -6255,8 +5652,6 @@ func (c *AlexaForBusiness) PutRoomSkillParameterRequest(input *PutRoomSkillParam
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/PutRoomSkillParameter
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) PutRoomSkillParameter(input *PutRoomSkillParameterInput) (*PutRoomSkillParameterOutput, error) {
 	req, out := c.PutRoomSkillParameterRequest(input)
 	return out, req.Send()
@@ -6271,8 +5666,6 @@ func (c *AlexaForBusiness) PutRoomSkillParameter(input *PutRoomSkillParameterInp
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) PutRoomSkillParameterWithContext(ctx aws.Context, input *PutRoomSkillParameterInput, opts ...request.Option) (*PutRoomSkillParameterOutput, error) {
 	req, out := c.PutRoomSkillParameterRequest(input)
 	req.SetContext(ctx)
@@ -6305,12 +5698,7 @@ const opPutSkillAuthorization = "PutSkillAuthorization"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/PutSkillAuthorization
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) PutSkillAuthorizationRequest(input *PutSkillAuthorizationInput) (req *request.Request, output *PutSkillAuthorizationOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, PutSkillAuthorization, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opPutSkillAuthorization,
 		HTTPMethod: "POST",
@@ -6351,8 +5739,6 @@ func (c *AlexaForBusiness) PutSkillAuthorizationRequest(input *PutSkillAuthoriza
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/PutSkillAuthorization
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) PutSkillAuthorization(input *PutSkillAuthorizationInput) (*PutSkillAuthorizationOutput, error) {
 	req, out := c.PutSkillAuthorizationRequest(input)
 	return out, req.Send()
@@ -6367,8 +5753,6 @@ func (c *AlexaForBusiness) PutSkillAuthorization(input *PutSkillAuthorizationInp
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) PutSkillAuthorizationWithContext(ctx aws.Context, input *PutSkillAuthorizationInput, opts ...request.Option) (*PutSkillAuthorizationOutput, error) {
 	req, out := c.PutSkillAuthorizationRequest(input)
 	req.SetContext(ctx)
@@ -6401,12 +5785,7 @@ const opRegisterAVSDevice = "RegisterAVSDevice"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/RegisterAVSDevice
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) RegisterAVSDeviceRequest(input *RegisterAVSDeviceInput) (req *request.Request, output *RegisterAVSDeviceOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, RegisterAVSDevice, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opRegisterAVSDevice,
 		HTTPMethod: "POST",
@@ -6449,8 +5828,6 @@ func (c *AlexaForBusiness) RegisterAVSDeviceRequest(input *RegisterAVSDeviceInpu
 //     The device is in an invalid state.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/RegisterAVSDevice
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) RegisterAVSDevice(input *RegisterAVSDeviceInput) (*RegisterAVSDeviceOutput, error) {
 	req, out := c.RegisterAVSDeviceRequest(input)
 	return out, req.Send()
@@ -6465,8 +5842,6 @@ func (c *AlexaForBusiness) RegisterAVSDevice(input *RegisterAVSDeviceInput) (*Re
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) RegisterAVSDeviceWithContext(ctx aws.Context, input *RegisterAVSDeviceInput, opts ...request.Option) (*RegisterAVSDeviceOutput, error) {
 	req, out := c.RegisterAVSDeviceRequest(input)
 	req.SetContext(ctx)
@@ -6499,12 +5874,7 @@ const opRejectSkill = "RejectSkill"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/RejectSkill
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) RejectSkillRequest(input *RejectSkillInput) (req *request.Request, output *RejectSkillOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, RejectSkill, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opRejectSkill,
 		HTTPMethod: "POST",
@@ -6544,8 +5914,6 @@ func (c *AlexaForBusiness) RejectSkillRequest(input *RejectSkillInput) (req *req
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/RejectSkill
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) RejectSkill(input *RejectSkillInput) (*RejectSkillOutput, error) {
 	req, out := c.RejectSkillRequest(input)
 	return out, req.Send()
@@ -6560,8 +5928,6 @@ func (c *AlexaForBusiness) RejectSkill(input *RejectSkillInput) (*RejectSkillOut
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) RejectSkillWithContext(ctx aws.Context, input *RejectSkillInput, opts ...request.Option) (*RejectSkillOutput, error) {
 	req, out := c.RejectSkillRequest(input)
 	req.SetContext(ctx)
@@ -6594,12 +5960,7 @@ const opResolveRoom = "ResolveRoom"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ResolveRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ResolveRoomRequest(input *ResolveRoomInput) (req *request.Request, output *ResolveRoomOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, ResolveRoom, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opResolveRoom,
 		HTTPMethod: "POST",
@@ -6639,8 +6000,6 @@ func (c *AlexaForBusiness) ResolveRoomRequest(input *ResolveRoomInput) (req *req
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/ResolveRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ResolveRoom(input *ResolveRoomInput) (*ResolveRoomOutput, error) {
 	req, out := c.ResolveRoomRequest(input)
 	return out, req.Send()
@@ -6655,8 +6014,6 @@ func (c *AlexaForBusiness) ResolveRoom(input *ResolveRoomInput) (*ResolveRoomOut
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) ResolveRoomWithContext(ctx aws.Context, input *ResolveRoomInput, opts ...request.Option) (*ResolveRoomOutput, error) {
 	req, out := c.ResolveRoomRequest(input)
 	req.SetContext(ctx)
@@ -6689,12 +6046,7 @@ const opRevokeInvitation = "RevokeInvitation"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/RevokeInvitation
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) RevokeInvitationRequest(input *RevokeInvitationInput) (req *request.Request, output *RevokeInvitationOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, RevokeInvitation, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opRevokeInvitation,
 		HTTPMethod: "POST",
@@ -6731,8 +6083,6 @@ func (c *AlexaForBusiness) RevokeInvitationRequest(input *RevokeInvitationInput)
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/RevokeInvitation
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) RevokeInvitation(input *RevokeInvitationInput) (*RevokeInvitationOutput, error) {
 	req, out := c.RevokeInvitationRequest(input)
 	return out, req.Send()
@@ -6747,8 +6097,6 @@ func (c *AlexaForBusiness) RevokeInvitation(input *RevokeInvitationInput) (*Revo
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) RevokeInvitationWithContext(ctx aws.Context, input *RevokeInvitationInput, opts ...request.Option) (*RevokeInvitationOutput, error) {
 	req, out := c.RevokeInvitationRequest(input)
 	req.SetContext(ctx)
@@ -6781,12 +6129,7 @@ const opSearchAddressBooks = "SearchAddressBooks"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchAddressBooks
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchAddressBooksRequest(input *SearchAddressBooksInput) (req *request.Request, output *SearchAddressBooksOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, SearchAddressBooks, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opSearchAddressBooks,
 		HTTPMethod: "POST",
@@ -6820,8 +6163,6 @@ func (c *AlexaForBusiness) SearchAddressBooksRequest(input *SearchAddressBooksIn
 // See the AWS API reference guide for Alexa For Business's
 // API operation SearchAddressBooks for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchAddressBooks
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchAddressBooks(input *SearchAddressBooksInput) (*SearchAddressBooksOutput, error) {
 	req, out := c.SearchAddressBooksRequest(input)
 	return out, req.Send()
@@ -6836,8 +6177,6 @@ func (c *AlexaForBusiness) SearchAddressBooks(input *SearchAddressBooksInput) (*
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchAddressBooksWithContext(ctx aws.Context, input *SearchAddressBooksInput, opts ...request.Option) (*SearchAddressBooksOutput, error) {
 	req, out := c.SearchAddressBooksRequest(input)
 	req.SetContext(ctx)
@@ -6861,8 +6200,6 @@ func (c *AlexaForBusiness) SearchAddressBooksWithContext(ctx aws.Context, input 
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchAddressBooksPages(input *SearchAddressBooksInput, fn func(*SearchAddressBooksOutput, bool) bool) error {
 	return c.SearchAddressBooksPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -6874,8 +6211,6 @@ func (c *AlexaForBusiness) SearchAddressBooksPages(input *SearchAddressBooksInpu
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchAddressBooksPagesWithContext(ctx aws.Context, input *SearchAddressBooksInput, fn func(*SearchAddressBooksOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -6925,12 +6260,7 @@ const opSearchContacts = "SearchContacts"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchContacts
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchContactsRequest(input *SearchContactsInput) (req *request.Request, output *SearchContactsOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, SearchContacts, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opSearchContacts,
 		HTTPMethod: "POST",
@@ -6963,8 +6293,6 @@ func (c *AlexaForBusiness) SearchContactsRequest(input *SearchContactsInput) (re
 // See the AWS API reference guide for Alexa For Business's
 // API operation SearchContacts for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchContacts
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchContacts(input *SearchContactsInput) (*SearchContactsOutput, error) {
 	req, out := c.SearchContactsRequest(input)
 	return out, req.Send()
@@ -6979,8 +6307,6 @@ func (c *AlexaForBusiness) SearchContacts(input *SearchContactsInput) (*SearchCo
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchContactsWithContext(ctx aws.Context, input *SearchContactsInput, opts ...request.Option) (*SearchContactsOutput, error) {
 	req, out := c.SearchContactsRequest(input)
 	req.SetContext(ctx)
@@ -7004,8 +6330,6 @@ func (c *AlexaForBusiness) SearchContactsWithContext(ctx aws.Context, input *Sea
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchContactsPages(input *SearchContactsInput, fn func(*SearchContactsOutput, bool) bool) error {
 	return c.SearchContactsPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -7017,8 +6341,6 @@ func (c *AlexaForBusiness) SearchContactsPages(input *SearchContactsInput, fn fu
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchContactsPagesWithContext(ctx aws.Context, input *SearchContactsInput, fn func(*SearchContactsOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -7068,12 +6390,7 @@ const opSearchDevices = "SearchDevices"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchDevices
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchDevicesRequest(input *SearchDevicesInput) (req *request.Request, output *SearchDevicesOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, SearchDevices, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opSearchDevices,
 		HTTPMethod: "POST",
@@ -7106,8 +6423,6 @@ func (c *AlexaForBusiness) SearchDevicesRequest(input *SearchDevicesInput) (req 
 // See the AWS API reference guide for Alexa For Business's
 // API operation SearchDevices for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchDevices
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchDevices(input *SearchDevicesInput) (*SearchDevicesOutput, error) {
 	req, out := c.SearchDevicesRequest(input)
 	return out, req.Send()
@@ -7122,8 +6437,6 @@ func (c *AlexaForBusiness) SearchDevices(input *SearchDevicesInput) (*SearchDevi
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchDevicesWithContext(ctx aws.Context, input *SearchDevicesInput, opts ...request.Option) (*SearchDevicesOutput, error) {
 	req, out := c.SearchDevicesRequest(input)
 	req.SetContext(ctx)
@@ -7147,8 +6460,6 @@ func (c *AlexaForBusiness) SearchDevicesWithContext(ctx aws.Context, input *Sear
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchDevicesPages(input *SearchDevicesInput, fn func(*SearchDevicesOutput, bool) bool) error {
 	return c.SearchDevicesPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -7160,8 +6471,6 @@ func (c *AlexaForBusiness) SearchDevicesPages(input *SearchDevicesInput, fn func
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchDevicesPagesWithContext(ctx aws.Context, input *SearchDevicesInput, fn func(*SearchDevicesOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -7211,12 +6520,7 @@ const opSearchNetworkProfiles = "SearchNetworkProfiles"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchNetworkProfiles
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchNetworkProfilesRequest(input *SearchNetworkProfilesInput) (req *request.Request, output *SearchNetworkProfilesOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, SearchNetworkProfiles, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opSearchNetworkProfiles,
 		HTTPMethod: "POST",
@@ -7250,8 +6554,6 @@ func (c *AlexaForBusiness) SearchNetworkProfilesRequest(input *SearchNetworkProf
 // See the AWS API reference guide for Alexa For Business's
 // API operation SearchNetworkProfiles for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchNetworkProfiles
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchNetworkProfiles(input *SearchNetworkProfilesInput) (*SearchNetworkProfilesOutput, error) {
 	req, out := c.SearchNetworkProfilesRequest(input)
 	return out, req.Send()
@@ -7266,8 +6568,6 @@ func (c *AlexaForBusiness) SearchNetworkProfiles(input *SearchNetworkProfilesInp
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchNetworkProfilesWithContext(ctx aws.Context, input *SearchNetworkProfilesInput, opts ...request.Option) (*SearchNetworkProfilesOutput, error) {
 	req, out := c.SearchNetworkProfilesRequest(input)
 	req.SetContext(ctx)
@@ -7291,8 +6591,6 @@ func (c *AlexaForBusiness) SearchNetworkProfilesWithContext(ctx aws.Context, inp
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchNetworkProfilesPages(input *SearchNetworkProfilesInput, fn func(*SearchNetworkProfilesOutput, bool) bool) error {
 	return c.SearchNetworkProfilesPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -7304,8 +6602,6 @@ func (c *AlexaForBusiness) SearchNetworkProfilesPages(input *SearchNetworkProfil
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchNetworkProfilesPagesWithContext(ctx aws.Context, input *SearchNetworkProfilesInput, fn func(*SearchNetworkProfilesOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -7355,12 +6651,7 @@ const opSearchProfiles = "SearchProfiles"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchProfiles
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchProfilesRequest(input *SearchProfilesInput) (req *request.Request, output *SearchProfilesOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, SearchProfiles, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opSearchProfiles,
 		HTTPMethod: "POST",
@@ -7393,8 +6684,6 @@ func (c *AlexaForBusiness) SearchProfilesRequest(input *SearchProfilesInput) (re
 // See the AWS API reference guide for Alexa For Business's
 // API operation SearchProfiles for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchProfiles
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchProfiles(input *SearchProfilesInput) (*SearchProfilesOutput, error) {
 	req, out := c.SearchProfilesRequest(input)
 	return out, req.Send()
@@ -7409,8 +6698,6 @@ func (c *AlexaForBusiness) SearchProfiles(input *SearchProfilesInput) (*SearchPr
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchProfilesWithContext(ctx aws.Context, input *SearchProfilesInput, opts ...request.Option) (*SearchProfilesOutput, error) {
 	req, out := c.SearchProfilesRequest(input)
 	req.SetContext(ctx)
@@ -7434,8 +6721,6 @@ func (c *AlexaForBusiness) SearchProfilesWithContext(ctx aws.Context, input *Sea
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchProfilesPages(input *SearchProfilesInput, fn func(*SearchProfilesOutput, bool) bool) error {
 	return c.SearchProfilesPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -7447,8 +6732,6 @@ func (c *AlexaForBusiness) SearchProfilesPages(input *SearchProfilesInput, fn fu
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchProfilesPagesWithContext(ctx aws.Context, input *SearchProfilesInput, fn func(*SearchProfilesOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -7498,12 +6781,7 @@ const opSearchRooms = "SearchRooms"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchRooms
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchRoomsRequest(input *SearchRoomsInput) (req *request.Request, output *SearchRoomsOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, SearchRooms, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opSearchRooms,
 		HTTPMethod: "POST",
@@ -7536,8 +6814,6 @@ func (c *AlexaForBusiness) SearchRoomsRequest(input *SearchRoomsInput) (req *req
 // See the AWS API reference guide for Alexa For Business's
 // API operation SearchRooms for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchRooms
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchRooms(input *SearchRoomsInput) (*SearchRoomsOutput, error) {
 	req, out := c.SearchRoomsRequest(input)
 	return out, req.Send()
@@ -7552,8 +6828,6 @@ func (c *AlexaForBusiness) SearchRooms(input *SearchRoomsInput) (*SearchRoomsOut
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchRoomsWithContext(ctx aws.Context, input *SearchRoomsInput, opts ...request.Option) (*SearchRoomsOutput, error) {
 	req, out := c.SearchRoomsRequest(input)
 	req.SetContext(ctx)
@@ -7577,8 +6851,6 @@ func (c *AlexaForBusiness) SearchRoomsWithContext(ctx aws.Context, input *Search
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchRoomsPages(input *SearchRoomsInput, fn func(*SearchRoomsOutput, bool) bool) error {
 	return c.SearchRoomsPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -7590,8 +6862,6 @@ func (c *AlexaForBusiness) SearchRoomsPages(input *SearchRoomsInput, fn func(*Se
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchRoomsPagesWithContext(ctx aws.Context, input *SearchRoomsInput, fn func(*SearchRoomsOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -7641,12 +6911,7 @@ const opSearchSkillGroups = "SearchSkillGroups"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchSkillGroups
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchSkillGroupsRequest(input *SearchSkillGroupsInput) (req *request.Request, output *SearchSkillGroupsOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, SearchSkillGroups, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opSearchSkillGroups,
 		HTTPMethod: "POST",
@@ -7680,8 +6945,6 @@ func (c *AlexaForBusiness) SearchSkillGroupsRequest(input *SearchSkillGroupsInpu
 // See the AWS API reference guide for Alexa For Business's
 // API operation SearchSkillGroups for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchSkillGroups
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchSkillGroups(input *SearchSkillGroupsInput) (*SearchSkillGroupsOutput, error) {
 	req, out := c.SearchSkillGroupsRequest(input)
 	return out, req.Send()
@@ -7696,8 +6959,6 @@ func (c *AlexaForBusiness) SearchSkillGroups(input *SearchSkillGroupsInput) (*Se
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchSkillGroupsWithContext(ctx aws.Context, input *SearchSkillGroupsInput, opts ...request.Option) (*SearchSkillGroupsOutput, error) {
 	req, out := c.SearchSkillGroupsRequest(input)
 	req.SetContext(ctx)
@@ -7721,8 +6982,6 @@ func (c *AlexaForBusiness) SearchSkillGroupsWithContext(ctx aws.Context, input *
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchSkillGroupsPages(input *SearchSkillGroupsInput, fn func(*SearchSkillGroupsOutput, bool) bool) error {
 	return c.SearchSkillGroupsPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -7734,8 +6993,6 @@ func (c *AlexaForBusiness) SearchSkillGroupsPages(input *SearchSkillGroupsInput,
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchSkillGroupsPagesWithContext(ctx aws.Context, input *SearchSkillGroupsInput, fn func(*SearchSkillGroupsOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -7785,12 +7042,7 @@ const opSearchUsers = "SearchUsers"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchUsers
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchUsersRequest(input *SearchUsersInput) (req *request.Request, output *SearchUsersOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, SearchUsers, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opSearchUsers,
 		HTTPMethod: "POST",
@@ -7823,8 +7075,6 @@ func (c *AlexaForBusiness) SearchUsersRequest(input *SearchUsersInput) (req *req
 // See the AWS API reference guide for Alexa For Business's
 // API operation SearchUsers for usage and error information.
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SearchUsers
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchUsers(input *SearchUsersInput) (*SearchUsersOutput, error) {
 	req, out := c.SearchUsersRequest(input)
 	return out, req.Send()
@@ -7839,8 +7089,6 @@ func (c *AlexaForBusiness) SearchUsers(input *SearchUsersInput) (*SearchUsersOut
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchUsersWithContext(ctx aws.Context, input *SearchUsersInput, opts ...request.Option) (*SearchUsersOutput, error) {
 	req, out := c.SearchUsersRequest(input)
 	req.SetContext(ctx)
@@ -7864,8 +7112,6 @@ func (c *AlexaForBusiness) SearchUsersWithContext(ctx aws.Context, input *Search
 //	        fmt.Println(page)
 //	        return pageNum <= 3
 //	    })
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchUsersPages(input *SearchUsersInput, fn func(*SearchUsersOutput, bool) bool) error {
 	return c.SearchUsersPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -7877,8 +7123,6 @@ func (c *AlexaForBusiness) SearchUsersPages(input *SearchUsersInput, fn func(*Se
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SearchUsersPagesWithContext(ctx aws.Context, input *SearchUsersInput, fn func(*SearchUsersOutput, bool) bool, opts ...request.Option) error {
 	p := request.Pagination{
 		NewRequest: func() (*request.Request, error) {
@@ -8011,12 +7255,7 @@ const opSendInvitation = "SendInvitation"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SendInvitation
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SendInvitationRequest(input *SendInvitationInput) (req *request.Request, output *SendInvitationOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, SendInvitation, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opSendInvitation,
 		HTTPMethod: "POST",
@@ -8057,8 +7296,6 @@ func (c *AlexaForBusiness) SendInvitationRequest(input *SendInvitationInput) (re
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/SendInvitation
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SendInvitation(input *SendInvitationInput) (*SendInvitationOutput, error) {
 	req, out := c.SendInvitationRequest(input)
 	return out, req.Send()
@@ -8073,8 +7310,6 @@ func (c *AlexaForBusiness) SendInvitation(input *SendInvitationInput) (*SendInvi
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) SendInvitationWithContext(ctx aws.Context, input *SendInvitationInput, opts ...request.Option) (*SendInvitationOutput, error) {
 	req, out := c.SendInvitationRequest(input)
 	req.SetContext(ctx)
@@ -8107,12 +7342,7 @@ const opStartDeviceSync = "StartDeviceSync"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/StartDeviceSync
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) StartDeviceSyncRequest(input *StartDeviceSyncInput) (req *request.Request, output *StartDeviceSyncOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, StartDeviceSync, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opStartDeviceSync,
 		HTTPMethod: "POST",
@@ -8160,8 +7390,6 @@ func (c *AlexaForBusiness) StartDeviceSyncRequest(input *StartDeviceSyncInput) (
 //     no longer managed by this account.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/StartDeviceSync
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) StartDeviceSync(input *StartDeviceSyncInput) (*StartDeviceSyncOutput, error) {
 	req, out := c.StartDeviceSyncRequest(input)
 	return out, req.Send()
@@ -8176,8 +7404,6 @@ func (c *AlexaForBusiness) StartDeviceSync(input *StartDeviceSyncInput) (*StartD
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) StartDeviceSyncWithContext(ctx aws.Context, input *StartDeviceSyncInput, opts ...request.Option) (*StartDeviceSyncOutput, error) {
 	req, out := c.StartDeviceSyncRequest(input)
 	req.SetContext(ctx)
@@ -8210,12 +7436,7 @@ const opStartSmartHomeApplianceDiscovery = "StartSmartHomeApplianceDiscovery"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/StartSmartHomeApplianceDiscovery
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) StartSmartHomeApplianceDiscoveryRequest(input *StartSmartHomeApplianceDiscoveryInput) (req *request.Request, output *StartSmartHomeApplianceDiscoveryOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, StartSmartHomeApplianceDiscovery, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opStartSmartHomeApplianceDiscovery,
 		HTTPMethod: "POST",
@@ -8249,8 +7470,6 @@ func (c *AlexaForBusiness) StartSmartHomeApplianceDiscoveryRequest(input *StartS
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/StartSmartHomeApplianceDiscovery
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) StartSmartHomeApplianceDiscovery(input *StartSmartHomeApplianceDiscoveryInput) (*StartSmartHomeApplianceDiscoveryOutput, error) {
 	req, out := c.StartSmartHomeApplianceDiscoveryRequest(input)
 	return out, req.Send()
@@ -8265,8 +7484,6 @@ func (c *AlexaForBusiness) StartSmartHomeApplianceDiscovery(input *StartSmartHom
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) StartSmartHomeApplianceDiscoveryWithContext(ctx aws.Context, input *StartSmartHomeApplianceDiscoveryInput, opts ...request.Option) (*StartSmartHomeApplianceDiscoveryOutput, error) {
 	req, out := c.StartSmartHomeApplianceDiscoveryRequest(input)
 	req.SetContext(ctx)
@@ -8299,12 +7516,7 @@ const opTagResource = "TagResource"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/TagResource
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) TagResourceRequest(input *TagResourceInput) (req *request.Request, output *TagResourceOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, TagResource, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opTagResource,
 		HTTPMethod: "POST",
@@ -8337,8 +7549,6 @@ func (c *AlexaForBusiness) TagResourceRequest(input *TagResourceInput) (req *req
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/TagResource
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) TagResource(input *TagResourceInput) (*TagResourceOutput, error) {
 	req, out := c.TagResourceRequest(input)
 	return out, req.Send()
@@ -8353,8 +7563,6 @@ func (c *AlexaForBusiness) TagResource(input *TagResourceInput) (*TagResourceOut
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) TagResourceWithContext(ctx aws.Context, input *TagResourceInput, opts ...request.Option) (*TagResourceOutput, error) {
 	req, out := c.TagResourceRequest(input)
 	req.SetContext(ctx)
@@ -8387,12 +7595,7 @@ const opUntagResource = "UntagResource"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UntagResource
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UntagResourceRequest(input *UntagResourceInput) (req *request.Request, output *UntagResourceOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, UntagResource, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opUntagResource,
 		HTTPMethod: "POST",
@@ -8425,8 +7628,6 @@ func (c *AlexaForBusiness) UntagResourceRequest(input *UntagResourceInput) (req 
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UntagResource
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UntagResource(input *UntagResourceInput) (*UntagResourceOutput, error) {
 	req, out := c.UntagResourceRequest(input)
 	return out, req.Send()
@@ -8441,8 +7642,6 @@ func (c *AlexaForBusiness) UntagResource(input *UntagResourceInput) (*UntagResou
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UntagResourceWithContext(ctx aws.Context, input *UntagResourceInput, opts ...request.Option) (*UntagResourceOutput, error) {
 	req, out := c.UntagResourceRequest(input)
 	req.SetContext(ctx)
@@ -8475,12 +7674,7 @@ const opUpdateAddressBook = "UpdateAddressBook"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateAddressBook
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateAddressBookRequest(input *UpdateAddressBookInput) (req *request.Request, output *UpdateAddressBookOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, UpdateAddressBook, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opUpdateAddressBook,
 		HTTPMethod: "POST",
@@ -8520,8 +7714,6 @@ func (c *AlexaForBusiness) UpdateAddressBookRequest(input *UpdateAddressBookInpu
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateAddressBook
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateAddressBook(input *UpdateAddressBookInput) (*UpdateAddressBookOutput, error) {
 	req, out := c.UpdateAddressBookRequest(input)
 	return out, req.Send()
@@ -8536,8 +7728,6 @@ func (c *AlexaForBusiness) UpdateAddressBook(input *UpdateAddressBookInput) (*Up
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateAddressBookWithContext(ctx aws.Context, input *UpdateAddressBookInput, opts ...request.Option) (*UpdateAddressBookOutput, error) {
 	req, out := c.UpdateAddressBookRequest(input)
 	req.SetContext(ctx)
@@ -8570,12 +7760,7 @@ const opUpdateBusinessReportSchedule = "UpdateBusinessReportSchedule"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateBusinessReportSchedule
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateBusinessReportScheduleRequest(input *UpdateBusinessReportScheduleInput) (req *request.Request, output *UpdateBusinessReportScheduleOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, UpdateBusinessReportSchedule, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opUpdateBusinessReportSchedule,
 		HTTPMethod: "POST",
@@ -8613,8 +7798,6 @@ func (c *AlexaForBusiness) UpdateBusinessReportScheduleRequest(input *UpdateBusi
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateBusinessReportSchedule
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateBusinessReportSchedule(input *UpdateBusinessReportScheduleInput) (*UpdateBusinessReportScheduleOutput, error) {
 	req, out := c.UpdateBusinessReportScheduleRequest(input)
 	return out, req.Send()
@@ -8629,8 +7812,6 @@ func (c *AlexaForBusiness) UpdateBusinessReportSchedule(input *UpdateBusinessRep
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateBusinessReportScheduleWithContext(ctx aws.Context, input *UpdateBusinessReportScheduleInput, opts ...request.Option) (*UpdateBusinessReportScheduleOutput, error) {
 	req, out := c.UpdateBusinessReportScheduleRequest(input)
 	req.SetContext(ctx)
@@ -8663,12 +7844,7 @@ const opUpdateConferenceProvider = "UpdateConferenceProvider"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateConferenceProvider
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateConferenceProviderRequest(input *UpdateConferenceProviderInput) (req *request.Request, output *UpdateConferenceProviderOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, UpdateConferenceProvider, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opUpdateConferenceProvider,
 		HTTPMethod: "POST",
@@ -8701,8 +7877,6 @@ func (c *AlexaForBusiness) UpdateConferenceProviderRequest(input *UpdateConferen
 //     The resource is not found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateConferenceProvider
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateConferenceProvider(input *UpdateConferenceProviderInput) (*UpdateConferenceProviderOutput, error) {
 	req, out := c.UpdateConferenceProviderRequest(input)
 	return out, req.Send()
@@ -8717,8 +7891,6 @@ func (c *AlexaForBusiness) UpdateConferenceProvider(input *UpdateConferenceProvi
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateConferenceProviderWithContext(ctx aws.Context, input *UpdateConferenceProviderInput, opts ...request.Option) (*UpdateConferenceProviderOutput, error) {
 	req, out := c.UpdateConferenceProviderRequest(input)
 	req.SetContext(ctx)
@@ -8751,12 +7923,7 @@ const opUpdateContact = "UpdateContact"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateContact
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateContactRequest(input *UpdateContactInput) (req *request.Request, output *UpdateContactOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, UpdateContact, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opUpdateContact,
 		HTTPMethod: "POST",
@@ -8793,8 +7960,6 @@ func (c *AlexaForBusiness) UpdateContactRequest(input *UpdateContactInput) (req 
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateContact
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateContact(input *UpdateContactInput) (*UpdateContactOutput, error) {
 	req, out := c.UpdateContactRequest(input)
 	return out, req.Send()
@@ -8809,8 +7974,6 @@ func (c *AlexaForBusiness) UpdateContact(input *UpdateContactInput) (*UpdateCont
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateContactWithContext(ctx aws.Context, input *UpdateContactInput, opts ...request.Option) (*UpdateContactOutput, error) {
 	req, out := c.UpdateContactRequest(input)
 	req.SetContext(ctx)
@@ -8843,12 +8006,7 @@ const opUpdateDevice = "UpdateDevice"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateDevice
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateDeviceRequest(input *UpdateDeviceInput) (req *request.Request, output *UpdateDeviceOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, UpdateDevice, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opUpdateDevice,
 		HTTPMethod: "POST",
@@ -8889,8 +8047,6 @@ func (c *AlexaForBusiness) UpdateDeviceRequest(input *UpdateDeviceInput) (req *r
 //     no longer managed by this account.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateDevice
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateDevice(input *UpdateDeviceInput) (*UpdateDeviceOutput, error) {
 	req, out := c.UpdateDeviceRequest(input)
 	return out, req.Send()
@@ -8905,8 +8061,6 @@ func (c *AlexaForBusiness) UpdateDevice(input *UpdateDeviceInput) (*UpdateDevice
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateDeviceWithContext(ctx aws.Context, input *UpdateDeviceInput, opts ...request.Option) (*UpdateDeviceOutput, error) {
 	req, out := c.UpdateDeviceRequest(input)
 	req.SetContext(ctx)
@@ -8939,12 +8093,7 @@ const opUpdateGateway = "UpdateGateway"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateGateway
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateGatewayRequest(input *UpdateGatewayInput) (req *request.Request, output *UpdateGatewayOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, UpdateGateway, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opUpdateGateway,
 		HTTPMethod: "POST",
@@ -8982,8 +8131,6 @@ func (c *AlexaForBusiness) UpdateGatewayRequest(input *UpdateGatewayInput) (req 
 //     The name sent in the request is already in use.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateGateway
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateGateway(input *UpdateGatewayInput) (*UpdateGatewayOutput, error) {
 	req, out := c.UpdateGatewayRequest(input)
 	return out, req.Send()
@@ -8998,8 +8145,6 @@ func (c *AlexaForBusiness) UpdateGateway(input *UpdateGatewayInput) (*UpdateGate
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateGatewayWithContext(ctx aws.Context, input *UpdateGatewayInput, opts ...request.Option) (*UpdateGatewayOutput, error) {
 	req, out := c.UpdateGatewayRequest(input)
 	req.SetContext(ctx)
@@ -9032,12 +8177,7 @@ const opUpdateGatewayGroup = "UpdateGatewayGroup"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateGatewayGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateGatewayGroupRequest(input *UpdateGatewayGroupInput) (req *request.Request, output *UpdateGatewayGroupOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, UpdateGatewayGroup, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opUpdateGatewayGroup,
 		HTTPMethod: "POST",
@@ -9075,8 +8215,6 @@ func (c *AlexaForBusiness) UpdateGatewayGroupRequest(input *UpdateGatewayGroupIn
 //     The name sent in the request is already in use.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateGatewayGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateGatewayGroup(input *UpdateGatewayGroupInput) (*UpdateGatewayGroupOutput, error) {
 	req, out := c.UpdateGatewayGroupRequest(input)
 	return out, req.Send()
@@ -9091,8 +8229,6 @@ func (c *AlexaForBusiness) UpdateGatewayGroup(input *UpdateGatewayGroupInput) (*
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateGatewayGroupWithContext(ctx aws.Context, input *UpdateGatewayGroupInput, opts ...request.Option) (*UpdateGatewayGroupOutput, error) {
 	req, out := c.UpdateGatewayGroupRequest(input)
 	req.SetContext(ctx)
@@ -9125,12 +8261,7 @@ const opUpdateNetworkProfile = "UpdateNetworkProfile"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateNetworkProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateNetworkProfileRequest(input *UpdateNetworkProfileInput) (req *request.Request, output *UpdateNetworkProfileOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, UpdateNetworkProfile, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opUpdateNetworkProfile,
 		HTTPMethod: "POST",
@@ -9176,8 +8307,6 @@ func (c *AlexaForBusiness) UpdateNetworkProfileRequest(input *UpdateNetworkProfi
 //     A password in SecretsManager is in an invalid state.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateNetworkProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateNetworkProfile(input *UpdateNetworkProfileInput) (*UpdateNetworkProfileOutput, error) {
 	req, out := c.UpdateNetworkProfileRequest(input)
 	return out, req.Send()
@@ -9192,8 +8321,6 @@ func (c *AlexaForBusiness) UpdateNetworkProfile(input *UpdateNetworkProfileInput
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateNetworkProfileWithContext(ctx aws.Context, input *UpdateNetworkProfileInput, opts ...request.Option) (*UpdateNetworkProfileOutput, error) {
 	req, out := c.UpdateNetworkProfileRequest(input)
 	req.SetContext(ctx)
@@ -9226,12 +8353,7 @@ const opUpdateProfile = "UpdateProfile"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateProfileRequest(input *UpdateProfileInput) (req *request.Request, output *UpdateProfileOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, UpdateProfile, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opUpdateProfile,
 		HTTPMethod: "POST",
@@ -9271,8 +8393,6 @@ func (c *AlexaForBusiness) UpdateProfileRequest(input *UpdateProfileInput) (req 
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateProfile
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateProfile(input *UpdateProfileInput) (*UpdateProfileOutput, error) {
 	req, out := c.UpdateProfileRequest(input)
 	return out, req.Send()
@@ -9287,8 +8407,6 @@ func (c *AlexaForBusiness) UpdateProfile(input *UpdateProfileInput) (*UpdateProf
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateProfileWithContext(ctx aws.Context, input *UpdateProfileInput, opts ...request.Option) (*UpdateProfileOutput, error) {
 	req, out := c.UpdateProfileRequest(input)
 	req.SetContext(ctx)
@@ -9321,12 +8439,7 @@ const opUpdateRoom = "UpdateRoom"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateRoomRequest(input *UpdateRoomInput) (req *request.Request, output *UpdateRoomOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, UpdateRoom, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opUpdateRoom,
 		HTTPMethod: "POST",
@@ -9363,8 +8476,6 @@ func (c *AlexaForBusiness) UpdateRoomRequest(input *UpdateRoomInput) (req *reque
 //     The name sent in the request is already in use.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateRoom
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateRoom(input *UpdateRoomInput) (*UpdateRoomOutput, error) {
 	req, out := c.UpdateRoomRequest(input)
 	return out, req.Send()
@@ -9379,8 +8490,6 @@ func (c *AlexaForBusiness) UpdateRoom(input *UpdateRoomInput) (*UpdateRoomOutput
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateRoomWithContext(ctx aws.Context, input *UpdateRoomInput, opts ...request.Option) (*UpdateRoomOutput, error) {
 	req, out := c.UpdateRoomRequest(input)
 	req.SetContext(ctx)
@@ -9413,12 +8522,7 @@ const opUpdateSkillGroup = "UpdateSkillGroup"
 //	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateSkillGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateSkillGroupRequest(input *UpdateSkillGroupInput) (req *request.Request, output *UpdateSkillGroupOutput) {
-	if c.Client.Config.Logger != nil {
-		c.Client.Config.Logger.Log("This operation, UpdateSkillGroup, has been deprecated")
-	}
 	op := &request.Operation{
 		Name:       opUpdateSkillGroup,
 		HTTPMethod: "POST",
@@ -9458,8 +8562,6 @@ func (c *AlexaForBusiness) UpdateSkillGroupRequest(input *UpdateSkillGroupInput)
 //     There is a concurrent modification of resources.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/alexaforbusiness-2017-11-09/UpdateSkillGroup
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateSkillGroup(input *UpdateSkillGroupInput) (*UpdateSkillGroupOutput, error) {
 	req, out := c.UpdateSkillGroupRequest(input)
 	return out, req.Send()
@@ -9474,8 +8576,6 @@ func (c *AlexaForBusiness) UpdateSkillGroup(input *UpdateSkillGroupInput) (*Upda
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-//
-// Deprecated: Alexa For Business is no longer supported
 func (c *AlexaForBusiness) UpdateSkillGroupWithContext(ctx aws.Context, input *UpdateSkillGroupInput, opts ...request.Option) (*UpdateSkillGroupOutput, error) {
 	req, out := c.UpdateSkillGroupRequest(input)
 	req.SetContext(ctx)
@@ -11926,8 +11026,6 @@ type CreateMeetingRoomConfiguration struct {
 	// when joining a meeting with Alexa.
 	InstantBooking *CreateInstantBooking `type:"structure"`
 
-	ProactiveJoin *CreateProactiveJoin `type:"structure"`
-
 	// Settings for requiring a check in when a room is reserved. Alexa can cancel
 	// a room reservation if it's not checked into to make the room available for
 	// others. Users can check in by joining the meeting with Alexa or an AVS device,
@@ -11969,11 +11067,6 @@ func (s *CreateMeetingRoomConfiguration) Validate() error {
 			invalidParams.AddNested("InstantBooking", err.(request.ErrInvalidParams))
 		}
 	}
-	if s.ProactiveJoin != nil {
-		if err := s.ProactiveJoin.Validate(); err != nil {
-			invalidParams.AddNested("ProactiveJoin", err.(request.ErrInvalidParams))
-		}
-	}
 	if s.RequireCheckIn != nil {
 		if err := s.RequireCheckIn.Validate(); err != nil {
 			invalidParams.AddNested("RequireCheckIn", err.(request.ErrInvalidParams))
@@ -11995,12 +11088,6 @@ func (s *CreateMeetingRoomConfiguration) SetEndOfMeetingReminder(v *CreateEndOfM
 // SetInstantBooking sets the InstantBooking field's value.
 func (s *CreateMeetingRoomConfiguration) SetInstantBooking(v *CreateInstantBooking) *CreateMeetingRoomConfiguration {
 	s.InstantBooking = v
-	return s
-}
-
-// SetProactiveJoin sets the ProactiveJoin field's value.
-func (s *CreateMeetingRoomConfiguration) SetProactiveJoin(v *CreateProactiveJoin) *CreateMeetingRoomConfiguration {
-	s.ProactiveJoin = v
 	return s
 }
 
@@ -12229,50 +11316,6 @@ func (s CreateNetworkProfileOutput) GoString() string {
 // SetNetworkProfileArn sets the NetworkProfileArn field's value.
 func (s *CreateNetworkProfileOutput) SetNetworkProfileArn(v string) *CreateNetworkProfileOutput {
 	s.NetworkProfileArn = &v
-	return s
-}
-
-type CreateProactiveJoin struct {
-	_ struct{} `type:"structure"`
-
-	// EnabledByMotion is a required field
-	EnabledByMotion *bool `type:"boolean" required:"true"`
-}
-
-// String returns the string representation.
-//
-// API parameter values that are decorated as "sensitive" in the API will not
-// be included in the string output. The member name will be present, but the
-// value will be replaced with "sensitive".
-func (s CreateProactiveJoin) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation.
-//
-// API parameter values that are decorated as "sensitive" in the API will not
-// be included in the string output. The member name will be present, but the
-// value will be replaced with "sensitive".
-func (s CreateProactiveJoin) GoString() string {
-	return s.String()
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *CreateProactiveJoin) Validate() error {
-	invalidParams := request.ErrInvalidParams{Context: "CreateProactiveJoin"}
-	if s.EnabledByMotion == nil {
-		invalidParams.Add(request.NewErrParamRequired("EnabledByMotion"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-// SetEnabledByMotion sets the EnabledByMotion field's value.
-func (s *CreateProactiveJoin) SetEnabledByMotion(v bool) *CreateProactiveJoin {
-	s.EnabledByMotion = &v
 	return s
 }
 
@@ -17820,8 +16863,6 @@ type MeetingRoomConfiguration struct {
 	// when joining a meeting with Alexa.
 	InstantBooking *InstantBooking `type:"structure"`
 
-	ProactiveJoin *ProactiveJoin `type:"structure"`
-
 	// Settings for requiring a check in when a room is reserved. Alexa can cancel
 	// a room reservation if it's not checked into. This makes the room available
 	// for others. Users can check in by joining the meeting with Alexa or an AVS
@@ -17859,12 +16900,6 @@ func (s *MeetingRoomConfiguration) SetEndOfMeetingReminder(v *EndOfMeetingRemind
 // SetInstantBooking sets the InstantBooking field's value.
 func (s *MeetingRoomConfiguration) SetInstantBooking(v *InstantBooking) *MeetingRoomConfiguration {
 	s.InstantBooking = v
-	return s
-}
-
-// SetProactiveJoin sets the ProactiveJoin field's value.
-func (s *MeetingRoomConfiguration) SetProactiveJoin(v *ProactiveJoin) *MeetingRoomConfiguration {
-	s.ProactiveJoin = v
 	return s
 }
 
@@ -18445,36 +17480,6 @@ func (s *PhoneNumber) SetNumber(v string) *PhoneNumber {
 // SetType sets the Type field's value.
 func (s *PhoneNumber) SetType(v string) *PhoneNumber {
 	s.Type = &v
-	return s
-}
-
-type ProactiveJoin struct {
-	_ struct{} `type:"structure"`
-
-	EnabledByMotion *bool `type:"boolean"`
-}
-
-// String returns the string representation.
-//
-// API parameter values that are decorated as "sensitive" in the API will not
-// be included in the string output. The member name will be present, but the
-// value will be replaced with "sensitive".
-func (s ProactiveJoin) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation.
-//
-// API parameter values that are decorated as "sensitive" in the API will not
-// be included in the string output. The member name will be present, but the
-// value will be replaced with "sensitive".
-func (s ProactiveJoin) GoString() string {
-	return s.String()
-}
-
-// SetEnabledByMotion sets the EnabledByMotion field's value.
-func (s *ProactiveJoin) SetEnabledByMotion(v bool) *ProactiveJoin {
-	s.EnabledByMotion = &v
 	return s
 }
 
@@ -23363,8 +22368,6 @@ type UpdateMeetingRoomConfiguration struct {
 	// duration when joining a meeting with Alexa.
 	InstantBooking *UpdateInstantBooking `type:"structure"`
 
-	ProactiveJoin *UpdateProactiveJoin `type:"structure"`
-
 	// Settings for requiring a check in when a room is reserved. Alexa can cancel
 	// a room reservation if it's not checked into to make the room available for
 	// others. Users can check in by joining the meeting with Alexa or an AVS device,
@@ -23401,11 +22404,6 @@ func (s *UpdateMeetingRoomConfiguration) Validate() error {
 			invalidParams.AddNested("EndOfMeetingReminder", err.(request.ErrInvalidParams))
 		}
 	}
-	if s.ProactiveJoin != nil {
-		if err := s.ProactiveJoin.Validate(); err != nil {
-			invalidParams.AddNested("ProactiveJoin", err.(request.ErrInvalidParams))
-		}
-	}
 
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -23422,12 +22420,6 @@ func (s *UpdateMeetingRoomConfiguration) SetEndOfMeetingReminder(v *UpdateEndOfM
 // SetInstantBooking sets the InstantBooking field's value.
 func (s *UpdateMeetingRoomConfiguration) SetInstantBooking(v *UpdateInstantBooking) *UpdateMeetingRoomConfiguration {
 	s.InstantBooking = v
-	return s
-}
-
-// SetProactiveJoin sets the ProactiveJoin field's value.
-func (s *UpdateMeetingRoomConfiguration) SetProactiveJoin(v *UpdateProactiveJoin) *UpdateMeetingRoomConfiguration {
-	s.ProactiveJoin = v
 	return s
 }
 
@@ -23584,50 +22576,6 @@ func (s UpdateNetworkProfileOutput) String() string {
 // value will be replaced with "sensitive".
 func (s UpdateNetworkProfileOutput) GoString() string {
 	return s.String()
-}
-
-type UpdateProactiveJoin struct {
-	_ struct{} `type:"structure"`
-
-	// EnabledByMotion is a required field
-	EnabledByMotion *bool `type:"boolean" required:"true"`
-}
-
-// String returns the string representation.
-//
-// API parameter values that are decorated as "sensitive" in the API will not
-// be included in the string output. The member name will be present, but the
-// value will be replaced with "sensitive".
-func (s UpdateProactiveJoin) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation.
-//
-// API parameter values that are decorated as "sensitive" in the API will not
-// be included in the string output. The member name will be present, but the
-// value will be replaced with "sensitive".
-func (s UpdateProactiveJoin) GoString() string {
-	return s.String()
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *UpdateProactiveJoin) Validate() error {
-	invalidParams := request.ErrInvalidParams{Context: "UpdateProactiveJoin"}
-	if s.EnabledByMotion == nil {
-		invalidParams.Add(request.NewErrParamRequired("EnabledByMotion"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-// SetEnabledByMotion sets the EnabledByMotion field's value.
-func (s *UpdateProactiveJoin) SetEnabledByMotion(v bool) *UpdateProactiveJoin {
-	s.EnabledByMotion = &v
-	return s
 }
 
 type UpdateProfileInput struct {

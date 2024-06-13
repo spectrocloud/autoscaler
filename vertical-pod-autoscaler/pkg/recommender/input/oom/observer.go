@@ -132,7 +132,7 @@ func findSpec(name string, containers []apiv1.Container) *apiv1.Container {
 }
 
 // OnAdd is Noop
-func (o *observer) OnAdd(obj interface{}, isInInitialList bool) {}
+func (*observer) OnAdd(obj interface{}) {}
 
 // OnUpdate inspects if the update contains oom information and
 // passess it to the ObservedOomsChannel

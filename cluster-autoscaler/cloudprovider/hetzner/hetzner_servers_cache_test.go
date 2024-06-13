@@ -70,7 +70,6 @@ func TestServersCache(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "test2", foundservers.Name)
 
-	server, err := c.getServer("test3")
-	require.Nil(t, server)
-	require.NoError(t, err)
+	_, err = c.getServer("test3")
+	require.Error(t, err)
 }

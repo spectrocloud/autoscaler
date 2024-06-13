@@ -23,7 +23,6 @@ import (
 	"strings"
 	"testing"
 
-	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/gce/localssdsize"
 	"k8s.io/autoscaler/cluster-autoscaler/config"
 	gpuUtils "k8s.io/autoscaler/cluster-autoscaler/utils/gpu"
 	"k8s.io/autoscaler/cluster-autoscaler/utils/units"
@@ -263,17 +262,12 @@ func TestBuildNodeFromTemplateSetsResources(t *testing.T) {
 			if tc.kubeEnv != "" {
 				template.Properties.Metadata.Items = []*gce.MetadataItems{{Key: "kube-env", Value: &tc.kubeEnv}}
 			}
-			var migOsInfo MigOsInfo
-			kubeEnv, err := ExtractKubeEnv(template)
-			if err == nil {
-				migOsInfo, err = tb.MigOsInfo(mig.Id(), kubeEnv)
-			}
+			migOsInfo, err := tb.MigOsInfo(mig.Id(), template)
 			if tc.expectedMigInfoErr {
 				assert.Error(t, err)
 				return
 			}
-			localSSDDiskSize := localssdsize.NewSimpleLocalSSDProvider()
-			node, err := tb.BuildNodeFromTemplate(mig, migOsInfo, template, kubeEnv, tc.physicalCpu, tc.physicalMemory, tc.pods, &GceReserved{}, localSSDDiskSize)
+			node, err := tb.BuildNodeFromTemplate(mig, migOsInfo, template, tc.physicalCpu, tc.physicalMemory, tc.pods, &GceReserved{})
 			if tc.expectedNodeTemplateErr {
 				assert.Error(t, err)
 			} else {
@@ -299,7 +293,7 @@ func TestBuildNodeFromTemplateSetsResources(t *testing.T) {
 				// specifying physicalEphemeralStorageGiB in the testCase struct
 				physicalEphemeralStorageGiB := tc.bootDiskSizeGiB
 				if tc.ephemeralStorageLocalSSDCount > 0 {
-					physicalEphemeralStorageGiB = tc.ephemeralStorageLocalSSDCount * int64(localSSDDiskSize.SSDSizeInGiB(template.Properties.MachineType))
+					physicalEphemeralStorageGiB = tc.ephemeralStorageLocalSSDCount * LocalSSDDiskSizeInGiB
 				} else if tc.isEphemeralStorageBlocked {
 					physicalEphemeralStorageGiB = 0
 				}
@@ -445,7 +439,7 @@ func TestCalculateAllocatable(t *testing.T) {
 
 func TestBuildAllocatableFromKubeEnv(t *testing.T) {
 	type testCase struct {
-		kubeEnvValue             string
+		kubeEnv                  string
 		capacityCpu              string
 		capacityMemory           string
 		capacityEphemeralStorage string
@@ -456,7 +450,7 @@ func TestBuildAllocatableFromKubeEnv(t *testing.T) {
 		expectedErr              bool
 	}
 	testCases := []testCase{{
-		kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+		kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 			"NODE_LABELS: a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true\n" +
 			"DNS_SERVER_IP: '10.0.0.10'\n" +
 			"KUBELET_TEST_ARGS: --experimental-allocatable-ignore-eviction --kube-reserved=cpu=1000m,memory=300000Mi,ephemeral-storage=30Gi\n" +
@@ -470,7 +464,7 @@ func TestBuildAllocatableFromKubeEnv(t *testing.T) {
 		gpuCount:                 10,
 		expectedErr:              false,
 	}, {
-		kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+		kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 			"NODE_LABELS: a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true\n" +
 			"DNS_SERVER_IP: '10.0.0.10'\n" +
 			"NODE_TAINTS: 'dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c'\n",
@@ -482,11 +476,7 @@ func TestBuildAllocatableFromKubeEnv(t *testing.T) {
 		capacity, err := makeResourceList(tc.capacityCpu, tc.capacityMemory, tc.gpuCount, tc.capacityEphemeralStorage)
 		assert.NoError(t, err)
 		tb := GceTemplateBuilder{}
-		var allocatable apiv1.ResourceList
-		kubeEnv, err := ParseKubeEnv("test", tc.kubeEnvValue)
-		if err == nil {
-			allocatable, err = tb.BuildAllocatableFromKubeEnv(capacity, kubeEnv, ParseEvictionHardOrGetDefault(nil))
-		}
+		allocatable, err := tb.BuildAllocatableFromKubeEnv(capacity, tc.kubeEnv, ParseEvictionHardOrGetDefault(nil))
 		if tc.expectedErr {
 			assert.Error(t, err)
 		} else {
@@ -628,39 +618,39 @@ func TestBuildCapacityMemory(t *testing.T) {
 func TestExtractAutoscalingOptionsFromKubeEnv(t *testing.T) {
 	cases := []struct {
 		desc          string
-		kubeEnvValue  string
+		env           string
 		expectedValue map[string]string
 		expectedErr   bool
 	}{
 		{
 			desc:          "autoscaling_options not specified",
-			kubeEnvValue:  "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d;node_taints=a=b:c,d=e:f\n",
+			env:           "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d;node_taints=a=b:c,d=e:f\n",
 			expectedValue: map[string]string{},
 			expectedErr:   false,
 		},
 		{
 			desc:          "empty KubeEnv",
-			kubeEnvValue:  "",
+			env:           "",
 			expectedValue: map[string]string{},
 			expectedErr:   false,
 		},
 		{
 			desc:          "unparsable KubeEnv",
-			kubeEnvValue:  "AUTOSCALER_ENV_VARS",
+			env:           "AUTOSCALER_ENV_VARS",
 			expectedValue: nil,
 			expectedErr:   true,
 		},
 		{
-			desc:         "partial option set",
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: node_labels=a=b;autoscaling_options=scaledownunreadytime=1h",
+			desc: "partial option set",
+			env:  "AUTOSCALER_ENV_VARS: node_labels=a=b;autoscaling_options=scaledownunreadytime=1h",
 			expectedValue: map[string]string{
 				config.DefaultScaleDownUnreadyTimeKey: "1h",
 			},
 			expectedErr: false,
 		},
 		{
-			desc:         "full option set",
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: node_labels=a,b;autoscaling_options=scaledownutilizationthreshold=0.4,scaledowngpuutilizationthreshold=0.5,scaledownunneededtime=30m,scaledownunreadytime=1h",
+			desc: "full option set",
+			env:  "AUTOSCALER_ENV_VARS: node_labels=a,b;autoscaling_options=scaledownutilizationthreshold=0.4,scaledowngpuutilizationthreshold=0.5,scaledownunneededtime=30m,scaledownunreadytime=1h",
 			expectedValue: map[string]string{
 				config.DefaultScaleDownUtilizationThresholdKey:    "0.4",
 				config.DefaultScaleDownGpuUtilizationThresholdKey: "0.5",
@@ -672,11 +662,7 @@ func TestExtractAutoscalingOptionsFromKubeEnv(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.desc, func(t *testing.T) {
-			var value map[string]string
-			kubeEnv, err := ParseKubeEnv("test", c.kubeEnvValue)
-			if err == nil {
-				value, err = extractAutoscalingOptionsFromKubeEnv(kubeEnv)
-			}
+			value, err := extractAutoscalingOptionsFromKubeEnv(c.env)
 			assert.Equal(t, c.expectedValue, value)
 			if c.expectedErr {
 				assert.Error(t, err)
@@ -691,7 +677,7 @@ func TestExtractAutoscalerVarFromKubeEnv(t *testing.T) {
 	cases := []struct {
 		desc          string
 		name          string
-		kubeEnvValue  string
+		env           string
 		expectedValue string
 		expectedFound bool
 		expectedErr   error
@@ -699,7 +685,7 @@ func TestExtractAutoscalerVarFromKubeEnv(t *testing.T) {
 		{
 			desc:          "node_labels",
 			name:          "node_labels",
-			kubeEnvValue:  "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d;node_taints=a=b:c,d=e:f\n",
+			env:           "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d;node_taints=a=b:c,d=e:f\n",
 			expectedValue: "a=b,c=d",
 			expectedFound: true,
 			expectedErr:   nil,
@@ -707,7 +693,7 @@ func TestExtractAutoscalerVarFromKubeEnv(t *testing.T) {
 		{
 			desc:          "node_labels not found",
 			name:          "node_labels",
-			kubeEnvValue:  "AUTOSCALER_ENV_VARS: node_taints=a=b:c,d=e:f\n",
+			env:           "AUTOSCALER_ENV_VARS: node_taints=a=b:c,d=e:f\n",
 			expectedValue: "",
 			expectedFound: false,
 			expectedErr:   nil,
@@ -715,7 +701,7 @@ func TestExtractAutoscalerVarFromKubeEnv(t *testing.T) {
 		{
 			desc:          "node_labels empty",
 			name:          "node_labels",
-			kubeEnvValue:  "AUTOSCALER_ENV_VARS: node_labels=;node_taints=a=b:c,d=e:f\n",
+			env:           "AUTOSCALER_ENV_VARS: node_labels=;node_taints=a=b:c,d=e:f\n",
 			expectedValue: "",
 			expectedFound: true,
 			expectedErr:   nil,
@@ -723,7 +709,7 @@ func TestExtractAutoscalerVarFromKubeEnv(t *testing.T) {
 		{
 			desc:          "node_taints",
 			name:          "node_taints",
-			kubeEnvValue:  "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d;node_taints=a=b:c,d=e:f\n",
+			env:           "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d;node_taints=a=b:c,d=e:f\n",
 			expectedValue: "a=b:c,d=e:f",
 			expectedFound: true,
 			expectedErr:   nil,
@@ -731,7 +717,7 @@ func TestExtractAutoscalerVarFromKubeEnv(t *testing.T) {
 		{
 			desc:          "malformed node_labels",
 			name:          "node_labels",
-			kubeEnvValue:  "AUTOSCALER_ENV_VARS: node_labels;node_taints=a=b:c,d=e:f\n",
+			env:           "AUTOSCALER_ENV_VARS: node_labels;node_taints=a=b:c,d=e:f\n",
 			expectedValue: "",
 			expectedFound: false,
 			expectedErr:   fmt.Errorf("malformed autoscaler var: node_labels"),
@@ -739,12 +725,7 @@ func TestExtractAutoscalerVarFromKubeEnv(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.desc, func(t *testing.T) {
-			var value string
-			var found bool
-			kubeEnv, err := ParseKubeEnv("test", c.kubeEnvValue)
-			if err == nil {
-				value, found, err = extractAutoscalerVarFromKubeEnv(kubeEnv, c.name)
-			}
+			value, found, err := extractAutoscalerVarFromKubeEnv(c.env, c.name)
 			assert.Equal(t, c.expectedValue, value)
 			assert.Equal(t, c.expectedFound, found)
 			assert.Equal(t, c.expectedErr, err)
@@ -762,14 +743,14 @@ func TestExtractLabelsFromKubeEnv(t *testing.T) {
 		preemptibleLabel: "true",
 	}
 	cases := []struct {
-		desc         string
-		kubeEnvValue string
-		expect       map[string]string
-		err          error
+		desc   string
+		env    string
+		expect map[string]string
+		err    error
 	}{
 		{
 			desc: "from NODE_LABELS",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			env: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"NODE_LABELS: a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n",
 			expect: expectedLabels,
@@ -777,7 +758,7 @@ func TestExtractLabelsFromKubeEnv(t *testing.T) {
 		},
 		{
 			desc: "from AUTOSCALER_ENV_VARS.node_labels",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			env: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
 				"kube_reserved=cpu=1000m,memory=300000Mi;" +
@@ -787,19 +768,15 @@ func TestExtractLabelsFromKubeEnv(t *testing.T) {
 			err:    nil,
 		},
 		{
-			desc:         "malformed key-value in AUTOSCALER_ENV_VARS.node_labels",
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: node_labels=ab,c=d\n",
-			err:          fmt.Errorf("error while parsing key-value list, val: ab"),
+			desc: "malformed key-value in AUTOSCALER_ENV_VARS.node_labels",
+			env:  "AUTOSCALER_ENV_VARS: node_labels=ab,c=d\n",
+			err:  fmt.Errorf("error while parsing key-value list, val: ab"),
 		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.desc, func(t *testing.T) {
-			var labels map[string]string
-			kubeEnv, err := ParseKubeEnv("test", c.kubeEnvValue)
-			if err == nil {
-				labels, err = extractLabelsFromKubeEnv(kubeEnv)
-			}
+			labels, err := extractLabelsFromKubeEnv(c.env)
 			assert.Equal(t, c.err, err)
 			if c.err != nil {
 				return
@@ -812,17 +789,14 @@ func TestExtractLabelsFromKubeEnv(t *testing.T) {
 						Items: []*gce.MetadataItems{
 							{
 								Key:   "kube-env",
-								Value: &c.kubeEnvValue,
+								Value: &c.env,
 							},
 						},
 					},
 				},
 			}
 
-			kubeEnv, err = ExtractKubeEnv(template)
-			if err == nil {
-				labels, err = GetLabelsFromKubeEnv(kubeEnv)
-			}
+			labels, err = GetLabelsFromTemplate(template)
 			assert.Equal(t, c.err, err)
 			if c.err != nil {
 				return
@@ -852,14 +826,14 @@ func TestExtractTaintsFromKubeEnv(t *testing.T) {
 	})
 
 	cases := []struct {
-		desc         string
-		kubeEnvValue string
-		expect       map[apiv1.Taint]bool
-		err          error
+		desc   string
+		env    string
+		expect map[apiv1.Taint]bool
+		err    error
 	}{
 		{
 			desc: "from NODE_TAINTS",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			env: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"NODE_LABELS: a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"NODE_TAINTS: 'dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c'\n",
@@ -867,7 +841,7 @@ func TestExtractTaintsFromKubeEnv(t *testing.T) {
 		},
 		{
 			desc: "from AUTOSCALER_ENV_VARS.node_taints",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			env: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -877,26 +851,22 @@ func TestExtractTaintsFromKubeEnv(t *testing.T) {
 		},
 		{
 			desc: "from empty AUTOSCALER_ENV_VARS.node_taints",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			env: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints=\n",
 			expect: makeTaintSet([]apiv1.Taint{}),
 		},
 		{
-			desc:         "malformed key-value in AUTOSCALER_ENV_VARS.node_taints",
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: node_taints='dedicatedml:NoSchedule,test=dev:PreferNoSchedule,a=b:c'\n",
-			err:          fmt.Errorf("error while parsing key-value list, val: dedicatedml:NoSchedule"),
+			desc: "malformed key-value in AUTOSCALER_ENV_VARS.node_taints",
+			env:  "AUTOSCALER_ENV_VARS: node_taints='dedicatedml:NoSchedule,test=dev:PreferNoSchedule,a=b:c'\n",
+			err:  fmt.Errorf("error while parsing key-value list, val: dedicatedml:NoSchedule"),
 		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.desc, func(t *testing.T) {
-			var taints []apiv1.Taint
-			kubeEnv, err := ParseKubeEnv("test", c.kubeEnvValue)
-			if err == nil {
-				taints, err = extractTaintsFromKubeEnv(kubeEnv)
-			}
+			taints, err := extractTaintsFromKubeEnv(c.env)
 			assert.Equal(t, c.err, err)
 			if c.err != nil {
 				return
@@ -909,17 +879,14 @@ func TestExtractTaintsFromKubeEnv(t *testing.T) {
 						Items: []*gce.MetadataItems{
 							{
 								Key:   "kube-env",
-								Value: &c.kubeEnvValue,
+								Value: &c.env,
 							},
 						},
 					},
 				},
 			}
 
-			kubeEnv, err = ExtractKubeEnv(template)
-			if err == nil {
-				taints, err = GetTaintsFromKubeEnv(kubeEnv)
-			}
+			taints, err = GetTaintsFromTemplate(template)
 			assert.Equal(t, c.err, err)
 			if c.err != nil {
 				return
@@ -932,14 +899,14 @@ func TestExtractTaintsFromKubeEnv(t *testing.T) {
 
 func TestExtractKubeReservedFromKubeEnv(t *testing.T) {
 	type testCase struct {
-		kubeEnvValue     string
+		kubeEnv          string
 		expectedReserved string
 		expectedErr      bool
 	}
 
 	testCases := []testCase{
 		{
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"NODE_LABELS: a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"KUBELET_TEST_ARGS: --experimental-allocatable-ignore-eviction --kube-reserved=cpu=1000m,memory=300000Mi\n" +
@@ -948,7 +915,7 @@ func TestExtractKubeReservedFromKubeEnv(t *testing.T) {
 			expectedErr:      false,
 		},
 		{
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -960,7 +927,7 @@ func TestExtractKubeReservedFromKubeEnv(t *testing.T) {
 		},
 		{
 			// Multi-line KUBELET_ARGS
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -971,7 +938,7 @@ func TestExtractKubeReservedFromKubeEnv(t *testing.T) {
 			expectedErr:      false,
 		},
 		{
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"NODE_LABELS: a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"KUBELET_TEST_ARGS: --experimental-allocatable-ignore-eviction\n" +
@@ -980,7 +947,7 @@ func TestExtractKubeReservedFromKubeEnv(t *testing.T) {
 			expectedErr:      true,
 		},
 		{
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"NODE_LABELS: a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"NODE_TAINTS: 'dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c'\n",
@@ -990,11 +957,7 @@ func TestExtractKubeReservedFromKubeEnv(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		var reserved string
-		kubeEnv, err := ParseKubeEnv("test", tc.kubeEnvValue)
-		if err == nil {
-			reserved, err = extractKubeReservedFromKubeEnv(kubeEnv)
-		}
+		reserved, err := extractKubeReservedFromKubeEnv(tc.kubeEnv)
 		assert.Equal(t, tc.expectedReserved, reserved)
 		if tc.expectedErr {
 			assert.Error(t, err)
@@ -1007,14 +970,14 @@ func TestExtractKubeReservedFromKubeEnv(t *testing.T) {
 func TestExtractOperatingSystemFromKubeEnv(t *testing.T) {
 	type testCase struct {
 		name                    string
-		kubeEnvValue            string
+		kubeEnv                 string
 		expectedOperatingSystem OperatingSystem
 	}
 
 	testCases := []testCase{
 		{
 			name: "linux",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -1025,7 +988,7 @@ func TestExtractOperatingSystemFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "windows",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -1036,7 +999,7 @@ func TestExtractOperatingSystemFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "no AUTOSCALER_ENV_VARS",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"NODE_LABELS: a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"KUBELET_TEST_ARGS: --experimental-allocatable-ignore-eviction --kube-reserved=cpu=1000m,memory=300000Mi\n" +
@@ -1045,7 +1008,7 @@ func TestExtractOperatingSystemFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "no os defined",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -1055,7 +1018,7 @@ func TestExtractOperatingSystemFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "os is empty",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -1066,7 +1029,7 @@ func TestExtractOperatingSystemFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "unknown (macos)",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -1079,9 +1042,7 @@ func TestExtractOperatingSystemFromKubeEnv(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			kubeEnv, err := ParseKubeEnv("test", tc.kubeEnvValue)
-			assert.NoError(t, err)
-			actualOperatingSystem := extractOperatingSystemFromKubeEnv(kubeEnv)
+			actualOperatingSystem := extractOperatingSystemFromKubeEnv(tc.kubeEnv)
 			assert.Equal(t, tc.expectedOperatingSystem, actualOperatingSystem)
 		})
 	}
@@ -1090,14 +1051,14 @@ func TestExtractOperatingSystemFromKubeEnv(t *testing.T) {
 func TestExtractOperatingSystemDistributionFromKubeEnv(t *testing.T) {
 	type testCase struct {
 		name                                string
-		kubeEnvValue                        string
+		kubeEnv                             string
 		expectedOperatingSystemDistribution OperatingSystemDistribution
 	}
 
 	testCases := []testCase{
 		{
 			name: "cos",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -1108,7 +1069,7 @@ func TestExtractOperatingSystemDistributionFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "cos containerd",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -1119,7 +1080,7 @@ func TestExtractOperatingSystemDistributionFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "ubuntu containerd",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -1130,7 +1091,7 @@ func TestExtractOperatingSystemDistributionFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "ubuntu",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -1141,7 +1102,7 @@ func TestExtractOperatingSystemDistributionFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "windows ltsc",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -1152,7 +1113,7 @@ func TestExtractOperatingSystemDistributionFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "windows sac",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -1163,7 +1124,7 @@ func TestExtractOperatingSystemDistributionFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "no AUTOSCALER_ENV_VARS",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"NODE_LABELS: a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"KUBELET_TEST_ARGS: --experimental-allocatable-ignore-eviction --kube-reserved=cpu=1000m,memory=300000Mi\n" +
@@ -1172,7 +1133,7 @@ func TestExtractOperatingSystemDistributionFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "no os distribution defined",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -1182,7 +1143,7 @@ func TestExtractOperatingSystemDistributionFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "os distribution is empty",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -1193,7 +1154,7 @@ func TestExtractOperatingSystemDistributionFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "unknown (macos)",
-			kubeEnvValue: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
+			kubeEnv: "ENABLE_NODE_PROBLEM_DETECTOR: 'daemonset'\n" +
 				"DNS_SERVER_IP: '10.0.0.10'\n" +
 				"AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
@@ -1206,9 +1167,7 @@ func TestExtractOperatingSystemDistributionFromKubeEnv(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			kubeEnv, err := ParseKubeEnv("test", tc.kubeEnvValue)
-			assert.NoError(t, err)
-			actualOperatingSystem := extractOperatingSystemDistributionFromKubeEnv(kubeEnv)
+			actualOperatingSystem := extractOperatingSystemDistributionFromKubeEnv(tc.kubeEnv)
 			assert.Equal(t, tc.expectedOperatingSystemDistribution, actualOperatingSystem)
 		})
 	}
@@ -1217,7 +1176,7 @@ func TestExtractOperatingSystemDistributionFromKubeEnv(t *testing.T) {
 func TestExtractExtendedResourcesFromKubeEnv(t *testing.T) {
 	type testCase struct {
 		name                      string
-		kubeEnvValue              string
+		kubeEnv                   string
 		expectedExtendedResources apiv1.ResourceList
 		expectedErr               bool
 	}
@@ -1225,7 +1184,7 @@ func TestExtractExtendedResourcesFromKubeEnv(t *testing.T) {
 	testCases := []testCase{
 		{
 			name: "numeric value",
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
+			kubeEnv: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
 				"kube_reserved=cpu=1000m,memory=300000Mi;" +
 				"extended_resources=foo=10",
@@ -1236,7 +1195,7 @@ func TestExtractExtendedResourcesFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "numeric value with quantity suffix",
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
+			kubeEnv: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
 				"kube_reserved=cpu=1000m,memory=300000Mi;" +
 				"extended_resources=foo=10G",
@@ -1247,7 +1206,7 @@ func TestExtractExtendedResourcesFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "multiple extended_resources definition",
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
+			kubeEnv: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
 				"kube_reserved=cpu=1000m,memory=300000Mi;" +
 				"extended_resources=foo=10G,bar=230",
@@ -1259,7 +1218,7 @@ func TestExtractExtendedResourcesFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "invalid value",
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
+			kubeEnv: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
 				"kube_reserved=cpu=1000m,memory=300000Mi;" +
 				"extended_resources=foo=bar",
@@ -1268,7 +1227,7 @@ func TestExtractExtendedResourcesFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "both valid and invalid values",
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
+			kubeEnv: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
 				"kube_reserved=cpu=1000m,memory=300000Mi;" +
 				"extended_resources=foo=bar,baz=10G",
@@ -1279,7 +1238,7 @@ func TestExtractExtendedResourcesFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "invalid quantity suffix",
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
+			kubeEnv: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
 				"kube_reserved=cpu=1000m,memory=300000Mi;" +
 				"extended_resources=foo=10Wi",
@@ -1288,7 +1247,7 @@ func TestExtractExtendedResourcesFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "malformed extended_resources map",
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
+			kubeEnv: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
 				"kube_reserved=cpu=1000m,memory=300000Mi;" +
 				"extended_resources=foo",
@@ -1297,7 +1256,7 @@ func TestExtractExtendedResourcesFromKubeEnv(t *testing.T) {
 		},
 		{
 			name: "malformed extended_resources definition",
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
+			kubeEnv: "AUTOSCALER_ENV_VARS: node_labels=a=b,c=d,cloud.google.com/gke-nodepool=pool-3,cloud.google.com/gke-preemptible=true;" +
 				"node_taints='dedicated=ml:NoSchedule,test=dev:PreferNoSchedule,a=b:c';" +
 				"kube_reserved=cpu=1000m,memory=300000Mi;" +
 				"extended_resources/",
@@ -1308,11 +1267,7 @@ func TestExtractExtendedResourcesFromKubeEnv(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			var extendedResources apiv1.ResourceList
-			kubeEnv, err := ParseKubeEnv("test", tc.kubeEnvValue)
-			if err == nil {
-				extendedResources, err = extractExtendedResourcesFromKubeEnv(kubeEnv)
-			}
+			extendedResources, err := extractExtendedResourcesFromKubeEnv(tc.kubeEnv)
 			assertEqualResourceLists(t, "Resources", tc.expectedExtendedResources, extendedResources)
 			if tc.expectedErr {
 				assert.Error(t, err)
@@ -1387,42 +1342,38 @@ func TestToSystemArchitecture(t *testing.T) {
 
 func TestExtractSystemArchitectureFromKubeEnv(t *testing.T) {
 	for tn, tc := range map[string]struct {
-		kubeEnvValue string
-		wantArch     SystemArchitecture
-		wantErr      error
+		kubeEnv  string
+		wantArch SystemArchitecture
+		wantErr  error
 	}{
 		"valid arch defined in AUTOSCALER_ENV_VARS": {
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: os_distribution=cos;arch=arm64;os=linux\n",
-			wantArch:     Arm64,
+			kubeEnv:  "AUTOSCALER_ENV_VARS: os_distribution=cos;arch=arm64;os=linux\n",
+			wantArch: Arm64,
 		},
 		"invalid arch defined in AUTOSCALER_ENV_VARS": {
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: os_distribution=cos;arch=blah;os=linux\n",
-			wantArch:     UnknownArch,
-			wantErr:      cmpopts.AnyError,
+			kubeEnv:  "AUTOSCALER_ENV_VARS: os_distribution=cos;arch=blah;os=linux\n",
+			wantArch: UnknownArch,
+			wantErr:  cmpopts.AnyError,
 		},
 		"empty arch defined in AUTOSCALER_ENV_VARS": {
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: os_distribution=cos;arch=;os=linux\n",
-			wantArch:     UnknownArch,
-			wantErr:      cmpopts.AnyError,
+			kubeEnv:  "AUTOSCALER_ENV_VARS: os_distribution=cos;arch=;os=linux\n",
+			wantArch: UnknownArch,
+			wantErr:  cmpopts.AnyError,
 		},
 
 		"no arch defined in AUTOSCALER_ENV_VARS": {
-			kubeEnvValue: "AUTOSCALER_ENV_VARS: os_distribution=cos;os=linux\n",
-			wantArch:     UnknownArch,
-			wantErr:      cmpopts.AnyError,
+			kubeEnv:  "AUTOSCALER_ENV_VARS: os_distribution=cos;os=linux\n",
+			wantArch: UnknownArch,
+			wantErr:  cmpopts.AnyError,
 		},
 		"KUBE_ENV parsing error": {
-			kubeEnvValue: "some-invalid-string",
-			wantArch:     UnknownArch,
-			wantErr:      cmpopts.AnyError,
+			kubeEnv:  "some-invalid-string",
+			wantArch: UnknownArch,
+			wantErr:  cmpopts.AnyError,
 		},
 	} {
 		t.Run(tn, func(t *testing.T) {
-			var gotArch SystemArchitecture
-			kubeEnv, gotErr := ParseKubeEnv("test", tc.kubeEnvValue)
-			if gotErr == nil {
-				gotArch, gotErr = extractSystemArchitectureFromKubeEnv(kubeEnv)
-			}
+			gotArch, gotErr := extractSystemArchitectureFromKubeEnv(tc.kubeEnv)
 			if diff := cmp.Diff(tc.wantArch, gotArch); diff != "" {
 				t.Errorf("extractSystemArchitectureFromKubeEnv diff (-want +got):\n%s", diff)
 			}
@@ -1459,16 +1410,11 @@ func TestBuildNodeFromTemplateArch(t *testing.T) {
 				},
 			}
 			tb := &GceTemplateBuilder{}
-			kubeEnv, gotErr := ExtractKubeEnv(template)
-			if gotErr != nil {
-				t.Fatalf("ExtractKubeEnv unexpected error: %v", gotErr)
-			}
-			migOsInfo, gotErr := tb.MigOsInfo(mig.Id(), kubeEnv)
+			migOsInfo, gotErr := tb.MigOsInfo(mig.Id(), template)
 			if gotErr != nil {
 				t.Fatalf("MigOsInfo unexpected error: %v", gotErr)
 			}
-			localSSDDiskSize := localssdsize.NewSimpleLocalSSDProvider()
-			gotNode, gotErr := tb.BuildNodeFromTemplate(mig, migOsInfo, template, kubeEnv, 16, 128, nil, &GceReserved{}, localSSDDiskSize)
+			gotNode, gotErr := tb.BuildNodeFromTemplate(mig, migOsInfo, template, 16, 128, nil, &GceReserved{})
 			if gotErr != nil {
 				t.Fatalf("BuildNodeFromTemplate unexpected error: %v", gotErr)
 			}

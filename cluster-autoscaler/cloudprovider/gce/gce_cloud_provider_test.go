@@ -58,9 +58,9 @@ func (m *gceManagerMock) GetMigForInstance(instance GceRef) (Mig, error) {
 	return args.Get(0).(*gceMig), args.Error(1)
 }
 
-func (m *gceManagerMock) GetMigNodes(mig Mig) ([]GceInstance, error) {
+func (m *gceManagerMock) GetMigNodes(mig Mig) ([]cloudprovider.Instance, error) {
 	args := m.Called(mig)
-	return args.Get(0).([]GceInstance), args.Error(1)
+	return args.Get(0).([]cloudprovider.Instance), args.Error(1)
 }
 
 func (m *gceManagerMock) Refresh() error {
@@ -297,24 +297,18 @@ func TestMig(t *testing.T) {
 	// Test DecreaseTargetSize.
 	gceManagerMock.On("GetMigSize", mock.AnythingOfType("*gce.gceMig")).Return(int64(3), nil).Once()
 	gceManagerMock.On("GetMigNodes", mock.AnythingOfType("*gce.gceMig")).Return(
-		[]GceInstance{
+		[]cloudprovider.Instance{
 			{
-				Instance: cloudprovider.Instance{
-					Id: "gce://project1/us-central1-b/gke-cluster-1-default-pool-f7607aac-9j4g",
-					Status: &cloudprovider.InstanceStatus{
-						State: cloudprovider.InstanceRunning,
-					},
+				Id: "gce://project1/us-central1-b/gke-cluster-1-default-pool-f7607aac-9j4g",
+				Status: &cloudprovider.InstanceStatus{
+					State: cloudprovider.InstanceRunning,
 				},
-				NumericId: 1,
 			},
 			{
-				Instance: cloudprovider.Instance{
-					Id: "gce://project1/us-central1-b/gke-cluster-1-default-pool-f7607aac-dck1",
-					Status: &cloudprovider.InstanceStatus{
-						State: cloudprovider.InstanceRunning,
-					},
+				Id: "gce://project1/us-central1-b/gke-cluster-1-default-pool-f7607aac-dck1",
+				Status: &cloudprovider.InstanceStatus{
+					State: cloudprovider.InstanceRunning,
 				},
-				NumericId: 222,
 			},
 		}, nil).Once()
 	gceManagerMock.On("SetMigSize", mock.AnythingOfType("*gce.gceMig"), int64(2)).Return(nil).Once()
@@ -330,24 +324,18 @@ func TestMig(t *testing.T) {
 	// Test DecreaseTargetSize - fail on deleting existing nodes.
 	gceManagerMock.On("GetMigSize", mock.AnythingOfType("*gce.gceMig")).Return(int64(3), nil).Once()
 	gceManagerMock.On("GetMigNodes", mock.AnythingOfType("*gce.gceMig")).Return(
-		[]GceInstance{
+		[]cloudprovider.Instance{
 			{
-				Instance: cloudprovider.Instance{
-					Id: "gce://project1/us-central1-b/gke-cluster-1-default-pool-f7607aac-9j4g",
-					Status: &cloudprovider.InstanceStatus{
-						State: cloudprovider.InstanceRunning,
-					},
+				Id: "gce://project1/us-central1-b/gke-cluster-1-default-pool-f7607aac-9j4g",
+				Status: &cloudprovider.InstanceStatus{
+					State: cloudprovider.InstanceRunning,
 				},
-				NumericId: 1111,
 			},
 			{
-				Instance: cloudprovider.Instance{
-					Id: "gce://project1/us-central1-b/gke-cluster-1-default-pool-f7607aac-dck1",
-					Status: &cloudprovider.InstanceStatus{
-						State: cloudprovider.InstanceRunning,
-					},
+				Id: "gce://project1/us-central1-b/gke-cluster-1-default-pool-f7607aac-dck1",
+				Status: &cloudprovider.InstanceStatus{
+					State: cloudprovider.InstanceRunning,
 				},
-				NumericId: 333,
 			},
 		}, nil).Once()
 	err = mig1.DecreaseTargetSize(-2)
@@ -407,24 +395,18 @@ func TestMig(t *testing.T) {
 
 	// Test Nodes.
 	gceManagerMock.On("GetMigNodes", mock.AnythingOfType("*gce.gceMig")).Return(
-		[]GceInstance{
+		[]cloudprovider.Instance{
 			{
-				Instance: cloudprovider.Instance{
-					Id: "gce://project1/us-central1-b/gke-cluster-1-default-pool-f7607aac-9j4g",
-					Status: &cloudprovider.InstanceStatus{
-						State: cloudprovider.InstanceRunning,
-					},
+				Id: "gce://project1/us-central1-b/gke-cluster-1-default-pool-f7607aac-9j4g",
+				Status: &cloudprovider.InstanceStatus{
+					State: cloudprovider.InstanceRunning,
 				},
-				NumericId: 1,
 			},
 			{
-				Instance: cloudprovider.Instance{
-					Id: "gce://project1/us-central1-b/gke-cluster-1-default-pool-f7607aac-dck1",
-					Status: &cloudprovider.InstanceStatus{
-						State: cloudprovider.InstanceRunning,
-					},
+				Id: "gce://project1/us-central1-b/gke-cluster-1-default-pool-f7607aac-dck1",
+				Status: &cloudprovider.InstanceStatus{
+					State: cloudprovider.InstanceRunning,
 				},
-				NumericId: 2,
 			},
 		}, nil).Once()
 	nodes, err := mig1.Nodes()

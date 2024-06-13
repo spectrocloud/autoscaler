@@ -19,7 +19,7 @@ package stats
 import (
 	"context"
 	"fmt"
-	"path/filepath"
+	"path"
 	"sort"
 	"strings"
 
@@ -152,7 +152,6 @@ func (p *cadvisorStatsProvider) ListPodStats(_ context.Context) ([]statsapi.PodS
 			cpu, memory := cadvisorInfoToCPUandMemoryStats(podInfo)
 			podStats.CPU = cpu
 			podStats.Memory = memory
-			podStats.Swap = cadvisorInfoToSwapStats(podInfo)
 			podStats.ProcessStats = cadvisorInfoToProcessStats(podInfo)
 		}
 
@@ -228,7 +227,6 @@ func (p *cadvisorStatsProvider) ListPodCPUAndMemoryStats(_ context.Context) ([]s
 			cpu, memory := cadvisorInfoToCPUandMemoryStats(podInfo)
 			podStats.CPU = cpu
 			podStats.Memory = memory
-			podStats.Swap = cadvisorInfoToSwapStats(podInfo)
 		}
 		result = append(result, *podStats)
 	}
@@ -320,7 +318,7 @@ func filterTerminatedContainerInfoAndAssembleByPodCgroupKey(containerInfo map[st
 			podCgroupKey = internalCgroupName[len(internalCgroupName)-1]
 		} else {
 			// Take last component only.
-			podCgroupKey = filepath.Base(key)
+			podCgroupKey = path.Base(key)
 		}
 		cinfosByPodCgroupKey[podCgroupKey] = cinfo
 		if !isPodManagedContainer(&cinfo) {

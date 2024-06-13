@@ -15,7 +15,7 @@ const (
 	// validated. You might not be authorized to carry out the request. Make sure
 	// that your account is authorized to use the Amazon QuickSight service, that
 	// your policies have the correct permissions, and that you are using the correct
-	// credentials.
+	// access keys.
 	ErrCodeAccessDeniedException = "AccessDeniedException"
 
 	// ErrCodeConcurrentUpdatingException for service response error code
@@ -62,13 +62,6 @@ const (
 	//
 	// One or more parameters has a value that isn't valid.
 	ErrCodeInvalidParameterValueException = "InvalidParameterValueException"
-
-	// ErrCodeInvalidRequestException for service response error code
-	// "InvalidRequestException".
-	//
-	// You don't have this feature activated for your account. To fix this issue,
-	// contact Amazon Web Services support.
-	ErrCodeInvalidRequestException = "InvalidRequestException"
 
 	// ErrCodeLimitExceededException for service response error code
 	// "LimitExceededException".
@@ -153,7 +146,6 @@ var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
 	"InternalFailureException":                 newErrorInternalFailureException,
 	"InvalidNextTokenException":                newErrorInvalidNextTokenException,
 	"InvalidParameterValueException":           newErrorInvalidParameterValueException,
-	"InvalidRequestException":                  newErrorInvalidRequestException,
 	"LimitExceededException":                   newErrorLimitExceededException,
 	"PreconditionNotMetException":              newErrorPreconditionNotMetException,
 	"ResourceExistsException":                  newErrorResourceExistsException,

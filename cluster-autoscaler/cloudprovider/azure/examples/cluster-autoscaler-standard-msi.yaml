@@ -154,9 +154,9 @@ spec:
         - effect: NoSchedule
           operator: "Equal"
           value: "true"
-          key: node-role.kubernetes.io/control-plane
+          key: node-role.kubernetes.io/master
       nodeSelector:
-        kubernetes.io/role: control-plane
+        kubernetes.io/role: master
       containers:
         - command:
             - ./cluster-autoscaler

@@ -48,7 +48,7 @@ const (
 	// ErrCodeNoAvailableOrganizationException for service response error code
 	// "NoAvailableOrganizationException".
 	//
-	// The Amazon Web Services account making this call is not a member of an organization.
+	// The account making this call is not a member of an organization.
 	ErrCodeNoAvailableOrganizationException = "NoAvailableOrganizationException"
 
 	// ErrCodeNoSuchResourceException for service response error code
@@ -60,8 +60,7 @@ const (
 	// ErrCodeOrganizationNotInAllFeaturesModeException for service response error code
 	// "OrganizationNotInAllFeaturesModeException".
 	//
-	// The organization that your Amazon Web Services account belongs to is not
-	// in All Features mode.
+	// The organization that your account belongs to is not in All Features mode.
 	ErrCodeOrganizationNotInAllFeaturesModeException = "OrganizationNotInAllFeaturesModeException"
 
 	// ErrCodeQuotaExceededException for service response error code
@@ -99,8 +98,7 @@ const (
 	// ErrCodeTemplatesNotAvailableInRegionException for service response error code
 	// "TemplatesNotAvailableInRegionException".
 	//
-	// The Service Quotas template is not available in this Amazon Web Services
-	// Region.
+	// The Service Quotas template is not available in this AWS Region.
 	ErrCodeTemplatesNotAvailableInRegionException = "TemplatesNotAvailableInRegionException"
 
 	// ErrCodeTooManyRequestsException for service response error code

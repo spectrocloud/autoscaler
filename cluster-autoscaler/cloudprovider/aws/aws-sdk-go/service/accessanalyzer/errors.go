@@ -26,12 +26,6 @@ const (
 	// Internal server error.
 	ErrCodeInternalServerException = "InternalServerException"
 
-	// ErrCodeInvalidParameterException for service response error code
-	// "InvalidParameterException".
-	//
-	// The specified parameter is invalid.
-	ErrCodeInvalidParameterException = "InvalidParameterException"
-
 	// ErrCodeResourceNotFoundException for service response error code
 	// "ResourceNotFoundException".
 	//
@@ -50,12 +44,6 @@ const (
 	// Throttling limit exceeded error.
 	ErrCodeThrottlingException = "ThrottlingException"
 
-	// ErrCodeUnprocessableEntityException for service response error code
-	// "UnprocessableEntityException".
-	//
-	// The specified entity could not be processed.
-	ErrCodeUnprocessableEntityException = "UnprocessableEntityException"
-
 	// ErrCodeValidationException for service response error code
 	// "ValidationException".
 	//
@@ -67,10 +55,8 @@ var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
 	"AccessDeniedException":         newErrorAccessDeniedException,
 	"ConflictException":             newErrorConflictException,
 	"InternalServerException":       newErrorInternalServerException,
-	"InvalidParameterException":     newErrorInvalidParameterException,
 	"ResourceNotFoundException":     newErrorResourceNotFoundException,
 	"ServiceQuotaExceededException": newErrorServiceQuotaExceededException,
 	"ThrottlingException":           newErrorThrottlingException,
-	"UnprocessableEntityException":  newErrorUnprocessableEntityException,
 	"ValidationException":           newErrorValidationException,
 }

@@ -17,31 +17,31 @@ limitations under the License.
 package ionoscloud
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
+	"github.com/google/uuid"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider"
 	ionos "k8s.io/autoscaler/cluster-autoscaler/cloudprovider/ionoscloud/ionos-cloud-sdk-go"
 )
 
 const (
-	// ProviderIDPrefix is the prefix of the provider id of a Kubernetes node object.
-	ProviderIDPrefix = "ionos://"
+	// ProviderIdPrefix is the prefix of the provider id of a Kubernetes node object.
+	ProviderIdPrefix = "ionos://"
 	// ErrorCodeUnknownState is set if the IonosCloud Kubernetes instace has an unknown state.
 	ErrorCodeUnknownState = "UNKNOWN_STATE"
 )
 
-var errMissingNodeID = errors.New("missing node ID")
+var errMissingNodeID = fmt.Errorf("missing node ID")
 
-// convertToInstanceID converts an IonosCloud kubernetes node Id to a cloudprovider.Instance Id.
-func convertToInstanceID(nodeID string) string {
-	return fmt.Sprintf("%s%s", ProviderIDPrefix, nodeID)
+// convertToInstanceId converts an IonosCloud kubernetes node Id to a cloudprovider.Instance Id.
+func convertToInstanceId(nodeId string) string {
+	return fmt.Sprintf("%s%s", ProviderIdPrefix, nodeId)
 }
 
-// convertToNodeID converts a cloudprovider.Instance Id to an IonosCloud kubernetes node Id.
-func convertToNodeID(providerID string) string {
-	return strings.TrimPrefix(providerID, ProviderIDPrefix)
+// convertToNodeId converts a cloudprovider.Instance Id to an IonosCloud kubernetes node Id.
+func convertToNodeId(providerId string) string {
+	return strings.TrimPrefix(providerId, ProviderIdPrefix)
 }
 
 // convertToInstances converts a list IonosCloud kubernetes nodes to a list of cloudprovider.Instances.
@@ -63,7 +63,7 @@ func convertToInstance(node ionos.KubernetesNode) (cloudprovider.Instance, error
 		return cloudprovider.Instance{}, errMissingNodeID
 	}
 	return cloudprovider.Instance{
-		Id:     convertToInstanceID(*node.Id),
+		Id:     convertToInstanceId(*node.Id),
 		Status: convertToInstanceStatus(*node.Metadata.State),
 	}, nil
 }
@@ -82,8 +82,13 @@ func convertToInstanceStatus(nodeState string) *cloudprovider.InstanceStatus {
 		st.ErrorInfo = &cloudprovider.InstanceErrorInfo{
 			ErrorClass:   cloudprovider.OtherErrorClass,
 			ErrorCode:    ErrorCodeUnknownState,
-			ErrorMessage: "Unknown node state: " + nodeState,
+			ErrorMessage: fmt.Sprintf("Unknown node state: %s", nodeState),
 		}
 	}
 	return st
+}
+
+// NewUUID returns a new UUID as string.
+func NewUUID() string {
+	return uuid.New().String()
 }

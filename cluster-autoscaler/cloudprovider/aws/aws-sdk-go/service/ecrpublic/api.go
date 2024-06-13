@@ -56,10 +56,10 @@ func (c *ECRPublic) BatchCheckLayerAvailabilityRequest(input *BatchCheckLayerAva
 
 // BatchCheckLayerAvailability API operation for Amazon Elastic Container Registry Public.
 //
-// Checks the availability of one or more image layers that are within a repository
-// in a public registry. When an image is pushed to a repository, each image
-// layer is checked to verify if it has been uploaded before. If it has been
-// uploaded, then the image layer is skipped.
+// Checks the availability of one or more image layers within a repository in
+// a public registry. When an image is pushed to a repository, each image layer
+// is checked to verify if it has been uploaded before. If it has been uploaded,
+// then the image layer is skipped.
 //
 // This operation is used by the Amazon ECR proxy and is not generally used
 // by customers for pulling and pushing images. In most cases, you should use
@@ -75,8 +75,8 @@ func (c *ECRPublic) BatchCheckLayerAvailabilityRequest(input *BatchCheckLayerAva
 // Returned Error Types:
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 //   - InvalidParameterException
 //     The specified parameter is invalid. Review the available parameters for the
@@ -86,10 +86,7 @@ func (c *ECRPublic) BatchCheckLayerAvailabilityRequest(input *BatchCheckLayerAva
 //     These errors are usually caused by a server-side issue.
 //
 //   - RegistryNotFoundException
-//     The registry doesn't exist.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The registry does not exist.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/BatchCheckLayerAvailability
 func (c *ECRPublic) BatchCheckLayerAvailability(input *BatchCheckLayerAvailabilityInput) (*BatchCheckLayerAvailabilityOutput, error) {
@@ -156,15 +153,15 @@ func (c *ECRPublic) BatchDeleteImageRequest(input *BatchDeleteImageInput) (req *
 
 // BatchDeleteImage API operation for Amazon Elastic Container Registry Public.
 //
-// Deletes a list of specified images that are within a repository in a public
-// registry. Images are specified with either an imageTag or imageDigest.
+// Deletes a list of specified images within a repository in a public registry.
+// Images are specified with either an imageTag or imageDigest.
 //
 // You can remove a tag from an image by specifying the image's tag in your
 // request. When you remove the last tag from an image, the image is deleted
 // from your repository.
 //
 // You can completely delete an image (and all of its tags) by specifying the
-// digest of the image in your request.
+// image's digest in your request.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -183,11 +180,8 @@ func (c *ECRPublic) BatchDeleteImageRequest(input *BatchDeleteImageInput) (req *
 //     API request.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/BatchDeleteImage
 func (c *ECRPublic) BatchDeleteImage(input *BatchDeleteImageInput) (*BatchDeleteImageOutput, error) {
@@ -254,12 +248,12 @@ func (c *ECRPublic) CompleteLayerUploadRequest(input *CompleteLayerUploadInput) 
 
 // CompleteLayerUpload API operation for Amazon Elastic Container Registry Public.
 //
-// Informs Amazon ECR that the image layer upload is complete for a specified
+// Informs Amazon ECR that the image layer upload has completed for a specified
 // public registry, repository name, and upload ID. You can optionally provide
 // a sha256 digest of the image layer for data validation purposes.
 //
-// When an image is pushed, the CompleteLayerUpload API is called once for each
-// new image layer to verify that the upload is complete.
+// When an image is pushed, the CompleteLayerUpload API is called once per each
+// new image layer to verify that the upload has completed.
 //
 // This operation is used by the Amazon ECR proxy and is not generally used
 // by customers for pulling and pushing images. In most cases, you should use
@@ -282,16 +276,16 @@ func (c *ECRPublic) CompleteLayerUploadRequest(input *CompleteLayerUploadInput) 
 //     API request.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 //   - UploadNotFoundException
-//     The upload can't be found, or the specified upload ID isn't valid for this
-//     repository.
+//     The upload could not be found, or the specified upload ID is not valid for
+//     this repository.
 //
 //   - InvalidLayerException
-//     The layer digest calculation performed by Amazon ECR when the image layer
-//     doesn't match the digest specified.
+//     The layer digest calculation performed by Amazon ECR upon receipt of the
+//     image layer does not match the digest specified.
 //
 //   - LayerPartTooSmallException
 //     Layer parts must be at least 5 MiB in size.
@@ -300,13 +294,13 @@ func (c *ECRPublic) CompleteLayerUploadRequest(input *CompleteLayerUploadInput) 
 //     The image layer already exists in the associated repository.
 //
 //   - EmptyUploadException
-//     The specified layer upload doesn't contain any layer parts.
+//     The specified layer upload does not contain any layer parts.
 //
 //   - RegistryNotFoundException
-//     The registry doesn't exist.
+//     The registry does not exist.
 //
 //   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The action is not supported in this Region.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/CompleteLayerUpload
 func (c *ECRPublic) CompleteLayerUpload(input *CompleteLayerUploadInput) (*CompleteLayerUploadOutput, error) {
@@ -406,12 +400,9 @@ func (c *ECRPublic) CreateRepositoryRequest(input *CreateRepositoryInput) (req *
 //     The specified repository already exists in the specified registry.
 //
 //   - LimitExceededException
-//     The operation didn't succeed because it would have exceeded a service limit
+//     The operation did not succeed because it would have exceeded a service limit
 //     for your account. For more information, see Amazon ECR Service Quotas (https://docs.aws.amazon.com/AmazonECR/latest/userguide/service-quotas.html)
 //     in the Amazon Elastic Container Registry User Guide.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/CreateRepository
 func (c *ECRPublic) CreateRepository(input *CreateRepositoryInput) (*CreateRepositoryOutput, error) {
@@ -479,9 +470,8 @@ func (c *ECRPublic) DeleteRepositoryRequest(input *DeleteRepositoryInput) (req *
 // DeleteRepository API operation for Amazon Elastic Container Registry Public.
 //
 // Deletes a repository in a public registry. If the repository contains images,
-// you must either manually delete all images in the repository or use the force
-// option. This option deletes all images on your behalf before deleting the
-// repository.
+// you must either delete all images in the repository or use the force option
+// which deletes all images on your behalf before deleting the repository.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -500,15 +490,12 @@ func (c *ECRPublic) DeleteRepositoryRequest(input *DeleteRepositoryInput) (req *
 //     API request.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 //   - RepositoryNotEmptyException
 //     The specified repository contains images. To delete a repository that contains
 //     images, you must force the deletion with the force parameter.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/DeleteRepository
 func (c *ECRPublic) DeleteRepository(input *DeleteRepositoryInput) (*DeleteRepositoryOutput, error) {
@@ -575,7 +562,7 @@ func (c *ECRPublic) DeleteRepositoryPolicyRequest(input *DeleteRepositoryPolicyI
 
 // DeleteRepositoryPolicy API operation for Amazon Elastic Container Registry Public.
 //
-// Deletes the repository policy that's associated with the specified repository.
+// Deletes the repository policy associated with the specified repository.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -594,15 +581,12 @@ func (c *ECRPublic) DeleteRepositoryPolicyRequest(input *DeleteRepositoryPolicyI
 //     API request.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 //   - RepositoryPolicyNotFoundException
-//     The specified repository and registry combination doesn't have an associated
+//     The specified repository and registry combination does not have an associated
 //     repository policy.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/DeleteRepositoryPolicy
 func (c *ECRPublic) DeleteRepositoryPolicy(input *DeleteRepositoryPolicyInput) (*DeleteRepositoryPolicyOutput, error) {
@@ -694,11 +678,8 @@ func (c *ECRPublic) DescribeImageTagsRequest(input *DescribeImageTagsInput) (req
 //     API request.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/DescribeImageTags
 func (c *ECRPublic) DescribeImageTags(input *DescribeImageTagsInput) (*DescribeImageTagsOutput, error) {
@@ -822,13 +803,12 @@ func (c *ECRPublic) DescribeImagesRequest(input *DescribeImagesInput) (req *requ
 
 // DescribeImages API operation for Amazon Elastic Container Registry Public.
 //
-// Returns metadata that's related to the images in a repository in a public
-// registry.
+// Returns metadata about the images in a repository in a public registry.
 //
 // Beginning with Docker version 1.9, the Docker client compresses image layers
 // before pushing them to a V2 Docker registry. The output of the docker images
-// command shows the uncompressed image size. Therefore, it might return a larger
-// image size than the image sizes that are returned by DescribeImages.
+// command shows the uncompressed image size, so it may return a larger image
+// size than the image sizes returned by DescribeImages.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -847,14 +827,11 @@ func (c *ECRPublic) DescribeImagesRequest(input *DescribeImagesInput) (req *requ
 //     API request.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 //   - ImageNotFoundException
-//     The image requested doesn't exist in the specified repository.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The image requested does not exist in the specified repository.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/DescribeImages
 func (c *ECRPublic) DescribeImages(input *DescribeImagesInput) (*DescribeImagesOutput, error) {
@@ -994,7 +971,7 @@ func (c *ECRPublic) DescribeRegistriesRequest(input *DescribeRegistriesInput) (r
 //     API request.
 //
 //   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The action is not supported in this Region.
 //
 //   - ServerException
 //     These errors are usually caused by a server-side issue.
@@ -1121,7 +1098,7 @@ func (c *ECRPublic) DescribeRepositoriesRequest(input *DescribeRepositoriesInput
 
 // DescribeRepositories API operation for Amazon Elastic Container Registry Public.
 //
-// Describes repositories that are in a public registry.
+// Describes repositories in a public registry.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1140,11 +1117,8 @@ func (c *ECRPublic) DescribeRepositoriesRequest(input *DescribeRepositoriesInput
 //     API request.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/DescribeRepositories
 func (c *ECRPublic) DescribeRepositories(input *DescribeRepositoriesInput) (*DescribeRepositoriesOutput, error) {
@@ -1263,7 +1237,7 @@ func (c *ECRPublic) GetAuthorizationTokenRequest(input *GetAuthorizationTokenInp
 // GetAuthorizationToken API operation for Amazon Elastic Container Registry Public.
 //
 // Retrieves an authorization token. An authorization token represents your
-// IAM authentication credentials. You can use it to access any Amazon ECR registry
+// IAM authentication credentials and can be used to access any Amazon ECR registry
 // that your IAM principal has access to. The authorization token is valid for
 // 12 hours. This API requires the ecr-public:GetAuthorizationToken and sts:GetServiceBearerToken
 // permissions.
@@ -1283,9 +1257,6 @@ func (c *ECRPublic) GetAuthorizationTokenRequest(input *GetAuthorizationTokenInp
 //   - InvalidParameterException
 //     The specified parameter is invalid. Review the available parameters for the
 //     API request.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/GetAuthorizationToken
 func (c *ECRPublic) GetAuthorizationToken(input *GetAuthorizationTokenInput) (*GetAuthorizationTokenOutput, error) {
@@ -1367,7 +1338,7 @@ func (c *ECRPublic) GetRegistryCatalogDataRequest(input *GetRegistryCatalogDataI
 //     These errors are usually caused by a server-side issue.
 //
 //   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The action is not supported in this Region.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/GetRegistryCatalogData
 func (c *ECRPublic) GetRegistryCatalogData(input *GetRegistryCatalogDataInput) (*GetRegistryCatalogDataOutput, error) {
@@ -1453,15 +1424,9 @@ func (c *ECRPublic) GetRepositoryCatalogDataRequest(input *GetRepositoryCatalogD
 //     The specified parameter is invalid. Review the available parameters for the
 //     API request.
 //
-//   - RepositoryCatalogDataNotFoundException
-//     The repository catalog data doesn't exist.
-//
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/GetRepositoryCatalogData
 func (c *ECRPublic) GetRepositoryCatalogData(input *GetRepositoryCatalogDataInput) (*GetRepositoryCatalogDataOutput, error) {
@@ -1547,15 +1512,12 @@ func (c *ECRPublic) GetRepositoryPolicyRequest(input *GetRepositoryPolicyInput) 
 //     API request.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 //   - RepositoryPolicyNotFoundException
-//     The specified repository and registry combination doesn't have an associated
+//     The specified repository and registry combination does not have an associated
 //     repository policy.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/GetRepositoryPolicy
 func (c *ECRPublic) GetRepositoryPolicy(input *GetRepositoryPolicyInput) (*GetRepositoryPolicyOutput, error) {
@@ -1624,9 +1586,9 @@ func (c *ECRPublic) InitiateLayerUploadRequest(input *InitiateLayerUploadInput) 
 //
 // Notifies Amazon ECR that you intend to upload an image layer.
 //
-// When an image is pushed, the InitiateLayerUpload API is called once for each
-// image layer that hasn't already been uploaded. Whether an image layer uploads
-// is determined by the BatchCheckLayerAvailability API action.
+// When an image is pushed, the InitiateLayerUpload API is called once per image
+// layer that has not already been uploaded. Whether or not an image layer has
+// been uploaded is determined by the BatchCheckLayerAvailability API action.
 //
 // This operation is used by the Amazon ECR proxy and is not generally used
 // by customers for pulling and pushing images. In most cases, you should use
@@ -1649,14 +1611,14 @@ func (c *ECRPublic) InitiateLayerUploadRequest(input *InitiateLayerUploadInput) 
 //     API request.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 //   - RegistryNotFoundException
-//     The registry doesn't exist.
+//     The registry does not exist.
 //
 //   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The action is not supported in this Region.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/InitiateLayerUpload
 func (c *ECRPublic) InitiateLayerUpload(input *InitiateLayerUploadInput) (*InitiateLayerUploadOutput, error) {
@@ -1739,11 +1701,8 @@ func (c *ECRPublic) ListTagsForResourceRequest(input *ListTagsForResourceInput) 
 //     API request.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 //   - ServerException
 //     These errors are usually caused by a server-side issue.
@@ -1813,12 +1772,11 @@ func (c *ECRPublic) PutImageRequest(input *PutImageInput) (req *request.Request,
 
 // PutImage API operation for Amazon Elastic Container Registry Public.
 //
-// Creates or updates the image manifest and tags that are associated with an
-// image.
+// Creates or updates the image manifest and tags associated with an image.
 //
 // When an image is pushed and all new image layers have been uploaded, the
 // PutImage API is called once to create or update the image manifest and the
-// tags that are associated with the image.
+// tags associated with the image.
 //
 // This operation is used by the Amazon ECR proxy and is not generally used
 // by customers for pulling and pushing images. In most cases, you should use
@@ -1841,22 +1799,22 @@ func (c *ECRPublic) PutImageRequest(input *PutImageInput) (req *request.Request,
 //     API request.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 //   - ImageAlreadyExistsException
 //     The specified image has already been pushed, and there were no changes to
 //     the manifest or image tag after the last push.
 //
 //   - LayersNotFoundException
-//     The specified layers can't be found, or the specified layer isn't valid for
-//     this repository.
+//     The specified layers could not be found, or the specified layer is not valid
+//     for this repository.
 //
 //   - ReferencedImagesNotFoundException
-//     The manifest list is referencing an image that doesn't exist.
+//     The manifest list is referencing an image that does not exist.
 //
 //   - LimitExceededException
-//     The operation didn't succeed because it would have exceeded a service limit
+//     The operation did not succeed because it would have exceeded a service limit
 //     for your account. For more information, see Amazon ECR Service Quotas (https://docs.aws.amazon.com/AmazonECR/latest/userguide/service-quotas.html)
 //     in the Amazon Elastic Container Registry User Guide.
 //
@@ -1865,14 +1823,14 @@ func (c *ECRPublic) PutImageRequest(input *PutImageInput) (req *request.Request,
 //     is configured for tag immutability.
 //
 //   - ImageDigestDoesNotMatchException
-//     The specified image digest doesn't match the digest that Amazon ECR calculated
+//     The specified image digest does not match the digest that Amazon ECR calculated
 //     for the image.
 //
 //   - RegistryNotFoundException
-//     The registry doesn't exist.
+//     The registry does not exist.
 //
 //   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The action is not supported in this Region.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/PutImage
 func (c *ECRPublic) PutImage(input *PutImageInput) (*PutImageOutput, error) {
@@ -1939,7 +1897,7 @@ func (c *ECRPublic) PutRegistryCatalogDataRequest(input *PutRegistryCatalogDataI
 
 // PutRegistryCatalogData API operation for Amazon Elastic Container Registry Public.
 //
-// Create or update the catalog data for a public registry.
+// Create or updates the catalog data for a public registry.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1958,7 +1916,7 @@ func (c *ECRPublic) PutRegistryCatalogDataRequest(input *PutRegistryCatalogDataI
 //     API request.
 //
 //   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The action is not supported in this Region.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/PutRegistryCatalogData
 func (c *ECRPublic) PutRegistryCatalogData(input *PutRegistryCatalogDataInput) (*PutRegistryCatalogDataOutput, error) {
@@ -2044,11 +2002,8 @@ func (c *ECRPublic) PutRepositoryCatalogDataRequest(input *PutRepositoryCatalogD
 //     API request.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/PutRepositoryCatalogData
 func (c *ECRPublic) PutRepositoryCatalogData(input *PutRepositoryCatalogDataInput) (*PutRepositoryCatalogDataOutput, error) {
@@ -2137,11 +2092,8 @@ func (c *ECRPublic) SetRepositoryPolicyRequest(input *SetRepositoryPolicyInput) 
 //     API request.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/SetRepositoryPolicy
 func (c *ECRPublic) SetRepositoryPolicy(input *SetRepositoryPolicyInput) (*SetRepositoryPolicyOutput, error) {
@@ -2210,9 +2162,9 @@ func (c *ECRPublic) TagResourceRequest(input *TagResourceInput) (req *request.Re
 // TagResource API operation for Amazon Elastic Container Registry Public.
 //
 // Associates the specified tags to a resource with the specified resourceArn.
-// If existing tags on a resource aren't specified in the request parameters,
-// they aren't changed. When a resource is deleted, the tags associated with
-// that resource are also deleted.
+// If existing tags on a resource are not specified in the request parameters,
+// they are not changed. When a resource is deleted, the tags associated with
+// that resource are deleted as well.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -2237,11 +2189,8 @@ func (c *ECRPublic) TagResourceRequest(input *TagResourceInput) (req *request.Re
 //     of tags that can be applied to a repository is 50.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 //   - ServerException
 //     These errors are usually caused by a server-side issue.
@@ -2337,11 +2286,8 @@ func (c *ECRPublic) UntagResourceRequest(input *UntagResourceInput) (req *reques
 //     of tags that can be applied to a repository is 50.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
-//
-//   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 //   - ServerException
 //     These errors are usually caused by a server-side issue.
@@ -2414,8 +2360,8 @@ func (c *ECRPublic) UploadLayerPartRequest(input *UploadLayerPartInput) (req *re
 // Uploads an image layer part to Amazon ECR.
 //
 // When an image is pushed, each new image layer is uploaded in parts. The maximum
-// size of each image layer part can be 20971520 bytes (about 20MB). The UploadLayerPart
-// API is called once for each new image layer part.
+// size of each image layer part can be 20971520 bytes (or about 20MB). The
+// UploadLayerPart API is called once per each new image layer part.
 //
 // This operation is used by the Amazon ECR proxy and is not generally used
 // by customers for pulling and pushing images. In most cases, you should use
@@ -2438,27 +2384,27 @@ func (c *ECRPublic) UploadLayerPartRequest(input *UploadLayerPartInput) (req *re
 //     API request.
 //
 //   - InvalidLayerPartException
-//     The layer part size isn't valid, or the first byte specified isn't consecutive
+//     The layer part size is not valid, or the first byte specified is not consecutive
 //     to the last byte of a previous layer part upload.
 //
 //   - RepositoryNotFoundException
-//     The specified repository can't be found. Check the spelling of the specified
-//     repository and ensure that you're performing operations on the correct registry.
+//     The specified repository could not be found. Check the spelling of the specified
+//     repository and ensure that you are performing operations on the correct registry.
 //
 //   - UploadNotFoundException
-//     The upload can't be found, or the specified upload ID isn't valid for this
-//     repository.
+//     The upload could not be found, or the specified upload ID is not valid for
+//     this repository.
 //
 //   - LimitExceededException
-//     The operation didn't succeed because it would have exceeded a service limit
+//     The operation did not succeed because it would have exceeded a service limit
 //     for your account. For more information, see Amazon ECR Service Quotas (https://docs.aws.amazon.com/AmazonECR/latest/userguide/service-quotas.html)
 //     in the Amazon Elastic Container Registry User Guide.
 //
 //   - RegistryNotFoundException
-//     The registry doesn't exist.
+//     The registry does not exist.
 //
 //   - UnsupportedCommandException
-//     The action isn't supported in this Region.
+//     The action is not supported in this Region.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/ecr-public-2020-10-30/UploadLayerPart
 func (c *ECRPublic) UploadLayerPart(input *UploadLayerPartInput) (*UploadLayerPartOutput, error) {
@@ -2487,7 +2433,7 @@ type AuthorizationData struct {
 	_ struct{} `type:"structure"`
 
 	// A base64-encoded string that contains authorization data for a public Amazon
-	// ECR registry. When the string is decoded, it's presented in the format user:password
+	// ECR registry. When the string is decoded, it is presented in the format user:password
 	// for public registry authentication using docker login.
 	AuthorizationToken *string `locationName:"authorizationToken" type:"string"`
 
@@ -2534,12 +2480,12 @@ type BatchCheckLayerAvailabilityInput struct {
 	// LayerDigests is a required field
 	LayerDigests []*string `locationName:"layerDigests" min:"1" type:"list" required:"true"`
 
-	// The Amazon Web Services account ID, or registry alias, associated with the
-	// public registry that contains the image layers to check. If you do not specify
-	// a registry, the default public registry is assumed.
-	RegistryId *string `locationName:"registryId" min:"2" type:"string"`
+	// The AWS account ID associated with the public registry that contains the
+	// image layers to check. If you do not specify a registry, the default public
+	// registry is assumed.
+	RegistryId *string `locationName:"registryId" min:"1" type:"string"`
 
-	// The name of the repository that's associated with the image layers to check.
+	// The name of the repository that is associated with the image layers to check.
 	//
 	// RepositoryName is a required field
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string" required:"true"`
@@ -2572,8 +2518,8 @@ func (s *BatchCheckLayerAvailabilityInput) Validate() error {
 	if s.LayerDigests != nil && len(s.LayerDigests) < 1 {
 		invalidParams.Add(request.NewErrParamMinLen("LayerDigests", 1))
 	}
-	if s.RegistryId != nil && len(*s.RegistryId) < 2 {
-		invalidParams.Add(request.NewErrParamMinLen("RegistryId", 2))
+	if s.RegistryId != nil && len(*s.RegistryId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RegistryId", 1))
 	}
 	if s.RepositoryName == nil {
 		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
@@ -2612,7 +2558,7 @@ type BatchCheckLayerAvailabilityOutput struct {
 	// Any failures associated with the call.
 	Failures []*LayerFailure `locationName:"failures" type:"list"`
 
-	// A list of image layer objects that correspond to the image layer references
+	// A list of image layer objects corresponding to the image layer references
 	// in the request.
 	Layers []*Layer `locationName:"layers" type:"list"`
 }
@@ -2656,10 +2602,10 @@ type BatchDeleteImageInput struct {
 	// ImageIds is a required field
 	ImageIds []*ImageIdentifier `locationName:"imageIds" min:"1" type:"list" required:"true"`
 
-	// The Amazon Web Services account ID, or registry alias, that's associated
-	// with the registry that contains the image to delete. If you do not specify
-	// a registry, the default public registry is assumed.
-	RegistryId *string `locationName:"registryId" min:"2" type:"string"`
+	// The AWS account ID associated with the registry that contains the image to
+	// delete. If you do not specify a registry, the default public registry is
+	// assumed.
+	RegistryId *string `locationName:"registryId" type:"string"`
 
 	// The repository in a public registry that contains the image to delete.
 	//
@@ -2693,9 +2639,6 @@ func (s *BatchDeleteImageInput) Validate() error {
 	}
 	if s.ImageIds != nil && len(s.ImageIds) < 1 {
 		invalidParams.Add(request.NewErrParamMinLen("ImageIds", 1))
-	}
-	if s.RegistryId != nil && len(*s.RegistryId) < 2 {
-		invalidParams.Add(request.NewErrParamMinLen("RegistryId", 2))
 	}
 	if s.RepositoryName == nil {
 		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
@@ -2786,10 +2729,9 @@ type CompleteLayerUploadInput struct {
 	// LayerDigests is a required field
 	LayerDigests []*string `locationName:"layerDigests" min:"1" type:"list" required:"true"`
 
-	// The Amazon Web Services account ID, or registry alias, associated with the
-	// registry where layers are uploaded. If you do not specify a registry, the
-	// default public registry is assumed.
-	RegistryId *string `locationName:"registryId" min:"2" type:"string"`
+	// The AWS account ID associated with the registry to which to upload layers.
+	// If you do not specify a registry, the default public registry is assumed.
+	RegistryId *string `locationName:"registryId" min:"1" type:"string"`
 
 	// The name of the repository in a public registry to associate with the image
 	// layer.
@@ -2831,8 +2773,8 @@ func (s *CompleteLayerUploadInput) Validate() error {
 	if s.LayerDigests != nil && len(s.LayerDigests) < 1 {
 		invalidParams.Add(request.NewErrParamMinLen("LayerDigests", 1))
 	}
-	if s.RegistryId != nil && len(*s.RegistryId) < 2 {
-		invalidParams.Add(request.NewErrParamMinLen("RegistryId", 2))
+	if s.RegistryId != nil && len(*s.RegistryId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RegistryId", 1))
 	}
 	if s.RepositoryName == nil {
 		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
@@ -2880,13 +2822,13 @@ type CompleteLayerUploadOutput struct {
 	// The sha256 digest of the image layer.
 	LayerDigest *string `locationName:"layerDigest" type:"string"`
 
-	// The public registry ID that's associated with the request.
+	// The public registry ID associated with the request.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
-	// The repository name that's associated with the request.
+	// The repository name associated with the request.
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string"`
 
-	// The upload ID that's associated with the layer.
+	// The upload ID associated with the layer.
 	UploadId *string `locationName:"uploadId" type:"string"`
 }
 
@@ -2940,17 +2882,17 @@ type CreateRepositoryInput struct {
 	CatalogData *RepositoryCatalogDataInput `locationName:"catalogData" type:"structure"`
 
 	// The name to use for the repository. This appears publicly in the Amazon ECR
-	// Public Gallery. The repository name can be specified on its own (for example
-	// nginx-web-app) or prepended with a namespace to group the repository into
-	// a category (for example project-a/nginx-web-app).
+	// Public Gallery. The repository name may be specified on its own (such as
+	// nginx-web-app) or it can be prepended with a namespace to group the repository
+	// into a category (such as project-a/nginx-web-app).
 	//
 	// RepositoryName is a required field
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string" required:"true"`
 
-	// The metadata that you apply to each repository to help categorize and organize
-	// your repositories. Each tag consists of a key and an optional value. You
-	// define both of them. Tag keys can have a maximum character length of 128
-	// characters, and tag values can have a maximum length of 256 characters.
+	// The metadata that you apply to the repository to help you categorize and
+	// organize them. Each tag consists of a key and an optional value, both of
+	// which you define. Tag keys can have a maximum character length of 128 characters,
+	// and tag values can have a maximum length of 256 characters.
 	Tags []*Tag `locationName:"tags" type:"list"`
 }
 
@@ -3060,13 +3002,12 @@ func (s *CreateRepositoryOutput) SetRepository(v *Repository) *CreateRepositoryO
 type DeleteRepositoryInput struct {
 	_ struct{} `type:"structure"`
 
-	// The force option can be used to delete a repository that contains images.
-	// If the force option is not used, the repository must be empty prior to deletion.
+	// If a repository contains images, forces the deletion.
 	Force *bool `locationName:"force" type:"boolean"`
 
-	// The Amazon Web Services account ID that's associated with the public registry
-	// that contains the repository to delete. If you do not specify a registry,
-	// the default public registry is assumed.
+	// The AWS account ID associated with the public registry that contains the
+	// repository to delete. If you do not specify a registry, the default public
+	// registry is assumed.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
 	// The name of the repository to delete.
@@ -3161,13 +3102,13 @@ func (s *DeleteRepositoryOutput) SetRepository(v *Repository) *DeleteRepositoryO
 type DeleteRepositoryPolicyInput struct {
 	_ struct{} `type:"structure"`
 
-	// The Amazon Web Services account ID that's associated with the public registry
-	// that contains the repository policy to delete. If you do not specify a registry,
-	// the default public registry is assumed.
+	// The AWS account ID associated with the public registry that contains the
+	// repository policy to delete. If you do not specify a registry, the default
+	// public registry is assumed.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
-	// The name of the repository that's associated with the repository policy to
-	// delete.
+	// The name of the repository that is associated with the repository policy
+	// to delete.
 	//
 	// RepositoryName is a required field
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string" required:"true"`
@@ -3225,10 +3166,10 @@ type DeleteRepositoryPolicyOutput struct {
 	// The JSON repository policy that was deleted from the repository.
 	PolicyText *string `locationName:"policyText" type:"string"`
 
-	// The registry ID that's associated with the request.
+	// The registry ID associated with the request.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
-	// The repository name that's associated with the request.
+	// The repository name associated with the request.
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string"`
 }
 
@@ -3271,26 +3212,26 @@ func (s *DeleteRepositoryPolicyOutput) SetRepositoryName(v string) *DeleteReposi
 type DescribeImageTagsInput struct {
 	_ struct{} `type:"structure"`
 
-	// The maximum number of repository results that's returned by DescribeImageTags
-	// in paginated output. When this parameter is used, DescribeImageTags only
-	// returns maxResults results in a single page along with a nextToken response
-	// element. You can see the remaining results of the initial request by sending
-	// another DescribeImageTags request with the returned nextToken value. This
-	// value can be between 1 and 1000. If this parameter isn't used, then DescribeImageTags
-	// returns up to 100 results and a nextToken value, if applicable. If you specify
-	// images with imageIds, you can't use this option.
+	// The maximum number of repository results returned by DescribeImageTags in
+	// paginated output. When this parameter is used, DescribeImageTags only returns
+	// maxResults results in a single page along with a nextToken response element.
+	// The remaining results of the initial request can be seen by sending another
+	// DescribeImageTags request with the returned nextToken value. This value can
+	// be between 1 and 1000. If this parameter is not used, then DescribeImageTags
+	// returns up to 100 results and a nextToken value, if applicable. This option
+	// cannot be used when you specify images with imageIds.
 	MaxResults *int64 `locationName:"maxResults" min:"1" type:"integer"`
 
-	// The nextToken value that's returned from a previous paginated DescribeImageTags
+	// The nextToken value returned from a previous paginated DescribeImageTags
 	// request where maxResults was used and the results exceeded the value of that
 	// parameter. Pagination continues from the end of the previous results that
-	// returned the nextToken value. If there are no more results to return, this
-	// value is null. If you specify images with imageIds, you can't use this option.
+	// returned the nextToken value. This value is null when there are no more results
+	// to return. This option cannot be used when you specify images with imageIds.
 	NextToken *string `locationName:"nextToken" type:"string"`
 
-	// The Amazon Web Services account ID that's associated with the public registry
-	// that contains the repository where images are described. If you do not specify
-	// a registry, the default public registry is assumed.
+	// The AWS account ID associated with the public registry that contains the
+	// repository in which to describe images. If you do not specify a registry,
+	// the default public registry is assumed.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
 	// The name of the repository that contains the image tag details to describe.
@@ -3367,9 +3308,9 @@ type DescribeImageTagsOutput struct {
 	ImageTagDetails []*ImageTagDetail `locationName:"imageTagDetails" type:"list"`
 
 	// The nextToken value to include in a future DescribeImageTags request. When
-	// the results of a DescribeImageTags request exceed maxResults, you can use
-	// this value to retrieve the next page of results. If there are no more results
-	// to return, this value is null.
+	// the results of a DescribeImageTags request exceed maxResults, this value
+	// can be used to retrieve the next page of results. This value is null when
+	// there are no more results to return.
 	NextToken *string `locationName:"nextToken" type:"string"`
 }
 
@@ -3409,26 +3350,26 @@ type DescribeImagesInput struct {
 	// The list of image IDs for the requested repository.
 	ImageIds []*ImageIdentifier `locationName:"imageIds" min:"1" type:"list"`
 
-	// The maximum number of repository results that's returned by DescribeImages
-	// in paginated output. When this parameter is used, DescribeImages only returns
-	// maxResults results in a single page along with a nextToken response element.
-	// You can see the remaining results of the initial request by sending another
-	// DescribeImages request with the returned nextToken value. This value can
-	// be between 1 and 1000. If this parameter isn't used, then DescribeImages
-	// returns up to 100 results and a nextToken value, if applicable. If you specify
-	// images with imageIds, you can't use this option.
+	// The maximum number of repository results returned by DescribeImages in paginated
+	// output. When this parameter is used, DescribeImages only returns maxResults
+	// results in a single page along with a nextToken response element. The remaining
+	// results of the initial request can be seen by sending another DescribeImages
+	// request with the returned nextToken value. This value can be between 1 and
+	// 1000. If this parameter is not used, then DescribeImages returns up to 100
+	// results and a nextToken value, if applicable. This option cannot be used
+	// when you specify images with imageIds.
 	MaxResults *int64 `locationName:"maxResults" min:"1" type:"integer"`
 
-	// The nextToken value that's returned from a previous paginated DescribeImages
-	// request where maxResults was used and the results exceeded the value of that
-	// parameter. Pagination continues from the end of the previous results that
-	// returned the nextToken value. If there are no more results to return, this
-	// value is null. If you specify images with imageIds, you can't use this option.
+	// The nextToken value returned from a previous paginated DescribeImages request
+	// where maxResults was used and the results exceeded the value of that parameter.
+	// Pagination continues from the end of the previous results that returned the
+	// nextToken value. This value is null when there are no more results to return.
+	// This option cannot be used when you specify images with imageIds.
 	NextToken *string `locationName:"nextToken" type:"string"`
 
-	// The Amazon Web Services account ID that's associated with the public registry
-	// that contains the repository where images are described. If you do not specify
-	// a registry, the default public registry is assumed.
+	// The AWS account ID associated with the public registry that contains the
+	// repository in which to describe images. If you do not specify a registry,
+	// the default public registry is assumed.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
 	// The repository that contains the images to describe.
@@ -3524,9 +3465,9 @@ type DescribeImagesOutput struct {
 	ImageDetails []*ImageDetail `locationName:"imageDetails" type:"list"`
 
 	// The nextToken value to include in a future DescribeImages request. When the
-	// results of a DescribeImages request exceed maxResults, you can use this value
-	// to retrieve the next page of results. If there are no more results to return,
-	// this value is null.
+	// results of a DescribeImages request exceed maxResults, this value can be
+	// used to retrieve the next page of results. This value is null when there
+	// are no more results to return.
 	NextToken *string `locationName:"nextToken" type:"string"`
 }
 
@@ -3563,20 +3504,20 @@ func (s *DescribeImagesOutput) SetNextToken(v string) *DescribeImagesOutput {
 type DescribeRegistriesInput struct {
 	_ struct{} `type:"structure"`
 
-	// The maximum number of repository results that's returned by DescribeRegistries
-	// in paginated output. When this parameter is used, DescribeRegistries only
-	// returns maxResults results in a single page along with a nextToken response
-	// element. The remaining results of the initial request can be seen by sending
-	// another DescribeRegistries request with the returned nextToken value. This
-	// value can be between 1 and 1000. If this parameter isn't used, then DescribeRegistries
+	// The maximum number of repository results returned by DescribeRegistries in
+	// paginated output. When this parameter is used, DescribeRegistries only returns
+	// maxResults results in a single page along with a nextToken response element.
+	// The remaining results of the initial request can be seen by sending another
+	// DescribeRegistries request with the returned nextToken value. This value
+	// can be between 1 and 1000. If this parameter is not used, then DescribeRegistries
 	// returns up to 100 results and a nextToken value, if applicable.
 	MaxResults *int64 `locationName:"maxResults" min:"1" type:"integer"`
 
-	// The nextToken value that's returned from a previous paginated DescribeRegistries
+	// The nextToken value returned from a previous paginated DescribeRegistries
 	// request where maxResults was used and the results exceeded the value of that
 	// parameter. Pagination continues from the end of the previous results that
-	// returned the nextToken value. If there are no more results to return, this
-	// value is null.
+	// returned the nextToken value. This value is null when there are no more results
+	// to return.
 	//
 	// This token should be treated as an opaque identifier that is only used to
 	// retrieve the next items in a list and not for other programmatic purposes.
@@ -3630,12 +3571,12 @@ type DescribeRegistriesOutput struct {
 	_ struct{} `type:"structure"`
 
 	// The nextToken value to include in a future DescribeRepositories request.
-	// If the results of a DescribeRepositories request exceed maxResults, you can
-	// use this value to retrieve the next page of results. If there are no more
-	// results, this value is null.
+	// When the results of a DescribeRepositories request exceed maxResults, this
+	// value can be used to retrieve the next page of results. This value is null
+	// when there are no more results to return.
 	NextToken *string `locationName:"nextToken" type:"string"`
 
-	// An object that contains the details for a public registry.
+	// An object containing the details for a public registry.
 	//
 	// Registries is a required field
 	Registries []*Registry `locationName:"registries" type:"list" required:"true"`
@@ -3674,30 +3615,30 @@ func (s *DescribeRegistriesOutput) SetRegistries(v []*Registry) *DescribeRegistr
 type DescribeRepositoriesInput struct {
 	_ struct{} `type:"structure"`
 
-	// The maximum number of repository results that's returned by DescribeRepositories
+	// The maximum number of repository results returned by DescribeRepositories
 	// in paginated output. When this parameter is used, DescribeRepositories only
 	// returns maxResults results in a single page along with a nextToken response
-	// element. You can see the remaining results of the initial request by sending
+	// element. The remaining results of the initial request can be seen by sending
 	// another DescribeRepositories request with the returned nextToken value. This
-	// value can be between 1 and 1000. If this parameter isn't used, then DescribeRepositories
-	// returns up to 100 results and a nextToken value, if applicable. If you specify
-	// repositories with repositoryNames, you can't use this option.
+	// value can be between 1 and 1000. If this parameter is not used, then DescribeRepositories
+	// returns up to 100 results and a nextToken value, if applicable. This option
+	// cannot be used when you specify repositories with repositoryNames.
 	MaxResults *int64 `locationName:"maxResults" min:"1" type:"integer"`
 
-	// The nextToken value that's returned from a previous paginated DescribeRepositories
+	// The nextToken value returned from a previous paginated DescribeRepositories
 	// request where maxResults was used and the results exceeded the value of that
 	// parameter. Pagination continues from the end of the previous results that
-	// returned the nextToken value. If there are no more results to return, this
-	// value is null. If you specify repositories with repositoryNames, you can't
-	// use this option.
+	// returned the nextToken value. This value is null when there are no more results
+	// to return. This option cannot be used when you specify repositories with
+	// repositoryNames.
 	//
 	// This token should be treated as an opaque identifier that is only used to
 	// retrieve the next items in a list and not for other programmatic purposes.
 	NextToken *string `locationName:"nextToken" type:"string"`
 
-	// The Amazon Web Services account ID that's associated with the registry that
-	// contains the repositories to be described. If you do not specify a registry,
-	// the default public registry is assumed.
+	// The AWS account ID associated with the registry that contains the repositories
+	// to be described. If you do not specify a registry, the default public registry
+	// is assumed.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
 	// A list of repositories to describe. If this parameter is omitted, then all
@@ -3768,8 +3709,8 @@ type DescribeRepositoriesOutput struct {
 
 	// The nextToken value to include in a future DescribeRepositories request.
 	// When the results of a DescribeRepositories request exceed maxResults, this
-	// value can be used to retrieve the next page of results. If there are no more
-	// results to return, this value is null.
+	// value can be used to retrieve the next page of results. This value is null
+	// when there are no more results to return.
 	NextToken *string `locationName:"nextToken" type:"string"`
 
 	// A list of repository objects corresponding to valid repositories.
@@ -3806,7 +3747,7 @@ func (s *DescribeRepositoriesOutput) SetRepositories(v []*Repository) *DescribeR
 	return s
 }
 
-// The specified layer upload doesn't contain any layer parts.
+// The specified layer upload does not contain any layer parts.
 type EmptyUploadException struct {
 	_            struct{}                  `type:"structure"`
 	RespMetadata protocol.ResponseMetadata `json:"-" xml:"-"`
@@ -3981,9 +3922,9 @@ func (s *GetRegistryCatalogDataOutput) SetRegistryCatalogData(v *RegistryCatalog
 type GetRepositoryCatalogDataInput struct {
 	_ struct{} `type:"structure"`
 
-	// The Amazon Web Services account ID that's associated with the registry that
-	// contains the repositories to be described. If you do not specify a registry,
-	// the default public registry is assumed.
+	// The AWS account ID associated with the registry that contains the repositories
+	// to be described. If you do not specify a registry, the default public registry
+	// is assumed.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
 	// The name of the repository to retrieve the catalog metadata for.
@@ -4072,9 +4013,9 @@ func (s *GetRepositoryCatalogDataOutput) SetCatalogData(v *RepositoryCatalogData
 type GetRepositoryPolicyInput struct {
 	_ struct{} `type:"structure"`
 
-	// The Amazon Web Services account ID that's associated with the public registry
-	// that contains the repository. If you do not specify a registry, the default
-	// public registry is assumed.
+	// The AWS account ID associated with the public registry that contains the
+	// repository. If you do not specify a registry, the default public registry
+	// is assumed.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
 	// The name of the repository with the policy to retrieve.
@@ -4132,14 +4073,14 @@ func (s *GetRepositoryPolicyInput) SetRepositoryName(v string) *GetRepositoryPol
 type GetRepositoryPolicyOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The repository policy text that's associated with the repository. The policy
-	// text will be in JSON format.
+	// The repository policy text associated with the repository. The policy text
+	// will be in JSON format.
 	PolicyText *string `locationName:"policyText" type:"string"`
 
-	// The registry ID that's associated with the request.
+	// The registry ID associated with the request.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
-	// The repository name that's associated with the request.
+	// The repository name associated with the request.
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string"`
 }
 
@@ -4179,25 +4120,23 @@ func (s *GetRepositoryPolicyOutput) SetRepositoryName(v string) *GetRepositoryPo
 	return s
 }
 
-// An object that represents an Amazon ECR image.
+// An object representing an Amazon ECR image.
 type Image struct {
 	_ struct{} `type:"structure"`
 
-	// An object that contains the image tag and image digest associated with an
-	// image.
+	// An object containing the image tag and image digest associated with an image.
 	ImageId *ImageIdentifier `locationName:"imageId" type:"structure"`
 
-	// The image manifest that's associated with the image.
+	// The image manifest associated with the image.
 	ImageManifest *string `locationName:"imageManifest" min:"1" type:"string"`
 
 	// The manifest media type of the image.
 	ImageManifestMediaType *string `locationName:"imageManifestMediaType" type:"string"`
 
-	// The Amazon Web Services account ID that's associated with the registry containing
-	// the image.
-	RegistryId *string `locationName:"registryId" min:"2" type:"string"`
+	// The AWS account ID associated with the registry containing the image.
+	RegistryId *string `locationName:"registryId" min:"1" type:"string"`
 
-	// The name of the repository that's associated with the image.
+	// The name of the repository associated with the image.
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string"`
 }
 
@@ -4314,7 +4253,7 @@ func (s *ImageAlreadyExistsException) RequestID() string {
 	return s.RespMetadata.RequestID
 }
 
-// An object that describes an image that's returned by a DescribeImages operation.
+// An object that describes an image returned by a DescribeImages operation.
 type ImageDetail struct {
 	_ struct{} `type:"structure"`
 
@@ -4327,29 +4266,29 @@ type ImageDetail struct {
 	// The media type of the image manifest.
 	ImageManifestMediaType *string `locationName:"imageManifestMediaType" type:"string"`
 
-	// The date and time, expressed in standard JavaScript date format, that the
-	// current image was pushed to the repository at.
+	// The date and time, expressed in standard JavaScript date format, at which
+	// the current image was pushed to the repository.
 	ImagePushedAt *time.Time `locationName:"imagePushedAt" type:"timestamp"`
 
 	// The size, in bytes, of the image in the repository.
 	//
-	// If the image is a manifest list, this is the max size of all manifests in
-	// the list.
+	// If the image is a manifest list, this will be the max size of all manifests
+	// in the list.
 	//
 	// Beginning with Docker version 1.9, the Docker client compresses image layers
 	// before pushing them to a V2 Docker registry. The output of the docker images
-	// command shows the uncompressed image size, so it might return a larger image
-	// size than the image sizes that are returned by DescribeImages.
+	// command shows the uncompressed image size, so it may return a larger image
+	// size than the image sizes returned by DescribeImages.
 	ImageSizeInBytes *int64 `locationName:"imageSizeInBytes" type:"long"`
 
-	// The list of tags that's associated with this image.
+	// The list of tags associated with this image.
 	ImageTags []*string `locationName:"imageTags" type:"list"`
 
-	// The Amazon Web Services account ID that's associated with the public registry
-	// where this image belongs.
+	// The AWS account ID associated with the public registry to which this image
+	// belongs.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
-	// The name of the repository where this image belongs.
+	// The name of the repository to which this image belongs.
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string"`
 }
 
@@ -4419,7 +4358,7 @@ func (s *ImageDetail) SetRepositoryName(v string) *ImageDetail {
 	return s
 }
 
-// The specified image digest doesn't match the digest that Amazon ECR calculated
+// The specified image digest does not match the digest that Amazon ECR calculated
 // for the image.
 type ImageDigestDoesNotMatchException struct {
 	_            struct{}                  `type:"structure"`
@@ -4484,17 +4423,17 @@ func (s *ImageDigestDoesNotMatchException) RequestID() string {
 	return s.RespMetadata.RequestID
 }
 
-// An object that represents an Amazon ECR image failure.
+// An object representing an Amazon ECR image failure.
 type ImageFailure struct {
 	_ struct{} `type:"structure"`
 
-	// The code that's associated with the failure.
+	// The code associated with the failure.
 	FailureCode *string `locationName:"failureCode" type:"string" enum:"ImageFailureCode"`
 
 	// The reason for the failure.
 	FailureReason *string `locationName:"failureReason" type:"string"`
 
-	// The image ID that's associated with the failure.
+	// The image ID associated with the failure.
 	ImageId *ImageIdentifier `locationName:"imageId" type:"structure"`
 }
 
@@ -4541,7 +4480,7 @@ type ImageIdentifier struct {
 	// The sha256 digest of the image manifest.
 	ImageDigest *string `locationName:"imageDigest" type:"string"`
 
-	// The tag that's used for the image.
+	// The tag used for the image.
 	ImageTag *string `locationName:"imageTag" min:"1" type:"string"`
 }
 
@@ -4588,7 +4527,7 @@ func (s *ImageIdentifier) SetImageTag(v string) *ImageIdentifier {
 	return s
 }
 
-// The image requested doesn't exist in the specified repository.
+// The image requested does not exist in the specified repository.
 type ImageNotFoundException struct {
 	_            struct{}                  `type:"structure"`
 	RespMetadata protocol.ResponseMetadata `json:"-" xml:"-"`
@@ -4717,17 +4656,17 @@ func (s *ImageTagAlreadyExistsException) RequestID() string {
 	return s.RespMetadata.RequestID
 }
 
-// An object that represents the image tag details for an image.
+// An object representing the image tag details for an image.
 type ImageTagDetail struct {
 	_ struct{} `type:"structure"`
 
-	// The time stamp that indicates when the image tag was created.
+	// The time stamp indicating when the image tag was created.
 	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp"`
 
 	// An object that describes the details of an image.
 	ImageDetail *ReferencedImageDetail `locationName:"imageDetail" type:"structure"`
 
-	// The tag that's associated with the image.
+	// The tag associated with the image.
 	ImageTag *string `locationName:"imageTag" min:"1" type:"string"`
 }
 
@@ -4770,12 +4709,12 @@ func (s *ImageTagDetail) SetImageTag(v string) *ImageTagDetail {
 type InitiateLayerUploadInput struct {
 	_ struct{} `type:"structure"`
 
-	// The Amazon Web Services account ID, or registry alias, that's associated
-	// with the registry to which you intend to upload layers. If you do not specify
-	// a registry, the default public registry is assumed.
-	RegistryId *string `locationName:"registryId" min:"2" type:"string"`
+	// The AWS account ID associated with the registry to which you intend to upload
+	// layers. If you do not specify a registry, the default public registry is
+	// assumed.
+	RegistryId *string `locationName:"registryId" min:"1" type:"string"`
 
-	// The name of the repository that you want to upload layers to.
+	// The name of the repository to which you intend to upload layers.
 	//
 	// RepositoryName is a required field
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string" required:"true"`
@@ -4802,8 +4741,8 @@ func (s InitiateLayerUploadInput) GoString() string {
 // Validate inspects the fields of the type to determine if they are valid.
 func (s *InitiateLayerUploadInput) Validate() error {
 	invalidParams := request.ErrInvalidParams{Context: "InitiateLayerUploadInput"}
-	if s.RegistryId != nil && len(*s.RegistryId) < 2 {
-		invalidParams.Add(request.NewErrParamMinLen("RegistryId", 2))
+	if s.RegistryId != nil && len(*s.RegistryId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RegistryId", 1))
 	}
 	if s.RepositoryName == nil {
 		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
@@ -4872,8 +4811,8 @@ func (s *InitiateLayerUploadOutput) SetUploadId(v string) *InitiateLayerUploadOu
 	return s
 }
 
-// The layer digest calculation performed by Amazon ECR when the image layer
-// doesn't match the digest specified.
+// The layer digest calculation performed by Amazon ECR upon receipt of the
+// image layer does not match the digest specified.
 type InvalidLayerException struct {
 	_            struct{}                  `type:"structure"`
 	RespMetadata protocol.ResponseMetadata `json:"-" xml:"-"`
@@ -4937,7 +4876,7 @@ func (s *InvalidLayerException) RequestID() string {
 	return s.RespMetadata.RequestID
 }
 
-// The layer part size isn't valid, or the first byte specified isn't consecutive
+// The layer part size is not valid, or the first byte specified is not consecutive
 // to the last byte of a previous layer part upload.
 type InvalidLayerPartException struct {
 	_            struct{}                  `type:"structure"`
@@ -4948,13 +4887,13 @@ type InvalidLayerPartException struct {
 
 	Message_ *string `locationName:"message" type:"string"`
 
-	// The Amazon Web Services account ID that's associated with the layer part.
+	// The AWS account ID associated with the layer part.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
 	// The name of the repository.
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string"`
 
-	// The upload ID that's associated with the layer part.
+	// The upload ID associated with the layer part.
 	UploadId *string `locationName:"uploadId" type:"string"`
 }
 
@@ -5145,7 +5084,7 @@ func (s *InvalidTagParameterException) RequestID() string {
 	return s.RespMetadata.RequestID
 }
 
-// An object that represents an Amazon ECR image layer.
+// An object representing an Amazon ECR image layer.
 type Layer struct {
 	_ struct{} `type:"structure"`
 
@@ -5269,17 +5208,17 @@ func (s *LayerAlreadyExistsException) RequestID() string {
 	return s.RespMetadata.RequestID
 }
 
-// An object that represents an Amazon ECR image layer failure.
+// An object representing an Amazon ECR image layer failure.
 type LayerFailure struct {
 	_ struct{} `type:"structure"`
 
-	// The failure code that's associated with the failure.
+	// The failure code associated with the failure.
 	FailureCode *string `locationName:"failureCode" type:"string" enum:"LayerFailureCode"`
 
 	// The reason for the failure.
 	FailureReason *string `locationName:"failureReason" type:"string"`
 
-	// The layer digest that's associated with the failure.
+	// The layer digest associated with the failure.
 	LayerDigest *string `locationName:"layerDigest" type:"string"`
 }
 
@@ -5383,8 +5322,8 @@ func (s *LayerPartTooSmallException) RequestID() string {
 	return s.RespMetadata.RequestID
 }
 
-// The specified layers can't be found, or the specified layer isn't valid for
-// this repository.
+// The specified layers could not be found, or the specified layer is not valid
+// for this repository.
 type LayersNotFoundException struct {
 	_            struct{}                  `type:"structure"`
 	RespMetadata protocol.ResponseMetadata `json:"-" xml:"-"`
@@ -5448,7 +5387,7 @@ func (s *LayersNotFoundException) RequestID() string {
 	return s.RespMetadata.RequestID
 }
 
-// The operation didn't succeed because it would have exceeded a service limit
+// The operation did not succeed because it would have exceeded a service limit
 // for your account. For more information, see Amazon ECR Service Quotas (https://docs.aws.amazon.com/AmazonECR/latest/userguide/service-quotas.html)
 // in the Amazon Elastic Container Registry User Guide.
 type LimitExceededException struct {
@@ -5517,11 +5456,12 @@ func (s *LimitExceededException) RequestID() string {
 type ListTagsForResourceInput struct {
 	_ struct{} `type:"structure"`
 
-	// The Amazon Resource Name (ARN) that identifies the resource to list the tags
-	// for. Currently, the supported resource is an Amazon ECR Public repository.
+	// The Amazon Resource Name (ARN) that identifies the resource for which to
+	// list the tags. Currently, the supported resource is an Amazon ECR Public
+	// repository.
 	//
 	// ResourceArn is a required field
-	ResourceArn *string `locationName:"resourceArn" min:"1" type:"string" required:"true"`
+	ResourceArn *string `locationName:"resourceArn" type:"string" required:"true"`
 }
 
 // String returns the string representation.
@@ -5547,9 +5487,6 @@ func (s *ListTagsForResourceInput) Validate() error {
 	invalidParams := request.ErrInvalidParams{Context: "ListTagsForResourceInput"}
 	if s.ResourceArn == nil {
 		invalidParams.Add(request.NewErrParamRequired("ResourceArn"))
-	}
-	if s.ResourceArn != nil && len(*s.ResourceArn) < 1 {
-		invalidParams.Add(request.NewErrParamMinLen("ResourceArn", 1))
 	}
 
 	if invalidParams.Len() > 0 {
@@ -5598,16 +5535,16 @@ func (s *ListTagsForResourceOutput) SetTags(v []*Tag) *ListTagsForResourceOutput
 type PutImageInput struct {
 	_ struct{} `type:"structure"`
 
-	// The image digest of the image manifest that corresponds to the image.
+	// The image digest of the image manifest corresponding to the image.
 	ImageDigest *string `locationName:"imageDigest" type:"string"`
 
-	// The image manifest that corresponds to the image to be uploaded.
+	// The image manifest corresponding to the image to be uploaded.
 	//
 	// ImageManifest is a required field
 	ImageManifest *string `locationName:"imageManifest" min:"1" type:"string" required:"true"`
 
 	// The media type of the image manifest. If you push an image manifest that
-	// doesn't contain the mediaType field, you must specify the imageManifestMediaType
+	// does not contain the mediaType field, you must specify the imageManifestMediaType
 	// in the request.
 	ImageManifestMediaType *string `locationName:"imageManifestMediaType" type:"string"`
 
@@ -5616,12 +5553,12 @@ type PutImageInput struct {
 	// (OCI) formats.
 	ImageTag *string `locationName:"imageTag" min:"1" type:"string"`
 
-	// The Amazon Web Services account ID, or registry alias, that's associated
-	// with the public registry that contains the repository where the image is
-	// put. If you do not specify a registry, the default public registry is assumed.
-	RegistryId *string `locationName:"registryId" min:"2" type:"string"`
+	// The AWS account ID associated with the public registry that contains the
+	// repository in which to put the image. If you do not specify a registry, the
+	// default public registry is assumed.
+	RegistryId *string `locationName:"registryId" min:"1" type:"string"`
 
-	// The name of the repository where the image is put.
+	// The name of the repository in which to put the image.
 	//
 	// RepositoryName is a required field
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string" required:"true"`
@@ -5657,8 +5594,8 @@ func (s *PutImageInput) Validate() error {
 	if s.ImageTag != nil && len(*s.ImageTag) < 1 {
 		invalidParams.Add(request.NewErrParamMinLen("ImageTag", 1))
 	}
-	if s.RegistryId != nil && len(*s.RegistryId) < 2 {
-		invalidParams.Add(request.NewErrParamMinLen("RegistryId", 2))
+	if s.RegistryId != nil && len(*s.RegistryId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RegistryId", 1))
 	}
 	if s.RepositoryName == nil {
 		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
@@ -5817,9 +5754,8 @@ type PutRepositoryCatalogDataInput struct {
 	// CatalogData is a required field
 	CatalogData *RepositoryCatalogDataInput `locationName:"catalogData" type:"structure" required:"true"`
 
-	// The Amazon Web Services account ID that's associated with the public registry
-	// the repository is in. If you do not specify a registry, the default public
-	// registry is assumed.
+	// The AWS account ID associated with the public registry the repository is
+	// in. If you do not specify a registry, the default public registry is assumed.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
 	// The name of the repository to create or update the catalog data for.
@@ -5914,7 +5850,7 @@ func (s *PutRepositoryCatalogDataOutput) SetCatalogData(v *RepositoryCatalogData
 	return s
 }
 
-// An object that describes the image tag details that are returned by a DescribeImageTags
+// An object that describes the image tag details returned by a DescribeImageTags
 // action.
 type ReferencedImageDetail struct {
 	_ struct{} `type:"structure"`
@@ -5928,19 +5864,19 @@ type ReferencedImageDetail struct {
 	// The media type of the image manifest.
 	ImageManifestMediaType *string `locationName:"imageManifestMediaType" type:"string"`
 
-	// The date and time, expressed in standard JavaScript date format, which the
-	// current image tag was pushed to the repository at.
+	// The date and time, expressed in standard JavaScript date format, at which
+	// the current image tag was pushed to the repository.
 	ImagePushedAt *time.Time `locationName:"imagePushedAt" type:"timestamp"`
 
 	// The size, in bytes, of the image in the repository.
 	//
-	// If the image is a manifest list, this is the max size of all manifests in
-	// the list.
+	// If the image is a manifest list, this will be the max size of all manifests
+	// in the list.
 	//
 	// Beginning with Docker version 1.9, the Docker client compresses image layers
 	// before pushing them to a V2 Docker registry. The output of the docker images
-	// command shows the uncompressed image size, so it might return a larger image
-	// size than the image sizes that are returned by DescribeImages.
+	// command shows the uncompressed image size, so it may return a larger image
+	// size than the image sizes returned by DescribeImages.
 	ImageSizeInBytes *int64 `locationName:"imageSizeInBytes" type:"long"`
 }
 
@@ -5992,7 +5928,7 @@ func (s *ReferencedImageDetail) SetImageSizeInBytes(v int64) *ReferencedImageDet
 	return s
 }
 
-// The manifest list is referencing an image that doesn't exist.
+// The manifest list is referencing an image that does not exist.
 type ReferencedImagesNotFoundException struct {
 	_            struct{}                  `type:"structure"`
 	RespMetadata protocol.ResponseMetadata `json:"-" xml:"-"`
@@ -6060,7 +5996,7 @@ func (s *ReferencedImagesNotFoundException) RequestID() string {
 type Registry struct {
 	_ struct{} `type:"structure"`
 
-	// An array of objects that represents the aliases for a public registry.
+	// An array of objects representing the aliases for a public registry.
 	//
 	// Aliases is a required field
 	Aliases []*RegistryAlias `locationName:"aliases" type:"list" required:"true"`
@@ -6068,10 +6004,10 @@ type Registry struct {
 	// The Amazon Resource Name (ARN) of the public registry.
 	//
 	// RegistryArn is a required field
-	RegistryArn *string `locationName:"registryArn" min:"1" type:"string" required:"true"`
+	RegistryArn *string `locationName:"registryArn" type:"string" required:"true"`
 
-	// The Amazon Web Services account ID that's associated with the registry. If
-	// you do not specify a registry, the default public registry is assumed.
+	// The AWS account ID associated with the registry. If you do not specify a
+	// registry, the default public registry is assumed.
 	//
 	// RegistryId is a required field
 	RegistryId *string `locationName:"registryId" type:"string" required:"true"`
@@ -6082,9 +6018,9 @@ type Registry struct {
 	// RegistryUri is a required field
 	RegistryUri *string `locationName:"registryUri" type:"string" required:"true"`
 
-	// Indicates whether the account is a verified Amazon Web Services Marketplace
-	// vendor. If an account is verified, each public repository receives a verified
-	// account badge on the Amazon ECR Public Gallery.
+	// Whether the account is verified. This indicates whether the account is an
+	// AWS Marketplace vendor. If an account is verified, each public repository
+	// will received a verified account badge on the Amazon ECR Public Gallery.
 	//
 	// Verified is a required field
 	Verified *bool `locationName:"verified" type:"boolean" required:"true"`
@@ -6139,13 +6075,13 @@ func (s *Registry) SetVerified(v bool) *Registry {
 }
 
 // An object representing the aliases for a public registry. A public registry
-// is given an alias when it's created. However, a custom alias can be set using
-// the Amazon ECR console. For more information, see Registries (https://docs.aws.amazon.com/AmazonECR/latest/userguide/Registries.html)
+// is given an alias upon creation but a custom alias can be set using the Amazon
+// ECR console. For more information, see Registries (https://docs.aws.amazon.com/AmazonECR/latest/userguide/Registries.html)
 // in the Amazon Elastic Container Registry User Guide.
 type RegistryAlias struct {
 	_ struct{} `type:"structure"`
 
-	// Indicates whether the registry alias is the default alias for the registry.
+	// Whether or not the registry alias is the default alias for the registry.
 	// When the first public repository is created, your public registry is assigned
 	// a default registry alias.
 	//
@@ -6157,12 +6093,12 @@ type RegistryAlias struct {
 	// Name is a required field
 	Name *string `locationName:"name" min:"2" type:"string" required:"true"`
 
-	// Indicates whether the registry alias is the primary alias for the registry.
+	// Whether or not the registry alias is the primary alias for the registry.
 	// If true, the alias is the primary registry alias and is displayed in both
 	// the repository URL and the image URI used in the docker pull commands on
 	// the Amazon ECR Public Gallery.
 	//
-	// A registry alias that isn't the primary registry alias can be used in the
+	// A registry alias that is not the primary registry alias can be used in the
 	// repository URI in a docker pull command.
 	//
 	// PrimaryRegistryAlias is a required field
@@ -6252,7 +6188,7 @@ func (s *RegistryCatalogData) SetDisplayName(v string) *RegistryCatalogData {
 	return s
 }
 
-// The registry doesn't exist.
+// The registry does not exist.
 type RegistryNotFoundException struct {
 	_            struct{}                  `type:"structure"`
 	RespMetadata protocol.ResponseMetadata `json:"-" xml:"-"`
@@ -6323,15 +6259,15 @@ type Repository struct {
 	// The date and time, in JavaScript date format, when the repository was created.
 	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp"`
 
-	// The Amazon Web Services account ID that's associated with the public registry
-	// that contains the repository.
+	// The AWS account ID associated with the public registry that contains the
+	// repository.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
 	// The Amazon Resource Name (ARN) that identifies the repository. The ARN contains
-	// the arn:aws:ecr namespace, followed by the region of the repository, Amazon
-	// Web Services account ID of the repository owner, repository namespace, and
-	// repository name. For example, arn:aws:ecr:region:012345678910:repository/test.
-	RepositoryArn *string `locationName:"repositoryArn" min:"1" type:"string"`
+	// the arn:aws:ecr namespace, followed by the region of the repository, AWS
+	// account ID of the repository owner, repository namespace, and repository
+	// name. For example, arn:aws:ecr:region:012345678910:repository/test.
+	RepositoryArn *string `locationName:"repositoryArn" type:"string"`
 
 	// The name of the repository.
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string"`
@@ -6471,10 +6407,10 @@ type RepositoryCatalogData struct {
 	// The short description of the repository.
 	Description *string `locationName:"description" type:"string"`
 
-	// The URL that contains the logo that's associated with the repository.
+	// The URL containing the logo associated with the repository.
 	LogoUrl *string `locationName:"logoUrl" type:"string"`
 
-	// Indicates whether the repository is certified by Amazon Web Services Marketplace.
+	// Whether or not the repository is certified by AWS Marketplace.
 	MarketplaceCertified *bool `locationName:"marketplaceCertified" type:"boolean"`
 
 	// The operating system tags that are associated with the repository.
@@ -6548,30 +6484,26 @@ func (s *RepositoryCatalogData) SetUsageText(v string) *RepositoryCatalogData {
 	return s
 }
 
-// An object that contains the catalog data for a repository. This data is publicly
+// An object containing the catalog data for a repository. This data is publicly
 // visible in the Amazon ECR Public Gallery.
 type RepositoryCatalogDataInput struct {
 	_ struct{} `type:"structure"`
 
-	// A detailed description of the contents of the repository. It's publicly visible
-	// in the Amazon ECR Public Gallery. The text must be in markdown format.
+	// A detailed description of the contents of the repository. It is publicly
+	// visible in the Amazon ECR Public Gallery. The text must be in markdown format.
 	AboutText *string `locationName:"aboutText" type:"string"`
 
 	// The system architecture that the images in the repository are compatible
 	// with. On the Amazon ECR Public Gallery, the following supported architectures
-	// appear as badges on the repository and are used as search filters.
+	// will appear as badges on the repository and are used as search filters.
 	//
-	// If an unsupported tag is added to your repository catalog data, it's associated
-	// with the repository and can be retrieved using the API but isn't discoverable
-	// in the Amazon ECR Public Gallery.
+	//    * Linux
 	//
-	//    * ARM
+	//    * Windows
 	//
-	//    * ARM 64
-	//
-	//    * x86
-	//
-	//    * x86-64
+	// If an unsupported tag is added to your repository catalog data, it will be
+	// associated with the repository and can be retrieved using the API but will
+	// not be discoverable in the Amazon ECR Public Gallery.
 	Architectures []*string `locationName:"architectures" type:"list"`
 
 	// A short description of the contents of the repository. This text appears
@@ -6588,18 +6520,22 @@ type RepositoryCatalogDataInput struct {
 
 	// The operating systems that the images in the repository are compatible with.
 	// On the Amazon ECR Public Gallery, the following supported operating systems
-	// appear as badges on the repository and are used as search filters.
+	// will appear as badges on the repository and are used as search filters.
 	//
-	// If an unsupported tag is added to your repository catalog data, it's associated
-	// with the repository and can be retrieved using the API but isn't discoverable
-	// in the Amazon ECR Public Gallery.
+	//    * ARM
 	//
-	//    * Linux
+	//    * ARM 64
 	//
-	//    * Windows
+	//    * x86
+	//
+	//    * x86-64
+	//
+	// If an unsupported tag is added to your repository catalog data, it will be
+	// associated with the repository and can be retrieved using the API but will
+	// not be discoverable in the Amazon ECR Public Gallery.
 	OperatingSystems []*string `locationName:"operatingSystems" type:"list"`
 
-	// Detailed information about how to use the contents of the repository. It's
+	// Detailed information on how to use the contents of the repository. It is
 	// publicly visible in the Amazon ECR Public Gallery. The usage text provides
 	// context, support information, and additional usage details for users of the
 	// repository. The text must be in markdown format.
@@ -6658,70 +6594,6 @@ func (s *RepositoryCatalogDataInput) SetOperatingSystems(v []*string) *Repositor
 func (s *RepositoryCatalogDataInput) SetUsageText(v string) *RepositoryCatalogDataInput {
 	s.UsageText = &v
 	return s
-}
-
-// The repository catalog data doesn't exist.
-type RepositoryCatalogDataNotFoundException struct {
-	_            struct{}                  `type:"structure"`
-	RespMetadata protocol.ResponseMetadata `json:"-" xml:"-"`
-
-	Message_ *string `locationName:"message" type:"string"`
-}
-
-// String returns the string representation.
-//
-// API parameter values that are decorated as "sensitive" in the API will not
-// be included in the string output. The member name will be present, but the
-// value will be replaced with "sensitive".
-func (s RepositoryCatalogDataNotFoundException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation.
-//
-// API parameter values that are decorated as "sensitive" in the API will not
-// be included in the string output. The member name will be present, but the
-// value will be replaced with "sensitive".
-func (s RepositoryCatalogDataNotFoundException) GoString() string {
-	return s.String()
-}
-
-func newErrorRepositoryCatalogDataNotFoundException(v protocol.ResponseMetadata) error {
-	return &RepositoryCatalogDataNotFoundException{
-		RespMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s *RepositoryCatalogDataNotFoundException) Code() string {
-	return "RepositoryCatalogDataNotFoundException"
-}
-
-// Message returns the exception's message.
-func (s *RepositoryCatalogDataNotFoundException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s *RepositoryCatalogDataNotFoundException) OrigErr() error {
-	return nil
-}
-
-func (s *RepositoryCatalogDataNotFoundException) Error() string {
-	return fmt.Sprintf("%s: %s", s.Code(), s.Message())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s *RepositoryCatalogDataNotFoundException) StatusCode() int {
-	return s.RespMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s *RepositoryCatalogDataNotFoundException) RequestID() string {
-	return s.RespMetadata.RequestID
 }
 
 // The specified repository contains images. To delete a repository that contains
@@ -6789,8 +6661,8 @@ func (s *RepositoryNotEmptyException) RequestID() string {
 	return s.RespMetadata.RequestID
 }
 
-// The specified repository can't be found. Check the spelling of the specified
-// repository and ensure that you're performing operations on the correct registry.
+// The specified repository could not be found. Check the spelling of the specified
+// repository and ensure that you are performing operations on the correct registry.
 type RepositoryNotFoundException struct {
 	_            struct{}                  `type:"structure"`
 	RespMetadata protocol.ResponseMetadata `json:"-" xml:"-"`
@@ -6854,7 +6726,7 @@ func (s *RepositoryNotFoundException) RequestID() string {
 	return s.RespMetadata.RequestID
 }
 
-// The specified repository and registry combination doesn't have an associated
+// The specified repository and registry combination does not have an associated
 // repository policy.
 type RepositoryPolicyNotFoundException struct {
 	_            struct{}                  `type:"structure"`
@@ -6986,9 +6858,9 @@ func (s *ServerException) RequestID() string {
 type SetRepositoryPolicyInput struct {
 	_ struct{} `type:"structure"`
 
-	// If the policy that you want to set on a repository policy would prevent you
-	// from setting another policy in the future, you must force the SetRepositoryPolicy
-	// operation. This prevents accidental repository lockouts.
+	// If the policy you are attempting to set on a repository policy would prevent
+	// you from setting another policy in the future, you must force the SetRepositoryPolicy
+	// operation. This is intended to prevent accidental repository lock outs.
 	Force *bool `locationName:"force" type:"boolean"`
 
 	// The JSON repository policy text to apply to the repository. For more information,
@@ -6998,9 +6870,8 @@ type SetRepositoryPolicyInput struct {
 	// PolicyText is a required field
 	PolicyText *string `locationName:"policyText" type:"string" required:"true"`
 
-	// The Amazon Web Services account ID that's associated with the registry that
-	// contains the repository. If you do not specify a registry, the default public
-	// registry is assumed.
+	// The AWS account ID associated with the registry that contains the repository.
+	// If you do not specify a registry, the default public registry is assumed.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
 	// The name of the repository to receive the policy.
@@ -7073,13 +6944,13 @@ func (s *SetRepositoryPolicyInput) SetRepositoryName(v string) *SetRepositoryPol
 type SetRepositoryPolicyOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The JSON repository policy text that's applied to the repository.
+	// The JSON repository policy text applied to the repository.
 	PolicyText *string `locationName:"policyText" type:"string"`
 
-	// The registry ID that's associated with the request.
+	// The registry ID associated with the request.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
-	// The repository name that's associated with the request.
+	// The repository name associated with the request.
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string"`
 }
 
@@ -7120,9 +6991,9 @@ func (s *SetRepositoryPolicyOutput) SetRepositoryName(v string) *SetRepositoryPo
 }
 
 // The metadata that you apply to a resource to help you categorize and organize
-// them. Each tag consists of a key and an optional value. You define both.
-// Tag keys can have a maximum character length of 128 characters, and tag values
-// can have a maximum length of 256 characters.
+// them. Each tag consists of a key and an optional value, both of which you
+// define. Tag keys can have a maximum character length of 128 characters, and
+// tag values can have a maximum length of 256 characters.
 type Tag struct {
 	_ struct{} `type:"structure"`
 
@@ -7181,11 +7052,11 @@ func (s *Tag) SetValue(v string) *Tag {
 type TagResourceInput struct {
 	_ struct{} `type:"structure"`
 
-	// The Amazon Resource Name (ARN) of the resource to add tags to. Currently,
+	// The Amazon Resource Name (ARN) of the resource to which to add tags. Currently,
 	// the supported resource is an Amazon ECR Public repository.
 	//
 	// ResourceArn is a required field
-	ResourceArn *string `locationName:"resourceArn" min:"1" type:"string" required:"true"`
+	ResourceArn *string `locationName:"resourceArn" type:"string" required:"true"`
 
 	// The tags to add to the resource. A tag is an array of key-value pairs. Tag
 	// keys can have a maximum character length of 128 characters, and tag values
@@ -7218,9 +7089,6 @@ func (s *TagResourceInput) Validate() error {
 	invalidParams := request.ErrInvalidParams{Context: "TagResourceInput"}
 	if s.ResourceArn == nil {
 		invalidParams.Add(request.NewErrParamRequired("ResourceArn"))
-	}
-	if s.ResourceArn != nil && len(*s.ResourceArn) < 1 {
-		invalidParams.Add(request.NewErrParamMinLen("ResourceArn", 1))
 	}
 	if s.Tags == nil {
 		invalidParams.Add(request.NewErrParamRequired("Tags"))
@@ -7341,7 +7209,7 @@ func (s *TooManyTagsException) RequestID() string {
 	return s.RespMetadata.RequestID
 }
 
-// The action isn't supported in this Region.
+// The action is not supported in this Region.
 type UnsupportedCommandException struct {
 	_            struct{}                  `type:"structure"`
 	RespMetadata protocol.ResponseMetadata `json:"-" xml:"-"`
@@ -7408,11 +7276,11 @@ func (s *UnsupportedCommandException) RequestID() string {
 type UntagResourceInput struct {
 	_ struct{} `type:"structure"`
 
-	// The Amazon Resource Name (ARN) of the resource to delete tags from. Currently,
-	// the supported resource is an Amazon ECR Public repository.
+	// The Amazon Resource Name (ARN) of the resource from which to delete tags.
+	// Currently, the supported resource is an Amazon ECR Public repository.
 	//
 	// ResourceArn is a required field
-	ResourceArn *string `locationName:"resourceArn" min:"1" type:"string" required:"true"`
+	ResourceArn *string `locationName:"resourceArn" type:"string" required:"true"`
 
 	// The keys of the tags to be removed.
 	//
@@ -7443,9 +7311,6 @@ func (s *UntagResourceInput) Validate() error {
 	invalidParams := request.ErrInvalidParams{Context: "UntagResourceInput"}
 	if s.ResourceArn == nil {
 		invalidParams.Add(request.NewErrParamRequired("ResourceArn"))
-	}
-	if s.ResourceArn != nil && len(*s.ResourceArn) < 1 {
-		invalidParams.Add(request.NewErrParamMinLen("ResourceArn", 1))
 	}
 	if s.TagKeys == nil {
 		invalidParams.Add(request.NewErrParamRequired("TagKeys"))
@@ -7512,12 +7377,12 @@ type UploadLayerPartInput struct {
 	// PartLastByte is a required field
 	PartLastByte *int64 `locationName:"partLastByte" type:"long" required:"true"`
 
-	// The Amazon Web Services account ID, or registry alias, that's associated
-	// with the registry that you're uploading layer parts to. If you do not specify
-	// a registry, the default public registry is assumed.
-	RegistryId *string `locationName:"registryId" min:"2" type:"string"`
+	// The AWS account ID associated with the registry to which you are uploading
+	// layer parts. If you do not specify a registry, the default public registry
+	// is assumed.
+	RegistryId *string `locationName:"registryId" min:"1" type:"string"`
 
-	// The name of the repository that you're uploading layer parts to.
+	// The name of the repository to which you are uploading layer parts.
 	//
 	// RepositoryName is a required field
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string" required:"true"`
@@ -7559,8 +7424,8 @@ func (s *UploadLayerPartInput) Validate() error {
 	if s.PartLastByte == nil {
 		invalidParams.Add(request.NewErrParamRequired("PartLastByte"))
 	}
-	if s.RegistryId != nil && len(*s.RegistryId) < 2 {
-		invalidParams.Add(request.NewErrParamMinLen("RegistryId", 2))
+	if s.RegistryId != nil && len(*s.RegistryId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RegistryId", 1))
 	}
 	if s.RepositoryName == nil {
 		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
@@ -7617,16 +7482,16 @@ func (s *UploadLayerPartInput) SetUploadId(v string) *UploadLayerPartInput {
 type UploadLayerPartOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The integer value of the last byte that's received in the request.
+	// The integer value of the last byte received in the request.
 	LastByteReceived *int64 `locationName:"lastByteReceived" type:"long"`
 
-	// The registry ID that's associated with the request.
+	// The registry ID associated with the request.
 	RegistryId *string `locationName:"registryId" type:"string"`
 
-	// The repository name that's associated with the request.
+	// The repository name associated with the request.
 	RepositoryName *string `locationName:"repositoryName" min:"2" type:"string"`
 
-	// The upload ID that's associated with the request.
+	// The upload ID associated with the request.
 	UploadId *string `locationName:"uploadId" type:"string"`
 }
 
@@ -7672,8 +7537,8 @@ func (s *UploadLayerPartOutput) SetUploadId(v string) *UploadLayerPartOutput {
 	return s
 }
 
-// The upload can't be found, or the specified upload ID isn't valid for this
-// repository.
+// The upload could not be found, or the specified upload ID is not valid for
+// this repository.
 type UploadNotFoundException struct {
 	_            struct{}                  `type:"structure"`
 	RespMetadata protocol.ResponseMetadata `json:"-" xml:"-"`

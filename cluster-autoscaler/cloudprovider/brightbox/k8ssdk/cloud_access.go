@@ -93,9 +93,6 @@ type CloudAccess interface {
 	DestroyCloudIP(identifier string) error
 
 	// ConfigMaps retrieves a list of all config maps
-	Images() ([]brightbox.Image, error)
-
-	// ConfigMaps retrieves a list of all config maps
 	ConfigMaps() ([]brightbox.ConfigMap, error)
 
 	// ConfigMap retrieves a detailed view on one config map

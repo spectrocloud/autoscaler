@@ -103,7 +103,6 @@ func (c *RPCService) EmptyStreamWithContext(ctx aws.Context, input *EmptyStreamI
 }
 
 var _ awserr.Error
-var _ time.Time
 
 // EmptyStreamEventStream provides the event stream handling for the EmptyStream.
 //
@@ -372,7 +371,6 @@ func (c *RPCService) GetEventStreamWithContext(ctx aws.Context, input *GetEventS
 }
 
 var _ awserr.Error
-var _ time.Time
 
 // GetEventStreamEventStream provides the event stream handling for the GetEventStream.
 //

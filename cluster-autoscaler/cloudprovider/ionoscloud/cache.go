@@ -17,12 +17,21 @@ limitations under the License.
 package ionoscloud
 
 import (
-	"maps"
 	"sync"
+	"time"
 
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider"
 	"k8s.io/klog/v2"
 )
+
+const nodeGroupCacheEntryTimeout = 2 * time.Minute
+
+type nodeGroupCacheEntry struct {
+	data cloudprovider.NodeGroup
+	ts   time.Time
+}
+
+var timeNow = time.Now
 
 // IonosCache caches resources to reduce API calls.
 // Cached state includes autoscaling limits, sizes and target sizes, a mapping of instances to node
@@ -30,7 +39,7 @@ import (
 type IonosCache struct {
 	mutex sync.Mutex
 
-	nodeGroups           map[string]cloudprovider.NodeGroup
+	nodeGroups           map[string]nodeGroupCacheEntry
 	nodesToNodeGroups    map[string]string
 	nodeGroupSizes       map[string]int
 	nodeGroupTargetSizes map[string]int
@@ -40,11 +49,11 @@ type IonosCache struct {
 // NewIonosCache initializes a new IonosCache.
 func NewIonosCache() *IonosCache {
 	return &IonosCache{
-		nodeGroups:           make(map[string]cloudprovider.NodeGroup),
-		nodesToNodeGroups:    make(map[string]string),
-		nodeGroupSizes:       make(map[string]int),
-		nodeGroupTargetSizes: make(map[string]int),
-		nodeGroupLockTable:   make(map[string]bool),
+		nodeGroups:           map[string]nodeGroupCacheEntry{},
+		nodesToNodeGroups:    map[string]string{},
+		nodeGroupSizes:       map[string]int{},
+		nodeGroupTargetSizes: map[string]int{},
+		nodeGroupLockTable:   map[string]bool{},
 	}
 }
 
@@ -53,7 +62,15 @@ func (cache *IonosCache) AddNodeGroup(newPool cloudprovider.NodeGroup) {
 	cache.mutex.Lock()
 	defer cache.mutex.Unlock()
 
-	cache.nodeGroups[newPool.Id()] = newPool
+	cache.nodeGroups[newPool.Id()] = nodeGroupCacheEntry{data: newPool}
+}
+
+func (cache *IonosCache) removeNodesForNodeGroupNoLock(id string) {
+	for nodeId, nodeGroupId := range cache.nodesToNodeGroups {
+		if nodeGroupId == id {
+			delete(cache.nodesToNodeGroups, nodeId)
+		}
+	}
 }
 
 // RemoveInstanceFromCache deletes an instance and its respective mapping to the node group from
@@ -62,10 +79,10 @@ func (cache *IonosCache) RemoveInstanceFromCache(id string) {
 	cache.mutex.Lock()
 	defer cache.mutex.Unlock()
 
-	if _, ok := cache.nodesToNodeGroups[id]; ok {
-		delete(cache.nodesToNodeGroups, id)
-		klog.V(5).Infof("Removed instance %s from cache", id)
-	}
+	klog.V(5).Infof("Removed instance %s from cache", id)
+	nodeGroupId := cache.nodesToNodeGroups[id]
+	delete(cache.nodesToNodeGroups, id)
+	cache.updateNodeGroupTimestampNoLock(nodeGroupId)
 }
 
 // SetInstancesCacheForNodeGroup overwrites cached instances and mappings for a node group.
@@ -73,28 +90,27 @@ func (cache *IonosCache) SetInstancesCacheForNodeGroup(id string, instances []cl
 	cache.mutex.Lock()
 	defer cache.mutex.Unlock()
 
-	maps.DeleteFunc(cache.nodesToNodeGroups, func(_, nodeGroupID string) bool {
-		return nodeGroupID == id
-	})
+	cache.removeNodesForNodeGroupNoLock(id)
 	cache.setInstancesCacheForNodeGroupNoLock(id, instances)
 }
 
 func (cache *IonosCache) setInstancesCacheForNodeGroupNoLock(id string, instances []cloudprovider.Instance) {
 	for _, instance := range instances {
-		nodeID := convertToNodeID(instance.Id)
-		cache.nodesToNodeGroups[nodeID] = id
+		nodeId := convertToNodeId(instance.Id)
+		cache.nodesToNodeGroups[nodeId] = id
 	}
+	cache.updateNodeGroupTimestampNoLock(id)
 }
 
-// GetNodeGroupIDs returns an unsorted list of cached node group ids.
-func (cache *IonosCache) GetNodeGroupIDs() []string {
+// GetNodeGroupIds returns an unsorted list of cached node group ids.
+func (cache *IonosCache) GetNodeGroupIds() []string {
 	cache.mutex.Lock()
 	defer cache.mutex.Unlock()
 
-	return cache.getNodeGroupIDs()
+	return cache.getNodeGroupIds()
 }
 
-func (cache *IonosCache) getNodeGroupIDs() []string {
+func (cache *IonosCache) getNodeGroupIds() []string {
 	ids := make([]string, 0, len(cache.nodeGroups))
 	for id := range cache.nodeGroups {
 		ids = append(ids, id)
@@ -109,26 +125,26 @@ func (cache *IonosCache) GetNodeGroups() []cloudprovider.NodeGroup {
 
 	nodeGroups := make([]cloudprovider.NodeGroup, 0, len(cache.nodeGroups))
 	for id := range cache.nodeGroups {
-		nodeGroups = append(nodeGroups, cache.nodeGroups[id])
+		nodeGroups = append(nodeGroups, cache.nodeGroups[id].data)
 	}
 	return nodeGroups
 }
 
 // GetNodeGroupForNode returns the node group for the given node.
 // Returns nil if either the mapping or the node group is not cached.
-func (cache *IonosCache) GetNodeGroupForNode(nodeID string) cloudprovider.NodeGroup {
+func (cache *IonosCache) GetNodeGroupForNode(nodeId string) cloudprovider.NodeGroup {
 	cache.mutex.Lock()
 	defer cache.mutex.Unlock()
 
-	nodeGroupID, found := cache.nodesToNodeGroups[nodeID]
+	id, found := cache.nodesToNodeGroups[nodeId]
 	if !found {
 		return nil
 	}
-	nodeGroup, found := cache.nodeGroups[nodeGroupID]
+	entry, found := cache.nodeGroups[id]
 	if !found {
 		return nil
 	}
-	return nodeGroup
+	return entry.data
 }
 
 // TryLockNodeGroup tries to write a node group lock entry.
@@ -202,4 +218,20 @@ func (cache *IonosCache) InvalidateNodeGroupTargetSize(id string) {
 	defer cache.mutex.Unlock()
 
 	delete(cache.nodeGroupTargetSizes, id)
+}
+
+// NodeGroupNeedsRefresh returns true when the instances for the given node group have not been
+// updated for more than 2 minutes.
+func (cache *IonosCache) NodeGroupNeedsRefresh(id string) bool {
+	cache.mutex.Lock()
+	defer cache.mutex.Unlock()
+
+	return timeNow().Sub(cache.nodeGroups[id].ts) > nodeGroupCacheEntryTimeout
+}
+
+func (cache *IonosCache) updateNodeGroupTimestampNoLock(id string) {
+	if entry, ok := cache.nodeGroups[id]; ok {
+		entry.ts = timeNow()
+		cache.nodeGroups[id] = entry
+	}
 }

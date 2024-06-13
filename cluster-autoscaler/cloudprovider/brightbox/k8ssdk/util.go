@@ -52,7 +52,7 @@ func MapZoneHandleToRegion(zoneHandle string) (string, error) {
 	return zoneHandle[:ix], nil
 }
 
-// getenvWithDefault retrieves the value of the environment variable
+// getEnvVarWithDefault retrieves the value of the environment variable
 // named by the key. If the variable is not present, return the default
 // value instead.
 func getenvWithDefault(key string, defaultValue string) string {

@@ -17,14 +17,13 @@ const (
 	// ErrCodeContactFlowNotPublishedException for service response error code
 	// "ContactFlowNotPublishedException".
 	//
-	// The flow has not been published.
+	// The contact flow has not been published.
 	ErrCodeContactFlowNotPublishedException = "ContactFlowNotPublishedException"
 
 	// ErrCodeContactNotFoundException for service response error code
 	// "ContactNotFoundException".
 	//
-	// The contact with the specified ID is not active or does not exist. Applies
-	// to Voice calls only, not to Chat or Task contacts.
+	// The contact with the specified ID is not active or does not exist.
 	ErrCodeContactNotFoundException = "ContactNotFoundException"
 
 	// ErrCodeDestinationNotAllowedException for service response error code
@@ -54,7 +53,7 @@ const (
 	// ErrCodeInvalidContactFlowException for service response error code
 	// "InvalidContactFlowException".
 	//
-	// The flow is not valid.
+	// The contact flow is not valid.
 	ErrCodeInvalidContactFlowException = "InvalidContactFlowException"
 
 	// ErrCodeInvalidContactFlowModuleException for service response error code
@@ -81,32 +80,11 @@ const (
 	// The allowed limit for the resource has been exceeded.
 	ErrCodeLimitExceededException = "LimitExceededException"
 
-	// ErrCodeMaximumResultReturnedException for service response error code
-	// "MaximumResultReturnedException".
-	//
-	// Maximum number (1000) of tags have been returned with current request. Consider
-	// changing request parameters to get more tags.
-	ErrCodeMaximumResultReturnedException = "MaximumResultReturnedException"
-
 	// ErrCodeOutboundContactNotPermittedException for service response error code
 	// "OutboundContactNotPermittedException".
 	//
 	// The contact is not permitted.
 	ErrCodeOutboundContactNotPermittedException = "OutboundContactNotPermittedException"
-
-	// ErrCodeOutputTypeNotFoundException for service response error code
-	// "OutputTypeNotFoundException".
-	//
-	// Thrown for analyzed content when requested OutputType was not enabled for
-	// a given contact. For example, if an OutputType.Raw was requested for a contact
-	// that had `RedactedOnly` Redaction policy set in Contact flow.
-	ErrCodeOutputTypeNotFoundException = "OutputTypeNotFoundException"
-
-	// ErrCodePropertyValidationException for service response error code
-	// "PropertyValidationException".
-	//
-	// The property is not valid.
-	ErrCodePropertyValidationException = "PropertyValidationException"
 
 	// ErrCodeResourceConflictException for service response error code
 	// "ResourceConflictException".
@@ -126,12 +104,6 @@ const (
 	// The specified resource was not found.
 	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
 
-	// ErrCodeResourceNotReadyException for service response error code
-	// "ResourceNotReadyException".
-	//
-	// The resource is not ready.
-	ErrCodeResourceNotReadyException = "ResourceNotReadyException"
-
 	// ErrCodeServiceQuotaExceededException for service response error code
 	// "ServiceQuotaExceededException".
 	//
@@ -143,12 +115,6 @@ const (
 	//
 	// The throttling limit has been exceeded.
 	ErrCodeThrottlingException = "ThrottlingException"
-
-	// ErrCodeTooManyRequestsException for service response error code
-	// "TooManyRequestsException".
-	//
-	// Displayed when rate-related API limits are exceeded.
-	ErrCodeTooManyRequestsException = "TooManyRequestsException"
 
 	// ErrCodeUserNotFoundException for service response error code
 	// "UserNotFoundException".
@@ -170,16 +136,11 @@ var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
 	"InvalidParameterException":            newErrorInvalidParameterException,
 	"InvalidRequestException":              newErrorInvalidRequestException,
 	"LimitExceededException":               newErrorLimitExceededException,
-	"MaximumResultReturnedException":       newErrorMaximumResultReturnedException,
 	"OutboundContactNotPermittedException": newErrorOutboundContactNotPermittedException,
-	"OutputTypeNotFoundException":          newErrorOutputTypeNotFoundException,
-	"PropertyValidationException":          newErrorPropertyValidationException,
 	"ResourceConflictException":            newErrorResourceConflictException,
 	"ResourceInUseException":               newErrorResourceInUseException,
 	"ResourceNotFoundException":            newErrorResourceNotFoundException,
-	"ResourceNotReadyException":            newErrorResourceNotReadyException,
 	"ServiceQuotaExceededException":        newErrorServiceQuotaExceededException,
 	"ThrottlingException":                  newErrorThrottlingException,
-	"TooManyRequestsException":             newErrorTooManyRequestsException,
 	"UserNotFoundException":                newErrorUserNotFoundException,
 }

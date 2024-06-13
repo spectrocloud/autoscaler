@@ -8,19 +8,19 @@ autoDiscovery:
 
 image:
   repository: docker.io/openstackmagnum/cluster-autoscaler
-  tag: v1.28.0
+  tag: v1.23.0
 
 nodeSelector:
-  node-role.kubernetes.io/control-plane: ""
+  node-role.kubernetes.io/master: ""
 
 tolerations:
 - key: CriticalAddonsOnly
   value: "True"
   effect: NoSchedule
 - key: dedicated
-  value: "control-plane"
+  value: "master"
   effect: NoSchedule
-- key: node-role.kubernetes.io/control-plane
+- key: node-role.kubernetes.io/master
   effect: NoSchedule
 
 cloudConfigPath: /etc/kubernetes/cloud-config

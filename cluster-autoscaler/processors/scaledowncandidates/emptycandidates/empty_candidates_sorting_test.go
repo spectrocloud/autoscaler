@@ -21,7 +21,7 @@ import (
 	"testing"
 
 	v1 "k8s.io/api/core/v1"
-	"k8s.io/autoscaler/cluster-autoscaler/simulator/options"
+	"k8s.io/autoscaler/cluster-autoscaler/simulator"
 	. "k8s.io/autoscaler/cluster-autoscaler/utils/test"
 	schedulerframework "k8s.io/kubernetes/pkg/scheduler/framework"
 )
@@ -62,15 +62,13 @@ func TestScaleDownEarlierThan(t *testing.T) {
 
 	niGetter := testNodeInfoGetter{map[string]*schedulerframework.NodeInfo{nodeEmptyName: niEmpty, nodeNonEmptyName: niNonEmpty, nodeEmptyName2: niEmpty2}}
 
-	deleteOptions := options.NodeDeleteOptions{
+	deleteOptions := simulator.NodeDeleteOptions{
 		SkipNodesWithSystemPods:           true,
 		SkipNodesWithLocalStorage:         true,
+		MinReplicaCount:                   0,
 		SkipNodesWithCustomControllerPods: true,
 	}
-	p := EmptySorting{
-		nodeInfoGetter: &niGetter,
-		deleteOptions:  deleteOptions,
-	}
+	p := EmptySorting{&niGetter, deleteOptions}
 
 	tests := []struct {
 		name        string
@@ -97,19 +95,22 @@ func TestScaleDownEarlierThan(t *testing.T) {
 			wantEarlier: true,
 		},
 		{
-			name:  "Non-empty node is not earlier that node without nodeInfo",
-			node1: nodeNonEmpty,
-			node2: noNodeInfoNode,
+			name:        "Non-empty node is not earlier that node without nodeInfo",
+			node1:       nodeNonEmpty,
+			node2:       noNodeInfoNode,
+			wantEarlier: false,
 		},
 		{
-			name:  "Node without nodeInfo is not earlier that non-empty node",
-			node1: noNodeInfoNode,
-			node2: nodeNonEmpty,
+			name:        "Node without nodeInfo is not earlier that non-empty node",
+			node1:       noNodeInfoNode,
+			node2:       nodeNonEmpty,
+			wantEarlier: false,
 		},
 		{
-			name:  "Empty node is not earlier that another empty node",
-			node1: nodeEmpty,
-			node2: nodeEmpty2,
+			name:        "Empty node is not earlier that another empty node",
+			node1:       nodeEmpty,
+			node2:       nodeEmpty2,
+			wantEarlier: false,
 		},
 	}
 	for _, test := range tests {

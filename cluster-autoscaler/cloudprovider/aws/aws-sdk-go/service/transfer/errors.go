@@ -25,7 +25,8 @@ const (
 	// ErrCodeInternalServiceError for service response error code
 	// "InternalServiceError".
 	//
-	// This exception is thrown when an error occurs in the Transfer Family service.
+	// This exception is thrown when an error occurs in the Amazon Web ServicesTransfer
+	// Family service.
 	ErrCodeInternalServiceError = "InternalServiceError"
 
 	// ErrCodeInvalidNextTokenException for service response error code
@@ -43,8 +44,7 @@ const (
 	// ErrCodeResourceExistsException for service response error code
 	// "ResourceExistsException".
 	//
-	// The requested resource does not exist, or exists in a region other than the
-	// one specified for the command.
+	// The requested resource does not exist.
 	ErrCodeResourceExistsException = "ResourceExistsException"
 
 	// ErrCodeResourceNotFoundException for service response error code
@@ -65,6 +65,8 @@ const (
 	// "ThrottlingException".
 	//
 	// The request was denied due to request throttling.
+	//
+	// HTTP Status Code: 400
 	ErrCodeThrottlingException = "ThrottlingException"
 )
 

@@ -18,13 +18,16 @@ package gce
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 )
 
 const (
-	projectsSubstring = "/projects/"
-	defaultDomainUrl  = "https://www.googleapis.com/compute/v1"
+	gceUrlSchema    = "https"
+	gceDomainSuffix = "googleapis.com/compute/v1/projects/"
+	// Cluster Autoscaler previously used "content" instead of "www" here, for reasons unknown.
+	gcePrefix           = gceUrlSchema + "://www." + gceDomainSuffix
+	instanceUrlTemplate = gcePrefix + "%s/zones/%s/instances/%s"
+	migUrlTemplate      = gcePrefix + "%s/zones/%s/instanceGroups/%s"
 )
 
 // ParseMigUrl expects url in format:
@@ -61,35 +64,30 @@ func ParseInstanceUrlRef(url string) (GceRef, error) {
 }
 
 // GenerateInstanceUrl generates url for instance.
-func GenerateInstanceUrl(domainUrl string, ref GceRef) string {
-	if domainUrl == "" {
-		domainUrl = defaultDomainUrl
-	}
-	instanceUrlTemplate := domainUrl + projectsSubstring + "%s/zones/%s/instances/%s"
+func GenerateInstanceUrl(ref GceRef) string {
 	return fmt.Sprintf(instanceUrlTemplate, ref.Project, ref.Zone, ref.Name)
 }
 
 // GenerateMigUrl generates url for instance.
-func GenerateMigUrl(domainUrl string, ref GceRef) string {
-	if domainUrl == "" {
-		domainUrl = defaultDomainUrl
-	}
-	migUrlTemplate := domainUrl + projectsSubstring + "%s/zones/%s/instanceGroups/%s"
+func GenerateMigUrl(ref GceRef) string {
 	return fmt.Sprintf(migUrlTemplate, ref.Project, ref.Zone, ref.Name)
 }
 
-// IsInstanceTemplateRegional determines whether or not an instance template is regional based on the url
-func IsInstanceTemplateRegional(templateUrl string) (bool, error) {
-	return regexp.MatchString("(/projects/.*[A-Za-z0-9]+.*/regions/)", templateUrl)
-}
-
 func parseGceUrl(url, expectedResource string) (project string, zone string, name string, err error) {
-	reg := regexp.MustCompile(fmt.Sprintf("https://.*/projects/.*/zones/.*/%s/.*", expectedResource))
-	errMsg := fmt.Errorf("wrong url: expected format <url>/projects/<project-id>/zones/<zone>/%s/<name>, got %s", expectedResource, url)
-	if !reg.MatchString(url) {
+	errMsg := fmt.Errorf("wrong url: expected format https://www.googleapis.com/compute/v1/projects/<project-id>/zones/<zone>/%s/<name>, got %s", expectedResource, url)
+	if !strings.Contains(url, gceDomainSuffix) {
 		return "", "", "", errMsg
 	}
-	splitted := strings.Split(strings.Split(url, projectsSubstring)[1], "/")
+	if !strings.HasPrefix(url, gceUrlSchema) {
+		return "", "", "", errMsg
+	}
+	splitted := strings.Split(strings.Split(url, gceDomainSuffix)[1], "/")
+	if len(splitted) != 5 || splitted[1] != "zones" {
+		return "", "", "", errMsg
+	}
+	if splitted[3] != expectedResource {
+		return "", "", "", fmt.Errorf("wrong resource in url: expected %s, got %s", expectedResource, splitted[3])
+	}
 	project = splitted[0]
 	zone = splitted[2]
 	name = splitted[4]

@@ -28,7 +28,6 @@ import (
 	"k8s.io/apimachinery/pkg/fields"
 	vpa_types "k8s.io/autoscaler/vertical-pod-autoscaler/pkg/apis/autoscaling.k8s.io/v1"
 	vpa_clientset "k8s.io/autoscaler/vertical-pod-autoscaler/pkg/client/clientset/versioned"
-	"k8s.io/autoscaler/vertical-pod-autoscaler/pkg/utils/test"
 	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
 	klog "k8s.io/klog/v2"
@@ -76,8 +75,8 @@ type observer struct {
 	channel chan recommendationChange
 }
 
-func (*observer) OnAdd(obj interface{}, isInInitialList bool) {}
-func (*observer) OnDelete(obj interface{})                    {}
+func (*observer) OnAdd(obj interface{})    {}
+func (*observer) OnDelete(obj interface{}) {}
 
 func (o *observer) OnUpdate(oldObj, newObj interface{}) {
 	get := func(vpa *vpa_types.VerticalPodAutoscaler) (result resourceRecommendation, found bool) {
@@ -159,19 +158,11 @@ var _ = RecommenderE2eDescribe("VPA CRD object", func() {
 		vpaClientSet := getVpaClientSet(f)
 
 		ginkgo.By("Setting up VPA")
-		targetRef := &autoscaling.CrossVersionObjectReference{
+		vpaCRD := NewVPA(f, "hamster-cronjob-vpa", &autoscaling.CrossVersionObjectReference{
 			APIVersion: "batch/v1",
 			Kind:       "CronJob",
 			Name:       "hamster-cronjob",
-		}
-
-		containerName := GetHamsterContainerNameByIndex(0)
-		vpaCRD := test.VerticalPodAutoscaler().
-			WithName("hamster-vpa").
-			WithNamespace(f.Namespace.Name).
-			WithTargetRef(targetRef).
-			WithContainer(containerName).
-			Get()
+		}, []*vpa_types.VerticalPodAutoscalerRecommenderSelector{})
 
 		InstallVPA(f, vpaCRD)
 
@@ -200,14 +191,7 @@ var _ = RecommenderE2eDescribe("VPA CRD object", func() {
 		)
 
 		ginkgo.By("Setting up a VPA CRD")
-		containerName := GetHamsterContainerNameByIndex(0)
-		vpaCRD = test.VerticalPodAutoscaler().
-			WithName("hamster-vpa").
-			WithNamespace(f.Namespace.Name).
-			WithTargetRef(hamsterTargetRef).
-			WithContainer(containerName).
-			Get()
-
+		vpaCRD = NewVPA(f, "hamster-vpa", hamsterTargetRef, []*vpa_types.VerticalPodAutoscalerRecommenderSelector{})
 		InstallVPA(f, vpaCRD)
 
 		vpaClientSet = getVpaClientSet(f)
@@ -282,17 +266,10 @@ var _ = RecommenderE2eDescribe("VPA CRD object", func() {
 	ginkgo.It("respects min allowed recommendation", func() {
 		const minMilliCpu = 10000
 		ginkgo.By("Setting up a VPA CRD")
-		containerName := GetHamsterContainerNameByIndex(0)
-		vpaCRD2 := test.VerticalPodAutoscaler().
-			WithName("hamster-vpa").
-			WithNamespace(f.Namespace.Name).
-			WithTargetRef(hamsterTargetRef).
-			WithContainer(containerName).
-			WithMinAllowed(containerName, "10000", "").
-			Get()
-
-		InstallVPA(f, vpaCRD2)
-		vpaCRD := vpaCRD2
+		minAllowed := apiv1.ResourceList{
+			apiv1.ResourceCPU: ParseQuantityOrDie(fmt.Sprintf("%dm", minMilliCpu)),
+		}
+		vpaCRD := createVpaCRDWithMinMaxAllowed(f, minAllowed, nil)
 
 		ginkgo.By("Waiting for recommendation to be filled")
 		vpa, err := WaitForRecommendationPresent(vpaClientSet, vpaCRD)
@@ -309,16 +286,10 @@ var _ = RecommenderE2eDescribe("VPA CRD object", func() {
 	ginkgo.It("respects max allowed recommendation", func() {
 		const maxMilliCpu = 1
 		ginkgo.By("Setting up a VPA CRD")
-		containerName := GetHamsterContainerNameByIndex(0)
-		vpaCRD := test.VerticalPodAutoscaler().
-			WithName("hamster-vpa").
-			WithNamespace(f.Namespace.Name).
-			WithTargetRef(hamsterTargetRef).
-			WithContainer(containerName).
-			WithMaxAllowed(containerName, "1m", "").
-			Get()
-
-		InstallVPA(f, vpaCRD)
+		maxAllowed := apiv1.ResourceList{
+			apiv1.ResourceCPU: ParseQuantityOrDie(fmt.Sprintf("%dm", maxMilliCpu)),
+		}
+		vpaCRD := createVpaCRDWithMinMaxAllowed(f, nil, maxAllowed)
 
 		ginkgo.By("Waiting for recommendation to be filled")
 		vpa, err := WaitForUncappedCPURecommendationAbove(vpaClientSet, vpaCRD, maxMilliCpu)
@@ -336,6 +307,23 @@ func getMilliCpu(resources apiv1.ResourceList) int64 {
 	return cpu.MilliValue()
 }
 
+// createVpaCRDWithMinMaxAllowed creates vpa object with min and max resources allowed.
+func createVpaCRDWithMinMaxAllowed(f *framework.Framework, minAllowed, maxAllowed apiv1.ResourceList) *vpa_types.VerticalPodAutoscaler {
+	vpaCRD := NewVPA(f, "hamster-vpa", hamsterTargetRef, []*vpa_types.VerticalPodAutoscalerRecommenderSelector{})
+	containerResourcePolicies := []vpa_types.ContainerResourcePolicy{
+		{
+			ContainerName: GetHamsterContainerNameByIndex(0),
+			MinAllowed:    minAllowed,
+			MaxAllowed:    maxAllowed,
+		},
+	}
+	vpaCRD.Spec.ResourcePolicy = &vpa_types.PodResourcePolicy{
+		ContainerPolicies: containerResourcePolicies,
+	}
+	InstallVPA(f, vpaCRD)
+	return vpaCRD
+}
+
 var _ = RecommenderE2eDescribe("VPA CRD object", func() {
 	f := framework.NewDefaultFramework("vertical-pod-autoscaling")
 	f.NamespacePodSecurityEnforceLevel = podsecurity.LevelBaseline
@@ -350,19 +338,8 @@ var _ = RecommenderE2eDescribe("VPA CRD object", func() {
 		ginkgo.By("Setting up a hamster deployment")
 		d := NewNHamstersDeployment(f, 2 /*number of containers*/)
 		_ = startDeploymentPods(f, d)
-
 		ginkgo.By("Setting up VPA CRD")
-		container1Name := GetHamsterContainerNameByIndex(0)
-		container2Name := GetHamsterContainerNameByIndex(1)
-		vpaCRD := test.VerticalPodAutoscaler().
-			WithName("hamster-vpa").
-			WithNamespace(f.Namespace.Name).
-			WithTargetRef(hamsterTargetRef).
-			WithContainer(container1Name).
-			WithContainer(container2Name).
-			Get()
-
-		InstallVPA(f, vpaCRD)
+		vpaCRD := createVpaCRDWithContainerScalingModes(f, vpa_types.ContainerScalingModeAuto, vpa_types.ContainerScalingModeAuto)
 
 		ginkgo.By("Waiting for recommendation to be filled for both containers")
 		vpa, err := WaitForRecommendationPresent(vpaClientSet, vpaCRD)
@@ -374,20 +351,7 @@ var _ = RecommenderE2eDescribe("VPA CRD object", func() {
 		ginkgo.By("Setting up a hamster deployment")
 		d := NewNHamstersDeployment(f, 2 /*number of containers*/)
 		_ = startDeploymentPods(f, d)
-
-		ginkgo.By("Setting up VPA CRD")
-		container1Name := GetHamsterContainerNameByIndex(0)
-		container2Name := GetHamsterContainerNameByIndex(1)
-		vpaCRD := test.VerticalPodAutoscaler().
-			WithName("hamster-vpa").
-			WithNamespace(f.Namespace.Name).
-			WithTargetRef(hamsterTargetRef).
-			WithContainer(container1Name).
-			WithScalingMode(container1Name, vpa_types.ContainerScalingModeOff).
-			WithContainer(container2Name).
-			Get()
-
-		InstallVPA(f, vpaCRD)
+		vpaCRD := createVpaCRDWithContainerScalingModes(f, vpa_types.ContainerScalingModeOff, vpa_types.ContainerScalingModeAuto)
 
 		ginkgo.By("Waiting for recommendation to be filled for just one container")
 		vpa, err := WaitForRecommendationPresent(vpaClientSet, vpaCRD)
@@ -399,6 +363,24 @@ var _ = RecommenderE2eDescribe("VPA CRD object", func() {
 		gomega.Expect(vpa.Status.Recommendation.ContainerRecommendations[0].ContainerName).To(gomega.Equal(GetHamsterContainerNameByIndex(1)), errMsg)
 	})
 })
+
+// createVpaCRDWithContainerScalingModes creates vpa object with containers policies
+// having assigned given scaling modes respectively.
+func createVpaCRDWithContainerScalingModes(f *framework.Framework, modes ...vpa_types.ContainerScalingMode) *vpa_types.VerticalPodAutoscaler {
+	vpaCRD := NewVPA(f, "hamster-vpa", hamsterTargetRef, []*vpa_types.VerticalPodAutoscalerRecommenderSelector{})
+	containerResourcePolicies := make([]vpa_types.ContainerResourcePolicy, len(modes), len(modes))
+	for i := range modes {
+		containerResourcePolicies[i] = vpa_types.ContainerResourcePolicy{
+			ContainerName: GetHamsterContainerNameByIndex(i),
+			Mode:          &modes[i],
+		}
+	}
+	vpaCRD.Spec.ResourcePolicy = &vpa_types.PodResourcePolicy{
+		ContainerPolicies: containerResourcePolicies,
+	}
+	InstallVPA(f, vpaCRD)
+	return vpaCRD
+}
 
 func deleteRecommender(c clientset.Interface) error {
 	namespace := "kube-system"

@@ -15,7 +15,6 @@
 
 # VSCode project files
 **/.vscode
-*.code-workspace
 
 # Emacs save files
 *~
@@ -29,5 +28,3 @@
 Session.vim
 .netrwhist
 
-# Binary files
-bin/

@@ -19,10 +19,10 @@ package hetzner
 import (
 	"context"
 	"fmt"
-	"maps"
 	"math/rand"
 	"strings"
 	"sync"
+	"time"
 
 	apiv1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -132,11 +132,6 @@ func (n *hetznerNodeGroup) IncreaseSize(delta int) error {
 	return nil
 }
 
-// AtomicIncreaseSize is not implemented.
-func (n *hetznerNodeGroup) AtomicIncreaseSize(delta int) error {
-	return cloudprovider.ErrNotImplemented
-}
-
 // DeleteNodes deletes nodes from this node group (and also increasing the size
 // of the node group with that). Error is returned either on failure or if the
 // given node doesn't belong to this node group. This function should wait
@@ -159,7 +154,7 @@ func (n *hetznerNodeGroup) DeleteNodes(nodes []*apiv1.Node) error {
 
 			err := n.manager.deleteByNode(node)
 			if err != nil {
-				klog.Errorf("failed to delete server ID %s error: %v", node.Name, err)
+				klog.Errorf("failed to delete server ID %d error: %v", node.Name, err)
 			}
 
 			waitGroup.Done()
@@ -227,14 +222,10 @@ func (n *hetznerNodeGroup) TemplateNodeInfo() (*schedulerframework.NodeInfo, err
 		return nil, fmt.Errorf("failed to create resource list for node group %s error: %v", n.id, err)
 	}
 
-	nodeName := newNodeName(n)
-
 	node := apiv1.Node{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: nodeName,
-			Labels: map[string]string{
-				apiv1.LabelHostname: nodeName,
-			},
+			Name:   newNodeName(n),
+			Labels: map[string]string{},
 		},
 		Status: apiv1.NodeStatus{
 			Capacity:   resourceList,
@@ -249,16 +240,6 @@ func (n *hetznerNodeGroup) TemplateNodeInfo() (*schedulerframework.NodeInfo, err
 		return nil, err
 	}
 	node.Labels = cloudprovider.JoinStringMaps(node.Labels, nodeGroupLabels)
-
-	if n.manager.clusterConfig.IsUsingNewFormat && n.id != drainingNodePoolId {
-		for _, taint := range n.manager.clusterConfig.NodeConfigs[n.id].Taints {
-			node.Spec.Taints = append(node.Spec.Taints, apiv1.Taint{
-				Key:    taint.Key,
-				Value:  taint.Value,
-				Effect: taint.Effect,
-			})
-		}
-	}
 
 	nodeInfo := schedulerframework.NewNodeInfo(cloudprovider.BuildKubeProxy(n.id))
 	nodeInfo.SetNode(&node)
@@ -304,7 +285,7 @@ func toInstance(vm *hcloud.Server) cloudprovider.Instance {
 	}
 }
 
-func toProviderID(nodeID int64) string {
+func toProviderID(nodeID int) string {
 	return fmt.Sprintf("%s%d", providerIDPrefix, nodeID)
 }
 
@@ -344,23 +325,14 @@ func buildNodeGroupLabels(n *hetznerNodeGroup) (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	klog.V(4).Infof("Build node group label for %s", n.id)
 
-	labels := map[string]string{
+	return map[string]string{
 		apiv1.LabelInstanceType:      n.instanceType,
 		apiv1.LabelTopologyRegion:    n.region,
 		apiv1.LabelArchStable:        archLabel,
 		"csi.hetzner.cloud/location": n.region,
 		nodeGroupLabel:               n.id,
-	}
-
-	if n.manager.clusterConfig.IsUsingNewFormat && n.id != drainingNodePoolId {
-		maps.Copy(labels, n.manager.clusterConfig.NodeConfigs[n.id].Labels)
-	}
-
-	klog.V(4).Infof("%s nodegroup labels: %s", n.id, labels)
-
-	return labels, nil
+	}, nil
 }
 
 func getMachineTypeResourceList(m *hetznerManager, instanceType string) (apiv1.ResourceList, error) {
@@ -371,10 +343,10 @@ func getMachineTypeResourceList(m *hetznerManager, instanceType string) (apiv1.R
 
 	return apiv1.ResourceList{
 		// TODO somehow determine the actual pods that will be running
-		apiv1.ResourcePods:             *resource.NewQuantity(defaultPodAmountsLimit, resource.DecimalSI),
-		apiv1.ResourceCPU:              *resource.NewQuantity(int64(typeInfo.Cores), resource.DecimalSI),
-		apiv1.ResourceMemory:           *resource.NewQuantity(int64(typeInfo.Memory*1024*1024*1024), resource.DecimalSI),
-		apiv1.ResourceEphemeralStorage: *resource.NewQuantity(int64(typeInfo.Disk*1024*1024*1024), resource.DecimalSI),
+		apiv1.ResourcePods:    *resource.NewQuantity(defaultPodAmountsLimit, resource.DecimalSI),
+		apiv1.ResourceCPU:     *resource.NewQuantity(int64(typeInfo.Cores), resource.DecimalSI),
+		apiv1.ResourceMemory:  *resource.NewQuantity(int64(typeInfo.Memory*1024*1024*1024), resource.DecimalSI),
+		apiv1.ResourceStorage: *resource.NewQuantity(int64(typeInfo.Disk*1024*1024*1024), resource.DecimalSI),
 	}, nil
 }
 
@@ -410,9 +382,6 @@ func instanceTypeArch(manager *hetznerManager, instanceType string) (string, err
 }
 
 func createServer(n *hetznerNodeGroup) error {
-	ctx, cancel := context.WithTimeout(n.manager.apiCallContext, n.manager.createTimeout)
-	defer cancel()
-
 	serverType, err := n.manager.cachedServerType.getServerType(n.instanceType)
 	if err != nil {
 		return err
@@ -423,16 +392,10 @@ func createServer(n *hetznerNodeGroup) error {
 		return err
 	}
 
-	cloudInit := n.manager.clusterConfig.LegacyConfig.CloudInit
-
-	if n.manager.clusterConfig.IsUsingNewFormat {
-		cloudInit = n.manager.clusterConfig.NodeConfigs[n.id].CloudInit
-	}
-
 	StartAfterCreate := true
 	opts := hcloud.ServerCreateOpts{
 		Name:             newNodeName(n),
-		UserData:         cloudInit,
+		UserData:         n.manager.cloudInit,
 		Location:         &hcloud.Location{Name: n.region},
 		ServerType:       serverType,
 		Image:            image,
@@ -456,17 +419,14 @@ func createServer(n *hetznerNodeGroup) error {
 		opts.Firewalls = []*hcloud.ServerCreateFirewall{serverCreateFirewall}
 	}
 
-	serverCreateResult, _, err := n.manager.client.Server.Create(ctx, opts)
+	serverCreateResult, _, err := n.manager.client.Server.Create(n.manager.apiCallContext, opts)
 	if err != nil {
 		return fmt.Errorf("could not create server type %s in region %s: %v", n.instanceType, n.region, err)
 	}
 
+	action := serverCreateResult.Action
 	server := serverCreateResult.Server
-
-	actions := append(serverCreateResult.NextActions, serverCreateResult.Action)
-
-	// Delete the server if any action (most importantly create_server & start_server) fails
-	err = n.manager.client.Action.WaitFor(ctx, actions...)
+	err = waitForServerAction(n.manager, server.Name, action)
 	if err != nil {
 		_ = n.manager.deleteServer(server)
 		return fmt.Errorf("failed to start server %s error: %v", server.Name, err)
@@ -483,18 +443,7 @@ func createServer(n *hetznerNodeGroup) error {
 // server.
 func findImage(n *hetznerNodeGroup, serverType *hcloud.ServerType) (*hcloud.Image, error) {
 	// Select correct image based on server type architecture
-	imageName := n.manager.clusterConfig.LegacyConfig.ImageName
-	if n.manager.clusterConfig.IsUsingNewFormat {
-		if serverType.Architecture == hcloud.ArchitectureARM {
-			imageName = n.manager.clusterConfig.ImagesForArch.Arm64
-		}
-
-		if serverType.Architecture == hcloud.ArchitectureX86 {
-			imageName = n.manager.clusterConfig.ImagesForArch.Amd64
-		}
-	}
-
-	image, _, err := n.manager.client.Image.GetForArchitecture(context.TODO(), imageName, serverType.Architecture)
+	image, _, err := n.manager.client.Image.GetForArchitecture(context.TODO(), n.manager.image, serverType.Architecture)
 	if err != nil {
 		// Keep looking for label if image was not found by id or name
 		if !strings.HasPrefix(err.Error(), "image not found") {
@@ -513,15 +462,48 @@ func findImage(n *hetznerNodeGroup, serverType *hcloud.ServerType) (*hcloud.Imag
 		Sort:         []string{"created:desc"},
 		Architecture: []hcloud.Architecture{serverType.Architecture},
 		ListOpts: hcloud.ListOpts{
-			LabelSelector: imageName,
+			LabelSelector: n.manager.image,
 		},
 	})
 
 	if err != nil || len(images) == 0 {
-		return nil, fmt.Errorf("unable to find image %s with architecture %s: %v", imageName, serverType.Architecture, err)
+		return nil, fmt.Errorf("unable to find image %s with architecture %s: %v", n.manager.image, serverType.Architecture, err)
 	}
 
 	return images[0], nil
+}
+
+func waitForServerAction(m *hetznerManager, serverName string, action *hcloud.Action) error {
+	// The implementation of the Hetzner Cloud action client's WatchProgress
+	// method may be a little puzzling. The following comment thus explains how
+	// waitForServerAction works.
+	//
+	// WatchProgress returns two channels. The first channel is used to send a
+	// ballpark estimate for the action progress, the second to send any error
+	// that may occur.
+	//
+	// WatchProgress is implemented in such a way, that the first channel can
+	// be ignored. It is not necessary to consume it to avoid a deadlock in
+	// WatchProgress. Any write to this channel is wrapped in a select.
+	// Progress updates are simply not sent if nothing reads from the other
+	// side.
+	//
+	// Once the action completes successfully nil is send through the second
+	// channel. Then both channels are closed.
+	//
+	// The following code therefore only watches the second channel. If it
+	// reads an error from the channel the action is failed. Otherwise the
+	// action is successful.
+	_, errChan := m.client.Action.WatchProgress(m.apiCallContext, action)
+	select {
+	case err := <-errChan:
+		if err != nil {
+			return fmt.Errorf("error while waiting for server action: %s: %v", serverName, err)
+		}
+		return nil
+	case <-time.After(m.createTimeout):
+		return fmt.Errorf("timeout waiting for server %s", serverName)
+	}
 }
 
 func (n *hetznerNodeGroup) resetTargetSize(expectedDelta int) {

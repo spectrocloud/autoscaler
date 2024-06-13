@@ -1,16 +1,31 @@
+/*
+Copyright 2018 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package schema
 
 import "time"
 
 // Volume defines the schema of a volume.
 type Volume struct {
-	ID          int64             `json:"id"`
+	ID          int               `json:"id"`
 	Name        string            `json:"name"`
-	Server      *int64            `json:"server"`
+	Server      *int              `json:"server"`
 	Status      string            `json:"status"`
 	Location    Location          `json:"location"`
 	Size        int               `json:"size"`
-	Format      *string           `json:"format"`
 	Protection  VolumeProtection  `json:"protection"`
 	Labels      map[string]string `json:"labels"`
 	LinuxDevice string            `json:"linux_device"`
@@ -22,7 +37,7 @@ type Volume struct {
 type VolumeCreateRequest struct {
 	Name      string             `json:"name"`
 	Size      int                `json:"size"`
-	Server    *int64             `json:"server,omitempty"`
+	Server    *int               `json:"server,omitempty"`
 	Location  interface{}        `json:"location,omitempty"` // int, string, or nil
 	Labels    *map[string]string `json:"labels,omitempty"`
 	Automount *bool              `json:"automount,omitempty"`
@@ -80,7 +95,7 @@ type VolumeActionChangeProtectionResponse struct {
 // VolumeActionAttachVolumeRequest defines the schema of the request to
 // attach a volume to a server.
 type VolumeActionAttachVolumeRequest struct {
-	Server    int64 `json:"server"`
+	Server    int   `json:"server"`
 	Automount *bool `json:"automount,omitempty"`
 }
 

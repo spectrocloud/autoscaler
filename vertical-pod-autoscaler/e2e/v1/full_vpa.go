@@ -26,7 +26,8 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
-	"k8s.io/autoscaler/vertical-pod-autoscaler/pkg/utils/test"
+	vpa_types "k8s.io/autoscaler/vertical-pod-autoscaler/pkg/apis/autoscaling.k8s.io/v1"
+	vpa_clientset "k8s.io/autoscaler/vertical-pod-autoscaler/pkg/client/clientset/versioned"
 	"k8s.io/kubernetes/test/e2e/framework"
 	podsecurity "k8s.io/pod-security-admission/api"
 
@@ -47,7 +48,9 @@ const (
 
 var _ = FullVpaE2eDescribe("Pods under VPA", func() {
 	var (
-		rc *ResourceConsumer
+		rc           *ResourceConsumer
+		vpaClientSet *vpa_clientset.Clientset
+		vpaCRD       *vpa_types.VerticalPodAutoscaler
 	)
 	replicas := 3
 
@@ -74,28 +77,20 @@ var _ = FullVpaE2eDescribe("Pods under VPA", func() {
 			f.ScalesGetter)
 
 		ginkgo.By("Setting up a VPA CRD")
-		targetRef := &autoscaling.CrossVersionObjectReference{
+		config, err := framework.LoadConfig()
+		gomega.Expect(err).NotTo(gomega.HaveOccurred())
+
+		vpaCRD = NewVPA(f, "hamster-vpa", &autoscaling.CrossVersionObjectReference{
 			APIVersion: "apps/v1",
 			Kind:       "Deployment",
 			Name:       "hamster",
-		}
+		}, []*vpa_types.VerticalPodAutoscalerRecommenderSelector{})
 
-		containerName := GetHamsterContainerNameByIndex(0)
-		vpaCRD := test.VerticalPodAutoscaler().
-			WithName("hamster-vpa").
-			WithNamespace(f.Namespace.Name).
-			WithTargetRef(targetRef).
-			WithContainer(containerName).
-			AppendRecommendation(
-				test.Recommendation().
-					WithContainer(containerName).
-					WithTarget("250m", "200Mi").
-					WithLowerBound("250m", "200Mi").
-					WithUpperBound("250m", "200Mi").
-					GetContainerResources()).
-			Get()
+		vpaClientSet = vpa_clientset.NewForConfigOrDie(config)
+		vpaClient := vpaClientSet.AutoscalingV1()
+		_, err = vpaClient.VerticalPodAutoscalers(ns).Create(context.TODO(), vpaCRD, metav1.CreateOptions{})
+		gomega.Expect(err).NotTo(gomega.HaveOccurred())
 
-		InstallVPA(f, vpaCRD)
 	})
 
 	ginkgo.It("have cpu requests growing with usage", func() {
@@ -132,7 +127,9 @@ var _ = FullVpaE2eDescribe("Pods under VPA", func() {
 
 var _ = FullVpaE2eDescribe("Pods under VPA with default recommender explicitly configured", func() {
 	var (
-		rc *ResourceConsumer
+		rc           *ResourceConsumer
+		vpaClientSet *vpa_clientset.Clientset
+		vpaCRD       *vpa_types.VerticalPodAutoscaler
 	)
 	replicas := 3
 
@@ -159,28 +156,19 @@ var _ = FullVpaE2eDescribe("Pods under VPA with default recommender explicitly c
 			f.ScalesGetter)
 
 		ginkgo.By("Setting up a VPA CRD with Recommender explicitly configured")
-		targetRef := &autoscaling.CrossVersionObjectReference{
+		config, err := framework.LoadConfig()
+		gomega.Expect(err).NotTo(gomega.HaveOccurred())
+
+		vpaCRD = NewVPA(f, "hamster-vpa", &autoscaling.CrossVersionObjectReference{
 			APIVersion: "apps/v1",
 			Kind:       "Deployment",
 			Name:       "hamster",
-		}
+		}, []*vpa_types.VerticalPodAutoscalerRecommenderSelector{{Name: "default"}})
 
-		containerName := GetHamsterContainerNameByIndex(0)
-		vpaCRD := test.VerticalPodAutoscaler().
-			WithName("hamster-vpa").
-			WithNamespace(f.Namespace.Name).
-			WithTargetRef(targetRef).
-			WithContainer(containerName).
-			AppendRecommendation(
-				test.Recommendation().
-					WithContainer(containerName).
-					WithTarget("250m", "200Mi").
-					WithLowerBound("250m", "200Mi").
-					WithUpperBound("250m", "200Mi").
-					GetContainerResources()).
-			Get()
-
-		InstallVPA(f, vpaCRD)
+		vpaClientSet = vpa_clientset.NewForConfigOrDie(config)
+		vpaClient := vpaClientSet.AutoscalingV1()
+		_, err = vpaClient.VerticalPodAutoscalers(ns).Create(context.TODO(), vpaCRD, metav1.CreateOptions{})
+		gomega.Expect(err).NotTo(gomega.HaveOccurred())
 
 	})
 
@@ -202,7 +190,9 @@ var _ = FullVpaE2eDescribe("Pods under VPA with default recommender explicitly c
 
 var _ = FullVpaE2eDescribe("Pods under VPA with non-recognized recommender explicitly configured", func() {
 	var (
-		rc *ResourceConsumer
+		rc           *ResourceConsumer
+		vpaClientSet *vpa_clientset.Clientset
+		vpaCRD       *vpa_types.VerticalPodAutoscaler
 	)
 	replicas := 3
 
@@ -229,29 +219,19 @@ var _ = FullVpaE2eDescribe("Pods under VPA with non-recognized recommender expli
 			f.ScalesGetter)
 
 		ginkgo.By("Setting up a VPA CRD with Recommender explicitly configured")
-		targetRef := &autoscaling.CrossVersionObjectReference{
+		config, err := framework.LoadConfig()
+		gomega.Expect(err).NotTo(gomega.HaveOccurred())
+
+		vpaCRD = NewVPA(f, "hamster-vpa", &autoscaling.CrossVersionObjectReference{
 			APIVersion: "apps/v1",
 			Kind:       "Deployment",
 			Name:       "hamster",
-		}
+		}, []*vpa_types.VerticalPodAutoscalerRecommenderSelector{{Name: "non-recognized"}})
 
-		containerName := GetHamsterContainerNameByIndex(0)
-		vpaCRD := test.VerticalPodAutoscaler().
-			WithName("hamster-vpa").
-			WithRecommender("non-recognized").
-			WithNamespace(f.Namespace.Name).
-			WithTargetRef(targetRef).
-			WithContainer(containerName).
-			AppendRecommendation(
-				test.Recommendation().
-					WithContainer(containerName).
-					WithTarget("250m", "200Mi").
-					WithLowerBound("250m", "200Mi").
-					WithUpperBound("250m", "200Mi").
-					GetContainerResources()).
-			Get()
-
-		InstallVPA(f, vpaCRD)
+		vpaClientSet = vpa_clientset.NewForConfigOrDie(config)
+		vpaClient := vpaClientSet.AutoscalingV1()
+		_, err = vpaClient.VerticalPodAutoscalers(ns).Create(context.TODO(), vpaCRD, metav1.CreateOptions{})
+		gomega.Expect(err).NotTo(gomega.HaveOccurred())
 
 	})
 
@@ -271,6 +251,10 @@ var _ = FullVpaE2eDescribe("Pods under VPA with non-recognized recommender expli
 })
 
 var _ = FullVpaE2eDescribe("OOMing pods under VPA", func() {
+	var (
+		vpaClientSet *vpa_clientset.Clientset
+		vpaCRD       *vpa_types.VerticalPodAutoscaler
+	)
 	const replicas = 3
 
 	f := framework.NewDefaultFramework("vertical-pod-autoscaling")
@@ -286,21 +270,19 @@ var _ = FullVpaE2eDescribe("OOMing pods under VPA", func() {
 			"hamster",
 			replicas)
 		ginkgo.By("Setting up a VPA CRD")
-		targetRef := &autoscaling.CrossVersionObjectReference{
+		config, err := framework.LoadConfig()
+		gomega.Expect(err).NotTo(gomega.HaveOccurred())
+
+		vpaCRD = NewVPA(f, "hamster-vpa", &autoscaling.CrossVersionObjectReference{
 			APIVersion: "v1",
 			Kind:       "Deployment",
 			Name:       "hamster",
-		}
+		}, []*vpa_types.VerticalPodAutoscalerRecommenderSelector{})
 
-		containerName := GetHamsterContainerNameByIndex(0)
-		vpaCRD := test.VerticalPodAutoscaler().
-			WithName("hamster-vpa").
-			WithNamespace(f.Namespace.Name).
-			WithTargetRef(targetRef).
-			WithContainer(containerName).
-			Get()
-
-		InstallVPA(f, vpaCRD)
+		vpaClientSet = vpa_clientset.NewForConfigOrDie(config)
+		vpaClient := vpaClientSet.AutoscalingV1()
+		_, err = vpaClient.VerticalPodAutoscalers(ns).Create(context.TODO(), vpaCRD, metav1.CreateOptions{})
+		gomega.Expect(err).NotTo(gomega.HaveOccurred())
 	})
 
 	ginkgo.It("have memory requests growing with OOMs", func() {

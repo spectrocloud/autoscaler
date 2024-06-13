@@ -31,14 +31,14 @@ const (
 	// ErrCodeInternalServerException for service response error code
 	// "InternalServerException".
 	//
-	// An internal error has occurred. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+	// An internal error has occurred.
 	ErrCodeInternalServerException = "InternalServerException"
 
 	// ErrCodeRequestThrottledException for service response error code
 	// "RequestThrottledException".
 	//
-	// The number of API requests has exceeded the maximum allowed API request throttling
-	// limit for the snapshot. For more information see Error retries (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/error-retries.html).
+	// The number of API requests has exceed the maximum allowed API request throttling
+	// limit.
 	ErrCodeRequestThrottledException = "RequestThrottledException"
 
 	// ErrCodeResourceNotFoundException for service response error code

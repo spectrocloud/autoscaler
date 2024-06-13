@@ -29,7 +29,6 @@ import (
 	cloudBuilder "k8s.io/autoscaler/cluster-autoscaler/cloudprovider/builder"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/externalgrpc/examples/external-grpc-cloud-provider-service/wrapper"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/externalgrpc/protos"
-	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/gce/localssdsize"
 	"k8s.io/autoscaler/cluster-autoscaler/config"
 	kube_flag "k8s.io/component-base/cli/flag"
 	klog "k8s.io/klog/v2"
@@ -122,12 +121,11 @@ func main() {
 		NodeGroups:             *nodeGroupsFlag,
 		ClusterName:            *clusterName,
 		GCEOptions: config.GCEOptions{
-			ConcurrentRefreshes:      1,
-			LocalSSDDiskSizeProvider: localssdsize.NewSimpleLocalSSDProvider(),
+			ConcurrentRefreshes: 1,
 		},
 		UserAgent: "user-agent",
 	}
-	cloudProvider := cloudBuilder.NewCloudProvider(autoscalingOptions, nil)
+	cloudProvider := cloudBuilder.NewCloudProvider(autoscalingOptions)
 	srv := wrapper.NewCloudProviderGrpcWrapper(cloudProvider)
 
 	// listen

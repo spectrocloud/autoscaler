@@ -14,13 +14,6 @@ const (
 	// The input parameters don't match the service's restrictions.
 	ErrCodeBadRequestException = "BadRequestException"
 
-	// ErrCodeConflictException for service response error code
-	// "ConflictException".
-	//
-	// The request could not be processed because of conflict in the current state
-	// of the resource.
-	ErrCodeConflictException = "ConflictException"
-
 	// ErrCodeForbiddenException for service response error code
 	// "ForbiddenException".
 	//
@@ -66,7 +59,6 @@ const (
 
 var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
 	"BadRequestException":            newErrorBadRequestException,
-	"ConflictException":              newErrorConflictException,
 	"ForbiddenException":             newErrorForbiddenException,
 	"NotFoundException":              newErrorNotFoundException,
 	"ResourceLimitExceededException": newErrorResourceLimitExceededException,

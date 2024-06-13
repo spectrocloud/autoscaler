@@ -18,9 +18,11 @@ package routines
 
 import (
 	vpa_types "k8s.io/autoscaler/vertical-pod-autoscaler/pkg/apis/autoscaling.k8s.io/v1"
+	"k8s.io/autoscaler/vertical-pod-autoscaler/pkg/recommender/model"
 )
 
 // RecommendationPostProcessor can amend the recommendation according to the defined policies
 type RecommendationPostProcessor interface {
-	Process(vpa *vpa_types.VerticalPodAutoscaler, recommendation *vpa_types.RecommendedPodResources) *vpa_types.RecommendedPodResources
+	Process(vpa *model.Vpa, recommendation *vpa_types.RecommendedPodResources,
+		policy *vpa_types.PodResourcePolicy) *vpa_types.RecommendedPodResources
 }

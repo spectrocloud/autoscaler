@@ -4,6 +4,3 @@ approvers:
 reviewers:
 # - NeilW
 # - johnl
-
-labels:
-- area/provider/brightbox

@@ -163,11 +163,6 @@ func (ng *nodeGroup) IncreaseSize(delta int) error {
 	return ng.setSize(newSize)
 }
 
-// AtomicIncreaseSize is not implemented.
-func (ng *nodeGroup) AtomicIncreaseSize(delta int) error {
-	return cloudprovider.ErrNotImplemented
-}
-
 // TargetSize returns the current TARGET size of the node group. It is possible that the
 // number is different from the number of nodes registered in Kubernetes.
 func (ng *nodeGroup) TargetSize() (int, error) {
@@ -349,12 +344,9 @@ func (ng *nodeGroup) listMachines() ([]unstructured.Unstructured, error) {
 			LabelSelector: fmt.Sprintf("%s=%s-%s", machineDeploymentNameLabelKey, ng.provider.config.ClusterName, ng.name),
 		},
 	)
-	if err != nil {
-		return nil, fmt.Errorf("could not list machines: %w", err)
-	}
 
 	ng.machines = machinesList.Items
-	return machinesList.Items, nil
+	return machinesList.Items, err
 }
 
 func (ng *nodeGroup) machineByName(name string) (*unstructured.Unstructured, error) {
@@ -463,7 +455,7 @@ func parseResourceAnnotations(annotations map[string]string) (corev1.ResourceLis
 
 	cpuResources, err := resource.ParseQuantity(cpu)
 	if err != nil {
-		return nil, fmt.Errorf("unable to parse cpu resources: %q: %w", cpu, err)
+		return nil, fmt.Errorf("unable to parse cpu resources: %s", cpu)
 	}
 	memory, ok := annotations[resourceMemoryAnnotation]
 	if !ok {
@@ -472,7 +464,7 @@ func parseResourceAnnotations(annotations map[string]string) (corev1.ResourceLis
 
 	memoryResources, err := resource.ParseQuantity(memory)
 	if err != nil {
-		return nil, fmt.Errorf("unable to parse memory resources: %q: %w", memory, err)
+		return nil, fmt.Errorf("unable to parse cpu resources: %s", cpu)
 	}
 	ephemeralStorage, ok := annotations[resourceEphemeralStorageAnnotation]
 	if !ok {
@@ -481,7 +473,7 @@ func parseResourceAnnotations(annotations map[string]string) (corev1.ResourceLis
 
 	ephemeralStorageResources, err := resource.ParseQuantity(ephemeralStorage)
 	if err != nil {
-		return nil, fmt.Errorf("unable to parse ephemeral storage resources: %q: %w", ephemeralStorage, err)
+		return nil, fmt.Errorf("unable to parse cpu resources: %s", cpu)
 	}
 
 	return corev1.ResourceList{
