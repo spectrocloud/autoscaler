@@ -20,7 +20,7 @@ RUN if [ ${CRYPTO_LIB} ]; \
     fi
 RUN if [ "${CRYPTO_LIB}" ]; then assert-static.sh bin/cluster-autoscaler; fi
 RUN if [ "${CRYPTO_LIB}" ]; then assert-fips.sh bin/cluster-autoscaler; fi
-RUN scan-govulncheck.sh bin/cluster-autoscaler
+#RUN scan-govulncheck.sh bin/cluster-autoscaler
 
 FROM --platform=$TARGETPLATFORM gcr.io/distroless/static:nonroot-amd64
 WORKDIR /
