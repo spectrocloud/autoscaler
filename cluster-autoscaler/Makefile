@@ -1,13 +1,16 @@
 ALL_ARCH = amd64 arm64 s390x
 all: $(addprefix build-arch-,$(ALL_ARCH))
 
+SPECTRO_VERSION ?= 4.7.0-dev
+TAG ?= v1.33.1-spectro-${SPECTRO_VERSION}
+
 TAG?=dev
 FLAGS=
 LDFLAGS?=-s
 ENVVAR=CGO_ENABLED=0
 GOOS?=linux
 GOARCH?=$(shell go env GOARCH)
-REGISTRY?=gcr.io/k8s-staging-autoscaling
+#REGISTRY?=gcr.io/k8s-staging-autoscaling
 DOCKER_NETWORK?=default
 SUPPORTED_BUILD_TAGS=$(shell ls cloudprovider/builder/ | grep -e '^builder_.*\.go' | sed 's/builder_\(.*\)\.go/\1/')
 ifdef BUILD_TAGS
@@ -36,6 +39,36 @@ endif
 IMAGE=$(REGISTRY)/cluster-autoscaler$(PROVIDER)
 
 export DOCKER_CLI_EXPERIMENTAL := enabled
+
+GOOS ?= $(shell go env GOOS)
+GOARCH ?= $(shell go env GOARCH)
+GOPATH ?= $(shell go env GOPATH)
+TARGETARCH ?= linux/amd64
+
+FIPS_ENABLE ?= ""
+
+BUILD_ARGS = --build-arg CRYPTO_LIB=${FIPS_ENABLE} --build-arg BUILDER_GOLANG_VERSION=${BUILDER_GOLANG_VERSION}
+RELEASE_LOC := release
+ifeq ($(FIPS_ENABLE),yes)
+RELEASE_LOC := release-fips
+endif
+
+ALL_ARCH = amd64 arm64
+REGISTRY ?= gcr.io/spectro-dev-public/$(USER)/${RELEASE_LOC}
+# main controller
+CORE_IMAGE_NAME ?= cluster-autoscaler
+CORE_CONTROLLER_IMG ?= $(REGISTRY)/$(CORE_IMAGE_NAME)
+
+.PHONY: docker-build-all ## Build all the architecture docker images
+docker-build-all: $(addprefix docker-build-,$(ALL_ARCH))
+
+docker-build-%: ## Build docker images for a given ARCH
+	$(MAKE) ARCH=$* docker-build
+
+.PHONY: docker-build
+docker-build:  ## Build the docker image for cluster autoscaler
+	docker buildx build --load --platform linux/${ARCH} ${BUILD_ARGS} --build-arg ARCH=$(ARCH) --build-arg LDFLAGS="$(LDFLAGS)" . -t $(CORE_CONTROLLER_IMG)-$(ARCH):$(TAG)
+	@echo $(CORE_CONTROLLER_IMG)-$(ARCH):$(TAG)
 
 build:
 	@$(MAKE) build-arch-$(GOARCH)
@@ -69,6 +102,28 @@ make-image-arch-%:
 		-t ${IMAGE}-$*:${TAG} \
 		-f Dockerfile .
 	@echo "Image ${TAG}${FOR_PROVIDER}-$* completed"
+
+.PHONY: docker-push
+docker-push: ## Push the docker image
+	docker push $(CORE_CONTROLLER_IMG)-$(ARCH):$(TAG)
+
+.PHONY: docker-push-all ## Push all the architecture docker images
+docker-push-all: $(addprefix docker-push-,$(ALL_ARCH))
+	$(MAKE) docker-push-core-manifest
+
+docker-push-%: ## Docker push
+	$(MAKE) ARCH=$* docker-push
+
+.PHONY: docker-push-core-manifest
+docker-push-core-manifest: ## Push the fat manifest docker image.
+	## Minimum docker version 18.06.0 is required for creating and pushing manifest images.
+	$(MAKE) docker-push-manifest CONTROLLER_IMG=$(CORE_CONTROLLER_IMG) MANIFEST_FILE=$(CORE_MANIFEST_FILE)
+
+.PHONY: docker-push-manifest
+docker-push-manifest: ## Push the manifest image
+	docker manifest create --amend $(CONTROLLER_IMG):$(TAG) $(shell echo $(ALL_ARCH) | sed -e "s~[^ ]*~$(CONTROLLER_IMG)\-&:$(TAG)~g")
+	@for arch in $(ALL_ARCH); do docker manifest annotate --arch $${arch} ${CONTROLLER_IMG}:${TAG} ${CONTROLLER_IMG}-$${arch}:${TAG}; done
+	docker manifest push --purge ${CONTROLLER_IMG}:${TAG}
 
 push-image: push-image-arch-$(GOARCH)
 
