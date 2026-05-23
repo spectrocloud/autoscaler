@@ -1,4 +1,5 @@
-FROM --platform=$TARGETPLATFORM us-docker.pkg.dev/palette-images/build-base-images/golang:1.24-alpine as builder
+ARG BUILDER_GOLANG_VERSION
+FROM --platform=$TARGETPLATFORM us-central1-docker.pkg.dev/palette-images-dev/hardened-images/builder/golang:${BUILDER_GOLANG_VERSION}-alpine as builder
 ARG TARGETOS
 ARG TARGETARCH
 ARG CRYPTO_LIB
